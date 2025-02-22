@@ -9,9 +9,10 @@ export interface IEvent extends Document {
   createdBy: mongoose.Types.ObjectId;
   hobby: string;
   image?: string;
+  likes: mongoose.Types.ObjectId[]; 
 }
 
-const EventSchema: Schema = new Schema({
+const eventSchema = new Schema<IEvent>({
   title: { type: String, required: true },
   description: { type: String, required: true },
   date: { type: Date, required: true },
@@ -19,7 +20,9 @@ const EventSchema: Schema = new Schema({
   hobby: { type: String, required: true },
   participants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  image: { type: String, default: '' }
+  image: { type: String, default: '' },
+  likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 }, { timestamps: true });
 
-export default mongoose.model<IEvent>('Event', EventSchema);
+const eventModel = mongoose.model<IEvent>('Event', eventSchema);
+export default eventModel;
