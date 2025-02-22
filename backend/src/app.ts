@@ -9,6 +9,7 @@ import eventRoutes from './routes/event.routes';
 import hobbyRoutes from './routes/hobby.routes';
 import likeRoutes from './routes/like.routes';
 import messageRoutes from './routes/message.routes';
+import notificationRoutes from './routes/notification.routes';
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.use('/api/events', eventRoutes);
 app.use('/api/hobbies', hobbyRoutes);
 app.use('/api/likes', likeRoutes);
 app.use('/api/messages', messageRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Root Route
 app.get('/', (req: Request, res: Response) => {
