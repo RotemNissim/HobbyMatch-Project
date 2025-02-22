@@ -68,6 +68,16 @@ router.post('/login', asyncHandler(async (req: Request, res: Response) => {
 }));
 
 /**
+ * @route   POST /logout
+ * @desc    Logout user (client should delete token)
+ */
+
+router.post('/logout', (req: Request, res: Response) => {
+  // Since JWT is stateless, the client simply deletes the token.
+  res.status(200).json({ message: 'Logout successful' });
+});
+
+/**
  * Error handling middleware for async routes
  */
 router.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
