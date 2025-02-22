@@ -7,6 +7,7 @@ export interface IUser extends Document {
   hobbies: string[];
   calendar: any[];
   profilePicture: string;
+  likes: string[];
 }
 const UserSchema = new mongoose.Schema<IUser>({
   username: { type: String, required: true },
@@ -15,6 +16,7 @@ const UserSchema = new mongoose.Schema<IUser>({
   hobbies: [{ type: String }],
   calendar: [{ type: Object }],
   profilePicture: { type: String, default: '' },
+  likes: [{ type: String }],
 });
 
 
