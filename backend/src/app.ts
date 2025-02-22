@@ -1,16 +1,44 @@
-import express from 'express';
+import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import mongoose from 'mongoose';
+
+// Import Routes
+import authRoutes from './routes/auth.routes';
+import userRoutes from './routes/user.routes';
+import eventRoutes from './routes/event.routes';
+import hobbyRoutes from './routes/hobby.routes';
+import likeRoutes from './routes/like.routes';
+import messageRoutes from './routes/message.routes';
 
 dotenv.config();
 
-const app = express();
+const app: Application = express();
+
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-app.get('/', (req, res) => {
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/events', eventRoutes);
+app.use('/api/hobbies', hobbyRoutes);
+app.use('/api/likes', likeRoutes);
+app.use('/api/messages', messageRoutes);
+
+// Root Route
+app.get('/', (req: Request, res: Response) => {
   res.send('API is running...');
+});
+
+// Global Error Handler
+app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
+  if (err instanceof Error) {
+    console.error(err.message);
+    res.status(500).json({ error: err.message });
+  } else {
+    res.status(500).json({ error: 'An unknown error occurred' });
+  }
 });
 
 export default app;
