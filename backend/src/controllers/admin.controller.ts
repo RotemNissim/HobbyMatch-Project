@@ -43,7 +43,7 @@ class AdminController {
       }
     }
     
-    async updateProfile(req: Request, res: Response) {
+    async updateUser(req: Request, res: Response) {
       try {
         const userId = req.params.id;
         const updates = req.body;
