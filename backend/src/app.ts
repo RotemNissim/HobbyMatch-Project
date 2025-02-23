@@ -1,6 +1,7 @@
 import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { authenticateToken } from './middleware/authMiddleware';
 
 // Import Routes
 import authRoutes from './routes/auth.routes';
@@ -21,7 +22,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
+app.use('/api/users', authenticateToken, userRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/hobbies', hobbyRoutes);
 app.use('/api/likes', likeRoutes);
