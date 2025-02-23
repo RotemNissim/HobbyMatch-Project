@@ -17,7 +17,7 @@ const asyncHandler = (fn: Function) => (req: Request, res: Response, next: NextF
  * @desc    Register a new user
  */
 router.post('/register', asyncHandler(async (req: Request, res: Response) => {
-  const { username, email, password } = req.body;
+  const { username, email, password, firstName, lastName } = req.body;
 
   // Check if user already exists
   const existingUser = await User.findOne({ email });
@@ -29,7 +29,7 @@ router.post('/register', asyncHandler(async (req: Request, res: Response) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   // Create new user
-  const newUser = new User({ username, email, password: hashedPassword });
+  const newUser = new User({ username, email, password: hashedPassword, firstName, lastName});
   await newUser.save();
 
   res.status(201).json({ message: 'User registered successfully' });

@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.use([authenticateToken,authorizeAdmin]);
 
-router.post('/users', (req, res) => AdminController.createUser(req, res));
+router.post('/users', (req, res) => AdminController.createUser(req: Request, res:Response));
 router.put('/users/:id', (req, res) => AdminController.updateUser(req, res));
 router.delete('/users/:id', (req, res) => AdminController.deleteUser(req, res));
 router.get('/users', (req, res) => AdminController.listUsers(req, res));
