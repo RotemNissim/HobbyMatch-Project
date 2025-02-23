@@ -3,8 +3,6 @@ import userService from '../services/user.service';
 
 class UserController {
   
-   
-
 async getUser(req: Request, res: Response) {
   try {
     const userId = req.params.id;
