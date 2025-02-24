@@ -8,13 +8,13 @@ const router = express.Router();
 
 router.use([authenticateToken,authorizeAdmin]);
 
-router.post('/users', (req, res) => AdminController.createUser(req: Request, res:Response));
+router.post('/users', (req:Request, res:Response) => AdminController.createUser(req, res));
 router.put('/users/:id', (req, res) => AdminController.updateUser(req, res));
 router.delete('/users/:id', (req, res) => AdminController.deleteUser(req, res));
 router.get('/users', (req, res) => AdminController.listUsers(req, res));
 
 
-router.post('/events', (req, res) => AdminController.createEvent(req, res));
+router.post('/events', (req:Request, res:Response) => AdminController.createEvent(req, res));
 router.put('/events/:id', (req, res) => AdminController.updateEvent(req, res));
 router.delete('/events/:id', (req, res) => AdminController.deleteEvent(req, res));
 router.get('/events', (req, res) => AdminController.listEvents(req, res));

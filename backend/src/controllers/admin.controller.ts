@@ -16,16 +16,18 @@ class AdminController {
       }
     }
     
-    async createUser(req: Request, res: Response) {
+    async createUser(req: Request, res: Response) : Promise<void> {
       try{ 
         const {username , password, email, firstName, lastName } = req.body;
         if (!firstName || !lastName || !username || !email || !password) {
-          return res.status(400).json({ message: 'All fields are required: firstName, lastName, username, email, password' });
+           res.status(400).json({ message: 'All fields are required: firstName, lastName, username, email, password' });
+           return;
         }
   
         const existingUser = await User.findOne({ email: email});
         if(existingUser){
-          return res.status(400).json({ message:  'Email already in use' });
+         res.status(400).json({ message:  'Email already in use' });
+         return;
         }
         const hashedPassword = await bcrypt.hash(password, 10);
         const data = {
@@ -76,11 +78,12 @@ class AdminController {
       }
   }
 
-    async createEvent (req: Request, res: Response) {
+    async createEvent (req: Request, res: Response): Promise<void> {
       try{
         const { title, description, location, date, hobbies, createdBy } = req.body;
         if (!title ||!description ||!location ||!date ||!hobbies ||!createdBy) {
-         return res.status(400).json({ message: 'All fields are required: title, description, location, date, hobbies, createdBy' });
+         res.status(400).json({ message: 'All fields are required: title, description, location, date, hobbies, createdBy' });
+         return;
         }
         const existingEvent = await Event.findOne({title: title, description: description, location: location, date: date, hobbies: hobbies})
       const data ={
