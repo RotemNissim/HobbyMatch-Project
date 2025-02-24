@@ -33,8 +33,15 @@ UserSchema.pre('save', async function (next) {
 });
 
 UserSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {
-  return await bcrypt.compare(candidatePassword, this.password);
+  console.log('Candidate Password:', candidatePassword);  // 💩 The password entered during login
+  console.log('Stored Hashed Password:', this.password);  // 💩 The hashed password from DB
+
+  const isMatch = await bcrypt.compare(candidatePassword, this.password);
+  console.log('Password Match Result:', isMatch);  // 💩 true or false
+
+  return isMatch;
 };
+
 
 const userModel = mongoose.model<IUser>('User', UserSchema);
 
