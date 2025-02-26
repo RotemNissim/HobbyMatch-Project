@@ -1,46 +1,28 @@
-import mongoose, { Document, Schema } from 'mongoose';
-import bcrypt from 'bcrypt';
-export interface IUser extends Document {
-  username: string;
+import mongoose from 'mongoose';
+export interface IUser {
   firstName: string;
   lastName: string;
   email: string;
+  _id?:string;
+  refreshToken?:string[];
   password: string;
   hobbies: string[];
   calendar: any[];
   profilePicture: string;
   likes: string[];
-  comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
-const UserSchema = new mongoose.Schema<IUser>({
-  username: { type: String, required: true, unique: true },
-  email: { type: String, required: true, unique: true },
+const UserSchema = new mongoose.Schema<IUser>({  
   firstName: { type: String, required: true },
   lastName: { type: String, required: true},
+  email: { type: String, required: true, unique: true },
+  refreshToken: {type: [String], default:[]},
   password: { type: String, required: true },
   hobbies: [{ type: String }],
   calendar: [{ type: Object }],
   profilePicture: { type: String, default: '' },
   likes: [{ type: String }],
 });
-
-UserSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
-  next();
-});
-
-UserSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {
-  console.log('Candidate Password:', candidatePassword);  // 💩 The password entered during login
-  console.log('Stored Hashed Password:', this.password);  // 💩 The hashed password from DB
-
-  const isMatch = await bcrypt.compare(candidatePassword, this.password);
-  console.log('Password Match Result:', isMatch);  // 💩 true or false
-
-  return isMatch;
-};
 
 
 const userModel = mongoose.model<IUser>('User', UserSchema);

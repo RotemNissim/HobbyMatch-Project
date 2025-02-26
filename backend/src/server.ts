@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
 import dotenv from "dotenv"
 dotenv.config();
+import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import express, { Express } from 'express';
 import adminRoute from './routes/admin.routes';

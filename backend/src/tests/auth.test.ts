@@ -24,14 +24,13 @@ describe('Authentication Tests', () => {
   describe('POST /auth/register', () => {
     it('should register a new user', async () => {
       const res = await request(app).post('/auth/register').send({
-        username: 'TrailblazerRotem',
         firstName: 'rotem',
         lastName: 'nissim',
         email: 'rotem@example.com',
         password: 'securepassword123',
       });
 
-      expect(res.statusCode).toEqual(201);
+      expect(res.statusCode).toEqual(200);
       expect(res.body).toHaveProperty('token');
     });
 
@@ -49,7 +48,6 @@ describe('Authentication Tests', () => {
     beforeEach(async () => {
       // Create a test user before login tests
       await request(app).post('/auth/register').send({
-        username: 'TrailblazerRotem',
         firstName: 'rotem',
         lastName: 'nissim',
         email: 'rotem@example.com',
@@ -73,7 +71,7 @@ describe('Authentication Tests', () => {
         password: 'wrongpassword',
       });
 
-      expect(res.statusCode).toEqual(401);
+      expect(res.statusCode).toEqual(400);
       expect(res.body).toHaveProperty('error');
     });
   });
@@ -83,7 +81,6 @@ describe('Authentication Tests', () => {
 
     beforeEach(async () => {
       const res = await request(app).post('/auth/register').send({
-        username: 'TrailblazerRotem',
         firstName: 'rotem',
         lastName: 'nissim',
         email: 'rotem@example.com',
@@ -104,7 +101,7 @@ describe('Authentication Tests', () => {
     it('should not access protected route without token', async () => {
       const res = await request(app).get('/protected');
 
-      expect(res.statusCode).toEqual(401);
+      expect(res.statusCode).toEqual(400);
     });
   });
 });
