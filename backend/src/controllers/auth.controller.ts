@@ -1,25 +1,75 @@
-import { NextFunction, Request, Response } from "express";
+import  express , {NextFunction, Request, Response } from "express";
 import userModel, { IUser } from '../models/User.models';
+import adminModel, {IAdmin} from '../models/Admin.models';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload} from 'jsonwebtoken';
 import { Document } from "mongoose";
 import dotenv from 'dotenv';
 dotenv.config();
 
-const register = async (req:Request, res:Response) => {
+const register = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const password = req.body.password;
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    console.log("🔍 Debug: Received request body:", req.body);
+
+    const { firstName, lastName, email, password, role } = req.body;
+
+    if (!firstName || !lastName || !email || !password) {
+      console.log("❌ Missing required fields!");
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // 🔥 If registering an admin, enforce authentication
+    if (role === 'admin') {
+      const authHeader = req.headers['authorization'];
+      const token = authHeader && authHeader.split(' ')[1];
+
+      if (!token) {
+        console.log("❌ No token provided for admin registration");
+        return res.status(401).json({ message: 'Access Denied' });
+      }
+
+      try {
+        const decoded = jwt.verify(token, process.env.TOKEN_SECRET as string) as { role: string };
+
+        console.log("✅ Token decoded successfully:", decoded);
+
+        if (decoded.role !== 'admin') {
+          console.log("❌ Forbidden: Requesting user is not an admin!");
+          return res.status(403).json({ message: 'Only admins can create new admins' });
+        }
+      } catch (err) {
+        console.log("❌ Invalid Token");
+        return res.status(403).json({ message: 'Invalid token' });
+      }
+
+      console.log("✅ Admin authorization passed!");
+
+      const admin = await adminModel.create({
+        firstName,
+        lastName,
+        email,
+        password: hashedPassword,
+        role: 'admin'
+      });
+
+      return res.status(201).json({ message: 'Admin registered successfully', admin });
+    }
+
+    // Default: Register as a user (No authentication required)
     const user = await userModel.create({
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      email: req.body.email,
+      firstName,
+      lastName,
+      email,
       password: hashedPassword
     });
-    res.status(200).send(user);
+
+    return res.status(201).json({ message: 'User registered successfully', user });
+
   } catch (err) {
-    res.status(400).send(err);
+    console.log("❌ Error registering user:", err);
+    return res.status(400).json({ message: 'Error registering user', error: err });
   }
 };
 
@@ -28,13 +78,16 @@ type tTokens = {
   refreshToken: string
 }
 
-const generateToken = (userId: string): tTokens | null => {
+const generateToken = (userId: string, role?: string): tTokens | null => {
   const sk = process.env.TOKEN_SECRET as string;
   const random = Math.random().toString();
-  const payload = {
+  const payload: any = {
     _id: userId, 
     random: random
   };
+  if (role) {
+    payload.role = role;
+  }
   const expiresIn = process.env.TOKEN_EXPIRES || '3h'; // Fallback in case of undefined
   const refreshExpiresIn = process.env.REFRESH_TOKEN_EXPIRES || '7d';
   if (!sk) {
@@ -53,43 +106,73 @@ const generateToken = (userId: string): tTokens | null => {
   };
 };
 
-const login = async (req:Request, res:Response) => {
+const login = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const user = await userModel.findOne({email:req.body.email});
-    if (!user) {
-      res.status(400).send('Wrong Username or Password');
-      return;
-    }
-    const validPassword = await bcrypt.compare(req.body.password,user.password);
-    if (!validPassword) {
-      res.status(400).send('Wrong Username or Password');
-      return;
-    }
-    if (!process.env.TOKEN_SECRET) {
-      res.status(500).send('Server Error');
-      return;
-    }
-    const tokens = generateToken(user._id);
-    if (!tokens) {
-      res.status(500).send('Server Error');
-      return;
-    }
-    if (!user.refreshToken) {
-      user.refreshToken = [];
-    }
-    user.refreshToken.push(tokens.refreshToken);
-    await user.save();
-    res.status(200).send(
-      {
-        accessToken: tokens.accessToken,
-        refreshToken: tokens.refreshToken,
-        _id:user._id
-      }
-    );
-} catch (err) {
-  res.status(400).send(err);
-}
+    const { email, password } = req.body;
 
+    console.log(`🔍 Logging in: ${email}`);
+
+    // 🔥 Force Mongoose to return password using select()
+    let account = await userModel.findOne({ email }).select("+password");
+
+    if (!account) {
+      account = await adminModel.findOne({ email }).select("+password");
+    }
+
+    if (!account) {
+      console.log('❌ No account found with this email');
+      return res.status(400).json({ message: 'Invalid email or password' });
+    }
+
+    console.log(`✅ Account found: ${account.email}, Role: ${(account as any).role}`);
+    console.log("🔍 Debug: Retrieved account object:", account);
+
+    if (!account.password) {
+      console.log('❌ Error: Password is still missing in the database!');
+      return res.status(500).json({ message: 'Server error: Password field not retrieved' });
+    }
+
+    // Compare password
+    const validPassword = await bcrypt.compare(password, account.password);
+    if (!validPassword) {
+      console.log('❌ Password does not match');
+      return res.status(400).json({ message: 'Invalid email or password' });
+    }
+
+    // Ensure role is assigned correctly
+    const role = (account as any).role || 'user';
+
+    console.log(`🔑 Assigning role: ${role}`);
+
+    // Generate JWT token with role
+    const tokens = generateToken(account._id.toString(), role);
+
+    if (!tokens) {
+      console.log('❌ Token generation failed');
+      return res.status(500).json({ message: 'Token generation failed' });
+    }
+
+    console.log(`✅ Token generated for ${email}`);
+
+    if (!account.refreshToken) {
+      account.refreshToken = [];
+    }
+    account.refreshToken.push(tokens.refreshToken);
+    await account.save();
+
+    console.log(`✅ User logged in: ${email}`);
+
+    return res.status(200).json({
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      _id: account._id,
+      role: role,
+    });
+
+  } catch (err) {
+    console.error('❌ Error in login function:', err);
+    return res.status(400).json({ message: 'Error logging in', error: err });
+  }
 };
 
 type tUser = Document<unknown, {}, IUser> & IUser & Required<{
@@ -97,7 +180,6 @@ type tUser = Document<unknown, {}, IUser> & IUser & Required<{
 }> & {
   __v: number;
 }
-
 const verifyRefreshToken = (refreshToken: string | undefined) => {
   return new Promise<tUser>((resolve, reject) => {
       //get refresh token from body
@@ -183,9 +265,12 @@ const logout = async (req:Request, res:Response) => {
 
 type Payload = {
     _id: string;
+    role?: string;
 };
-
-export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export interface AuthRequest extends Request {
+  user?: JwtPayload;
+}
+export const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
     const authorization = req.header('authorization');
     const token = authorization && authorization.split(' ')[1];
 
@@ -193,6 +278,8 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
         res.status(401).send('Access Denied');
         return;
     }
+    console.log("🔑 Current TOKEN_SECRET:", process.env.TOKEN_SECRET);
+
     if (!process.env.TOKEN_SECRET) {
         res.status(500).send('Server Error');
         return;
@@ -200,17 +287,19 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
 
     jwt.verify(token, process.env.TOKEN_SECRET, (err, payload) => {
         if (err) {
+          console.log("❌ Invalid Token Signature");
             res.status(401).send('Access Denied');
             return;
         }
-        req.params.userId = (payload as Payload)._id;
+        // req.params.userId = (payload as Payload)._id;
+        req.user = payload as JwtPayload; 
         next();
     });
 };
 
 export default {
-    register,
-    login,
+    register: register as unknown as express.RequestHandler,
+    login : login as unknown as express.RequestHandler,
     refresh,
     logout
 };
