@@ -22,9 +22,9 @@ beforeAll(async () => {
     email: "testuser@example.com",
     password: "testpassword123",
   });
-
-  userToken = userRes.body.token;
-  userId = userRes.body.user._id;
+  
+  userToken = userRes.body.refreshToken;
+  userId = userRes.body._id;
 });
 
 afterEach(async () => {
