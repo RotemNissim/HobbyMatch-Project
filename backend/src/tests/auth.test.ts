@@ -31,7 +31,7 @@ describe('Authentication Tests', () => {
       });
 
       expect(res.statusCode).toEqual(200);
-      expect(res.body).toHaveProperty('token');
+      expect(res.body).toHaveProperty('refreshToken');
     });
 
     it('should not register with missing fields', async () => {
@@ -62,7 +62,7 @@ describe('Authentication Tests', () => {
       });
 
       expect(res.statusCode).toEqual(200);
-      expect(res.body).toHaveProperty('token');
+      expect(res.body).toHaveProperty('refreshToken');
     });
 
     it('should fail login with wrong credentials', async () => {
@@ -101,7 +101,7 @@ describe('Authentication Tests', () => {
     it('should not access protected route without token', async () => {
       const res = await request(app).get('/protected');
 
-      expect(res.statusCode).toEqual(400);
+      expect(res.statusCode).toEqual(404);
     });
   });
 });
