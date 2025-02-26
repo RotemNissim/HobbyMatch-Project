@@ -23,7 +23,7 @@ router.post(
   [authenticateToken, // Verify JWT
   authorizeAdmin],    // Ensure requester is an admin
   asyncHandler(async (req: Request, res: Response) => {
-    const { username, email, password } = req.body;
+    const {firstName, lastName,role, email, password } = req.body;
 
     // Check if admin already exists
     const existingAdmin = await Admin.findOne({ email });
@@ -35,7 +35,7 @@ router.post(
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create new admin
-    const newAdmin = new Admin({ username, email, password: hashedPassword });
+    const newAdmin = new Admin({ firstName,lastName, role, email, password: hashedPassword });
     await newAdmin.save();
 
     res.status(201).json({ message: 'Admin registered successfully' });
@@ -68,7 +68,8 @@ router.post('/login', asyncHandler(async (req: Request, res: Response) => {
     token,
     admin: {
       id: admin._id,
-      username: admin.username,
+      firstName: admin.firstName,
+      lastName: admin.lastName,
       email: admin.email
     }
   });

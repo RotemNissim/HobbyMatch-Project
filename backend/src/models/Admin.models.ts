@@ -1,29 +1,26 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import bcrypt from 'bcrypt';
 
-export interface IAdmin extends Document {
-    username: string;
+export interface IAdmin {
+    firstName: string;
+    lastName: string;
+    _id?:string;
+    refreshToken?:string[];
     password: string;
     email: string;
-    comparePassword(candidatePassword: string): Promise<boolean>;
+    role: 'admin';
+   
 }
 
 const AdminSchema = new mongoose.Schema<IAdmin>({
-    username: { type: String, required: true, unique: true },
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+    refreshToken: { type: [String], default: [] },
+    role: { type: String, default: 'admin' },
     password: { type: String, required: true },
     email: { type: String, required: true, unique: true }
 });
 
-AdminSchema.pre('save', async function (next) {
-    if (!this.isModified('password')) return next();
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
-});
-
-AdminSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {
-    return await bcrypt.compare(candidatePassword, this.password);
-};
 
 const adminModel = mongoose.model<IAdmin>('Admin', AdminSchema);
 

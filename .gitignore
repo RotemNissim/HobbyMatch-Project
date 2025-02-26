@@ -1,6 +1,7 @@
 # Node.js dependencies
 /backend/node_modules/
 /frontend/frontend/node_modules/
+/.vscode
 
 # Build output
 /backend/dist/

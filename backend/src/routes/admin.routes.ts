@@ -1,12 +1,13 @@
 import express, { Request, Response, NextFunction } from 'express';
 import Admin from '../models/Admin.models';
+import { authMiddleware } from '../controllers/auth.controller';
 import { authenticateToken } from '../middleware/authMiddleware';
 import { authorizeAdmin } from '../middleware/authAdminMiddleware';
 import AdminController from '../controllers/admin.controller';
 
 const router = express.Router();
 
-router.use([authenticateToken,authorizeAdmin]);
+router.use(authMiddleware);
 
 router.post('/users', (req:Request, res:Response) => AdminController.createUser(req, res));
 router.put('/users/:id', (req, res) => AdminController.updateUser(req, res));
