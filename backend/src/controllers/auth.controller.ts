@@ -182,57 +182,85 @@ type tUser = Document<unknown, {}, IUser> & IUser & Required<{
 }
 const verifyRefreshToken = (refreshToken: string | undefined) => {
   return new Promise<tUser>((resolve, reject) => {
-      //get refresh token from body
-      if (!refreshToken) {
-          reject("fail");
-          return;
-      }
-      //verify token
-      if (!process.env.TOKEN_SECRET) {
-          reject("fail");
-          return;
-      }
-      jwt.verify(refreshToken, process.env.TOKEN_SECRET, async (err: any, payload: any) => {
-          if (err) {
-              reject("fail");
-              return
-          }
-          //get the user id fromn token
-          const userId = payload._id;
-          try {
-              //get the user form the db
-              const user = await userModel.findById(userId);
-              if (!user) {
-                  reject("fail");
-                  return;
-              }
-              if (!user.refreshToken || !user.refreshToken.includes(refreshToken)) {
-                  user.refreshToken = [];
-                  await user.save();
-                  reject("fail");
-                  return;
-              }
-              const tokens = user.refreshToken!.filter((token) => token !== refreshToken);
-              user.refreshToken = tokens;
+    if (!refreshToken) {
+      console.log("❌ No refresh token provided");
+      return reject("fail");
+    }
 
-              resolve(user);
-          } catch (err) {
-              reject("fail");
-              return;
-          }
-      });
+    if (!process.env.TOKEN_SECRET) {
+      console.log("❌ No TOKEN_SECRET found");
+      return reject("fail");
+    }
+
+    jwt.verify(refreshToken, process.env.TOKEN_SECRET, async (err: any, payload: any) => {
+      if (err) {
+        console.log("❌ Token verification failed:", err.message);
+        return reject("fail");
+      }
+
+      const userId = payload._id;
+      try {
+        // 🔥 Check both user and admin collections
+        let user = await userModel.findById(userId);
+        if (!user) {
+          user = await adminModel.findById(userId);  // ✅ Try finding an admin
+        }
+
+        if (!user) {
+          console.log("❌ User/Admin not found");
+          return reject("fail");
+        }
+
+        if (!user.refreshToken || !user.refreshToken.includes(refreshToken)) {
+          console.log("❌ Refresh token not found in user/admin database");
+          user.refreshToken = [];
+          await user.save();
+          return reject("fail");
+        }
+
+        user.refreshToken = user.refreshToken.filter((token) => token !== refreshToken);
+        await user.save();
+
+        resolve(user);
+      } catch (err) {
+        console.log("❌ Database error:", err);
+        return reject("fail");
+      }
+    });
   });
-}
+};
 
-const logout = async (req:Request, res:Response) => {
+const logout = async (req: Request, res: Response) => {
   try {
-    const user = await verifyRefreshToken(req.params.refreshToken);
+    const { refreshToken } = req.body;  // ✅ Extract refresh token from request body
+
+    console.log("🔍 Logout request received with refreshToken:", refreshToken);  // Debugging
+
+    if (!refreshToken) {
+      console.log("❌ No refresh token provided");
+      return res.status(400).json({ message: "No refresh token provided" });
+    }
+
+    const user = await verifyRefreshToken(refreshToken);
+    if (!user) {
+      console.log("❌ Invalid refresh token");
+      return res.status(400).json({ message: "Invalid refresh token" });
+    }
+
+    console.log("✅ User found, removing refresh token");
+
+    // Remove the refresh token from the database
+    user.refreshToken = user.refreshToken?.filter(token => token !== refreshToken);
     await user.save();
-    res.status(200).send('Logged Out');
-   } catch (err) {
-     res.status(400).send('Failed');
-   }
-  };
+
+    return res.status(200).json({ message: "Logged out successfully" });
+
+  } catch (err) {
+    console.error("❌ Logout error:", err);
+    return res.status(400).json({ message: "Logout failed", error: err });
+  }
+};
+
   const refresh = async (req: Request, res: Response) => {
     try {
         const user = await verifyRefreshToken(req.body.refreshToken);
@@ -301,5 +329,5 @@ export default {
     register: register as unknown as express.RequestHandler,
     login : login as unknown as express.RequestHandler,
     refresh,
-    logout
+    logout : logout as unknown as express.RequestHandler
 };
