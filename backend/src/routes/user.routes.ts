@@ -1,55 +1,35 @@
-import express, { Request, Response, NextFunction } from 'express';
-import User from '../models/User.models';
-import { authenticateToken, AuthRequest } from '../middleware/authMiddleware';
+import express from 'express';
+import UserController from '../controllers/user.controller';
+import { authMiddleware } from '../controllers/auth.controller';
+import { asyncHandler } from '../middleware/asyncHandler';
 
 const router = express.Router();
 
-// Get user profile
-router.get('/:id', authenticateToken, async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    const user = await User.findById(req.params.id).select('-password');
-    if (!user) {
-      res.status(404).json({ message: 'User not found' });
-      return;
-    }
-    res.json(user);
-  } catch (err) {
-    next(err);
-  }
-});
-
-// Update user profile
-router.put('/:id', authenticateToken, async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    if (!req.user || (req.user as any).id !== req.params.id) {
-      res.status(403).json({ message: 'Unauthorized' });
-      return;
-    }
-
-    const updates = req.body;
-    const user = await User.findByIdAndUpdate(req.params.id, updates, { new: true }).select('-password');
-
-    if (!user) {
-      res.status(404).json({ message: 'User not found' });
-      return;
-    }
-
-    res.json(user);
-  } catch (err) {
-    next(err);
-  }
-});
+/**
+ * User Profile Routes
+ */
+router.get('/:id', authMiddleware, (req, res) => UserController.getUser(req, res));
+router.put('/:id', authMiddleware, (req, res) => UserController.updateProfile(req, res));
 
 /**
- * Error handling middleware for user routes
+ * Event Management Routes
  */
-router.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
-  if (err instanceof Error) {
-    console.error(err.message);
-    res.status(500).json({ error: err.message });
-  } else {
-    res.status(500).json({ error: 'An unknown error occurred' });
-  }
-});
+router.post('/events', authMiddleware, asyncHandler(UserController.createEvent));
+router.put('/events/:id', authMiddleware, asyncHandler(UserController.updateEvent));
+
+/**
+ * Hobbies Management Routes
+ */
+router.get('/hobbies', authMiddleware,asyncHandler(UserController.getUserHobbies));
+
+/**
+ * Likes Management Routes
+ */
+router.get('/likes', authMiddleware, asyncHandler(UserController.getUserLikes));
+
+/**
+ * Comments Management Routes
+ */
+router.post('/comments/:id', authMiddleware, asyncHandler(UserController.addCommentToEvent));
 
 export default router;

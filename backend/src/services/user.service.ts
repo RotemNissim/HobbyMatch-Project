@@ -21,7 +21,7 @@ class UserService {
   /**
    * Update user profile
    */
-  async updateUser(userId: string, updates: Partial<{ username: string; email: string; hobbies: string[] }>) {
+  async updateUser(userId: string, updates: Partial<{ firstName: string, lastName: string, email: string; hobbies: string[] }>) {
     const user = await User.findByIdAndUpdate(userId, updates, { new: true }).select('-password');
     if (!user) {
       throw new Error('User not found or update failed');

@@ -11,7 +11,7 @@ class HobbyService {
     return hobbies;
   }
 
-  async getHobbiesByUserId(userId: string) {
+  async getHobbiesByUserId(userId: mongoose.Types.ObjectId) {
     const user = await User.findById(userId).select('hobbies');
    
     if (!user) {
