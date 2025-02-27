@@ -1,0 +1,156 @@
+### Admin - Get Admin by ID
+GET http://localhost:3000/admins/{adminId}
+
+### Admin - Create User
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+  "username": "testUser",
+  "password": "password123",
+  "email": "test@example.com",
+  "firstName": "Test",
+  "lastName": "User"
+}
+
+### Admin - Update User
+PUT http://localhost:3000/users/{userId}
+Content-Type: application/json
+
+{
+  "email": "updated@example.com",
+  "firstName": "UpdatedName"
+}
+
+### Admin - Delete User
+DELETE http://localhost:3000/users/{userId}
+
+### Admin - List Users
+GET http://localhost:3000/users
+
+### Admin - Create Event
+POST http://localhost:3000/events
+Content-Type: application/json
+
+{
+  "title": "New Event",
+  "description": "Exciting event",
+  "location": "City Park",
+  "date": "2025-03-01T12:00:00Z",
+  "hobbies": ["Hiking"],
+  "createdBy": "adminId"
+}
+
+### Admin - Update Event
+PUT http://localhost:3000/events/{eventId}
+Content-Type: application/json
+
+{
+  "title": "Updated Event"
+}
+
+### Admin - Delete Event
+DELETE http://localhost:3000/events/{eventId}
+
+### Admin - List Events
+GET http://localhost:3000/events
+
+### Auth - Register User
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john@example.com",
+  "password": "securepass",
+  "role": "user"
+}
+
+### Auth - Login
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": "john@example.com",
+  "password": "securepass"
+}
+
+### Auth - Refresh Token
+POST http://localhost:3000/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "your_refresh_token_here"
+}
+
+### Auth - Logout
+POST http://localhost:3000/auth/logout
+Content-Type: application/json
+
+{
+  "refreshToken": "your_refresh_token_here"
+}
+
+### Event - Get All Events
+GET http://localhost:3000/events
+
+### Event - Join Event
+POST http://localhost:3000/events/{eventId}/join
+
+### Hobby - Get All Hobbies
+GET http://localhost:3000/hobbies
+
+### Hobby - Add Hobby to User
+POST http://localhost:3000/hobbies/{userId}
+Content-Type: application/json
+
+{
+  "hobbyId": "hobbyIdHere"
+}
+
+### Hobby - Remove Hobby from User
+DELETE http://localhost:3000/hobbies/{userId}
+Content-Type: application/json
+
+{
+  "hobbyId": "hobbyIdHere"
+}
+
+### Like - Like an Event
+POST http://localhost:3000/likes
+Content-Type: application/json
+
+{
+  "eventId": "eventIdHere"
+}
+
+### Like - Unlike an Event
+DELETE http://localhost:3000/likes/{eventId}
+
+### Like - Get Likes for an Event
+GET http://localhost:3000/likes/{eventId}
+
+### Message - Send Message
+POST http://localhost:3000/messages
+Content-Type: application/json
+
+{
+  "eventId": "eventIdHere",
+  "content": "Hello there!"
+}
+
+### Message - Get Messages for an Event
+GET http://localhost:3000/messages/{eventId}
+
+### User - Get User Profile
+GET http://localhost:3000/users/{userId}
+
+### User - Update User Profile
+PUT http://localhost:3000/users/{userId}
+Content-Type: application/json
+
+{
+  "firstName": "New Name",
+  "lastName": "Updated"
+}
