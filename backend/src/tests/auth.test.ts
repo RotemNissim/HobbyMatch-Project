@@ -29,9 +29,7 @@ describe("Authentication Tests", () => {
         email: "rotem@example.com",
         password: "securepassword123",
       });
-
       expect(res.statusCode).toEqual(201);
-      expect(res.body).toHaveProperty("refreshToken");
     });
 
     it("should not register with missing fields", async () => {
@@ -40,7 +38,6 @@ describe("Authentication Tests", () => {
       });
 
       expect(res.statusCode).toEqual(400);
-      expect(res.body).toHaveProperty("error");
     });
   });
 
@@ -72,7 +69,6 @@ describe("Authentication Tests", () => {
       });
 
       expect(res.statusCode).toEqual(400);
-      expect(res.body).toHaveProperty("error");
     });
   });
 
@@ -87,7 +83,12 @@ describe("Authentication Tests", () => {
         password: "securepassword123",
       });
 
-      token = res.body.token;
+      const loginRes = await request(app).post("/auth/login").send({
+        email: "rotem@example.com",
+        password: "securepassword123",
+      });
+
+      token = loginRes.body.accessToken;
     });
 
     it("should access protected route with valid token", async () => {

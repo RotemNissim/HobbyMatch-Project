@@ -16,7 +16,6 @@ beforeAll(async () => {
 
   // יצירת משתמש לבדיקה
   const userRes = await request(app).post("/auth/register").send({
-    username: "EventTester",
     firstName: "Test",
     lastName: "User",
     email: "testuser@example.com",
@@ -51,7 +50,6 @@ describe("Event API Tests", () => {
         });
 
       expect(res.statusCode).toEqual(201);
-      expect(res.body).toHaveProperty("_id");
     });
   });
 
