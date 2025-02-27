@@ -1,7 +1,7 @@
 import Comment from "../models/Comment.models";
 import mongoose from "mongoose";
 
-class MessageService {
+class CommentService {
   /**
    * Send a comment from one user to another
    */
@@ -32,4 +32,4 @@ class MessageService {
   }
 }
 
-export default new MessageService();
+export default new CommentService();
