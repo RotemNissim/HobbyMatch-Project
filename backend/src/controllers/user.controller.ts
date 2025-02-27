@@ -3,7 +3,7 @@ import userService from '../services/user.service';
 import eventService from '../services/event.service';
 import likeService from '../services/like.service';
 import hobbyService from '../services/hobby.service';
-import commentService from '../services/message.service';
+import commentService from '../services/comment.service';
 
 
 export interface AuthRequest extends Request {
