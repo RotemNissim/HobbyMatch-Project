@@ -1,34 +1,34 @@
-import Message from '../models/Message.models';
-import mongoose from 'mongoose';
+import Comment from "../models/Comment.models";
+import mongoose from "mongoose";
 
 class MessageService {
   /**
-   * Send a message from one user to another
+   * Send a comment from one user to another
    */
   async sendMessage(senderId: string, receiverId: string, content: string) {
-    const newMessage = new Message({
+    const newComment = new Comment({
       sender: new mongoose.Types.ObjectId(senderId),
       receiver: new mongoose.Types.ObjectId(receiverId),
       content,
       timestamp: new Date(),
     });
 
-    await newMessage.save();
-    return newMessage;
+    await newComment.save();
+    return newComment;
   }
 
   /**
-   * Get all messages between two users
+   * Get all comments between two users
    */
   async getMessages(userId1: string, userId2: string) {
-    const messages = await Message.find({
+    const comments = await Comment.find({
       $or: [
         { sender: userId1, receiver: userId2 },
         { sender: userId2, receiver: userId1 },
       ],
     }).sort({ timestamp: 1 });
 
-    return messages;
+    return comments;
   }
 }
 
