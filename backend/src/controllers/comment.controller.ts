@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import commentService from "../services/comment.service";
 
-class MessageController {
+class CommentController {
   /**
    * Send a comment from one user to another
    */
@@ -9,12 +9,12 @@ class MessageController {
     try {
       const senderId = req.params.senderId;
       const { receiverId, content } = req.body;
-      const newMessage = await commentService.sendComment(
+      const newComment = await commentService.sendComment(
         senderId,
         receiverId,
         content
       );
-      res.status(201).json(newMessage);
+      res.status(201).json(newComment);
     } catch (error: unknown) {
       const errMsg =
         error instanceof Error ? error.message : "Failed to send comment";
@@ -38,4 +38,4 @@ class MessageController {
   }
 }
 
-export default new MessageController();
+export default new CommentController();
