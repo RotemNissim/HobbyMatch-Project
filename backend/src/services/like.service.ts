@@ -1,5 +1,6 @@
 import User from '../models/User.models';
 import Event from '../models/Event.models';
+import Like from '../models/Like.models';
 import mongoose from 'mongoose';
 
 class LikeService {
@@ -68,6 +69,20 @@ class LikeService {
     await user.save();
 
     return user;
+  }
+
+  async getUserLikes(userId: string) {
+    // Find all likes where the user has liked events
+    const likes = await Like.find({ user: userId }).populate('event');
+
+    if (!likes.length) {
+      throw new Error('No liked events found for this user');
+    }
+
+    // Extract the full event details from populated likes
+    const likedEvents = likes.map((like) => like.event);
+
+    return likedEvents;
   }
 }
 
