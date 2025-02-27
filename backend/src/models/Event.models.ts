@@ -7,7 +7,7 @@ export interface IEvent extends Document {
   location: string;
   participants: mongoose.Types.ObjectId[]; // הפניות ל-User
   createdBy: mongoose.Types.ObjectId;
-  hobby: string;
+  hobby: mongoose.Types.ObjectId[];
   image?: string;
   likes: mongoose.Types.ObjectId[]; 
 }
@@ -17,7 +17,7 @@ const eventSchema = new Schema<IEvent>({
   description: { type: String, required: true },
   date: { type: Date, required: true },
   location: { type: String, required: true },
-  hobby: { type: String, required: true },
+  hobby: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Hobby', required: true }],
   participants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   image: { type: String, default: '' },

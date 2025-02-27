@@ -13,7 +13,7 @@ class EventService {
   /**
    * Update an existing event
    */
-  async updateEvent(eventId: string, updates: Partial<{ title: string; description: string; date: Date; location: string; hobbies: string[] }>) {
+  async updateEvent(userId: string, eventId: string, updates: Partial<{ title: string; description: string; date: Date; location: string; hobbies: string[] }>) {
     const event = await Event.findByIdAndUpdate(eventId, updates, { new: true });
     if (!event) {
       throw new Error('Event not found or update failed');

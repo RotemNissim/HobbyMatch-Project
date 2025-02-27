@@ -10,7 +10,7 @@ import authRoute from './routes/auth.routes';
 import adminAuthRoute from './routes/adminAuth.routes';
 import hobbyRoute from './routes/hobby.routes';
 import likeRoute from './routes/like.routes';
-import messageRoute from './routes/message.routes';
+import messageRoute from './routes/comment.routes';
 import notificationRoute from './routes/notification.routes';
 
 const app = express();
@@ -30,7 +30,7 @@ app.use("/auth", authRoute);
 app.use("/adminAuth", adminAuthRoute);
 app.use("/hobbies", hobbyRoute);
 app.use("/likes", likeRoute);
-app.use("/messages", messageRoute);
+app.use("/comments", messageRoute);
 app.use("/notifications", notificationRoute);
 app.use("/public", express.static("public"));
 app.use(express.static("front"));
