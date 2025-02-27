@@ -6,7 +6,7 @@ export interface IUser {
   _id?:string;
   refreshToken?:string[];
   password: string;
-  hobbies: string[];
+  hobbies: mongoose.Types.ObjectId[];
   calendar: any[];
   profilePicture: string;
   likes: string[];
@@ -18,7 +18,7 @@ const UserSchema = new mongoose.Schema<IUser>({
   email: { type: String, required: true, unique: true },
   refreshToken: {type: [String], default:[]},
   password: { type: String, required: true },
-  hobbies: [{ type: String }],
+  hobbies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Hobby' }],
   calendar: [{ type: Object }],
   profilePicture: { type: String, default: '' },
   likes: [{ type: String }],
