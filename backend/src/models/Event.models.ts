@@ -10,6 +10,7 @@ export interface IEvent extends Document {
   hobby: mongoose.Types.ObjectId[];
   image?: string;
   likes: mongoose.Types.ObjectId[]; 
+  comments?: mongoose.Types.ObjectId[];
 }
 
 const eventSchema = new Schema<IEvent>({
@@ -22,6 +23,7 @@ const eventSchema = new Schema<IEvent>({
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   image: { type: String, default: '' },
   likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }]
 }, { timestamps: true });
 
 const eventModel = mongoose.model<IEvent>('Event', eventSchema);

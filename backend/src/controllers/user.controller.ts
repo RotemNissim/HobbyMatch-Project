@@ -52,7 +52,7 @@ async updateProfile(req: Request, res: Response) {
             }
             const eventId = req.params.id;
             const updates = req.body;
-            const updatedEvent = await eventService.updateEvent(userId,eventId, updates);
+            const updatedEvent = await eventService.updateEvent(eventId, updates, userId);
             return res.status(200).send(updatedEvent);
           } catch (err) {
             const errMsg = err instanceof Error ? err.message : "Failed to update event";
