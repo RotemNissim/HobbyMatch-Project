@@ -4,7 +4,8 @@ import { authMiddleware } from '../controllers/auth.controller';
 import { asyncHandler } from '../middleware/asyncHandler';
 
 const router = express.Router();
-
+router.get('/hobbies', authMiddleware,asyncHandler(UserController.getUserHobbies));
+router.get('/likes', authMiddleware, asyncHandler(UserController.getUserLikes));
 /**
  * User Profile Routes
  */
@@ -17,19 +18,7 @@ router.put('/:id', authMiddleware, (req, res) => UserController.updateProfile(re
 router.post('/events', authMiddleware, asyncHandler(UserController.createEvent));
 router.put('/events/:id', authMiddleware, asyncHandler(UserController.updateEvent));
 
-/**
- * Hobbies Management Routes
- */
-router.get('/hobbies', authMiddleware,asyncHandler(UserController.getUserHobbies));
 
-/**
- * Likes Management Routes
- */
-router.get('/likes', authMiddleware, asyncHandler(UserController.getUserLikes));
-
-/**
- * Comments Management Routes
- */
 router.post('/comments/:id', authMiddleware, asyncHandler(UserController.addCommentToEvent));
 
 export default router;

@@ -7,11 +7,10 @@ import adminRoute from './routes/admin.routes';
 import userRoute from './routes/user.routes';
 import eventRoute from './routes/event.routes';
 import authRoute from './routes/auth.routes';
-import adminAuthRoute from './routes/adminAuth.routes';
 import hobbyRoute from './routes/hobby.routes';
 import likeRoute from './routes/like.routes';
 import commentRoute from './routes/comment.routes';
-import notificationRoute from './routes/notification.routes';
+
 
 const app = express();
 app.use(bodyParser.json());
@@ -27,11 +26,9 @@ app.use("/users", userRoute);
 app.use("/admins", adminRoute);
 app.use("/events", eventRoute);
 app.use("/auth", authRoute);
-app.use("/adminAuth", adminAuthRoute);
 app.use("/hobbies", hobbyRoute);
 app.use("/likes", likeRoute);
 app.use("/comments", commentRoute);
-app.use("/notifications", notificationRoute);
 app.use("/public", express.static("public"));
 app.use(express.static("front"));
 
