@@ -1,18 +1,20 @@
-import { useState } from "react";
+import { BrowserRouter } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+import AppRouter from './router/AppRouter';
 
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import AuthPage from "./pages/AuthPage"; // תוודא שהנתיב נכון
-
-const App : React.FC = () => (
-
-  
-    <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<AuthPage />} />
-        {/* הוספה של שאר הדפים שלך */}
-      </Routes>
-      </BrowserRouter>
-  
-)
+function App() {
+    return (
+        <BrowserRouter>
+            <div className="app-container">
+                <Navbar />
+                <main className="main-content">
+                    <AppRouter />
+                </main>
+                <Footer />
+            </div>
+        </BrowserRouter>
+    );
+}
 
 export default App;
