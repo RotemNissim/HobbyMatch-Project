@@ -290,7 +290,6 @@ const logout = async (req: Request, res: Response) => {
         res.status(400).send("fail");
     }
 };
-
 export interface AuthPayLoad extends JwtPayload {
   _id: string;
   role?: string;
@@ -319,7 +318,6 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
             res.status(401).send('Access Denied');
             return;
         }
-        // req.params.userId = (payload as Payload)._id;
         req.user = payload as AuthPayLoad; 
         next();
     });
@@ -329,5 +327,6 @@ export default {
     register: register as unknown as express.RequestHandler,
     login : login as unknown as express.RequestHandler,
     refresh,
-    logout : logout as unknown as express.RequestHandler
+    logout : logout as unknown as express.RequestHandler,
+    generateToken
 };
