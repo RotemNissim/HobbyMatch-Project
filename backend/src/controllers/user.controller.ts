@@ -67,7 +67,7 @@ async updateProfile(req: Request, res: Response) {
           if (!userId) {
             return res.status(401).send("user not found");
           }
-          const hobbies = await hobbyService.getHobbiesByUserId( new mongoose.Types.ObjectId(userId));
+          const hobbies = await hobbyService.getHobbiesByUserId(userId);
           return res.status(200).send(hobbies);
         } catch (err) {
            return res.status(404).send(err);

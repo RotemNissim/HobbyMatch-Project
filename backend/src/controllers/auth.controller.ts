@@ -291,12 +291,12 @@ const logout = async (req: Request, res: Response) => {
     }
 };
 
-type Payload = {
-    _id: string;
-    role?: string;
-};
+export interface AuthPayLoad extends JwtPayload {
+  _id: string;
+  role?: string;
+}
 export interface AuthRequest extends Request {
-  user?: JwtPayload;
+  user?: AuthPayLoad;
 }
 export const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
     const authorization = req.header('authorization');
@@ -320,7 +320,7 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
             return;
         }
         // req.params.userId = (payload as Payload)._id;
-        req.user = payload as JwtPayload; 
+        req.user = payload as AuthPayLoad; 
         next();
     });
 };
