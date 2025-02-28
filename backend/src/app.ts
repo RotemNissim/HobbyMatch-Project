@@ -10,4 +10,4 @@ initApp().then((app) => {
     console.log(`listening at http://localhost:${port}`);
   });
 });
-console.log("Gal is the King");
+

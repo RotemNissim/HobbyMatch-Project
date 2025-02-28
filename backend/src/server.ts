@@ -35,6 +35,7 @@ app.use("/notifications", notificationRoute);
 app.use("/public", express.static("public"));
 app.use(express.static("front"));
 
+
 const db = mongoose.connection;
 db.once("error", (error) => console.error(error));
 db.once("open", () => console.log("Connected to database"));
