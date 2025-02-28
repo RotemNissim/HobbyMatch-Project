@@ -61,19 +61,22 @@ async updateProfile(req: Request, res: Response) {
           }
       }
 
-      getUserHobbies = async (req:AuthRequest, res:Response) : Promise<Response> => {
+      getUserHobbies = async (req: AuthRequest, res: Response): Promise<Response> => {
         try {
-          const userId = req.user?._id;
-          if (!userId) {
-            return res.status(401).send("user not found");
-          }
-          const hobbies = await hobbyService.getHobbiesByUserId(userId);
-          return res.status(200).send(hobbies);
-        } catch (err) {
-           return res.status(404).send(err);
+            console.log("🐛 getUserHobbies triggered for user:", req.user?._id);
+    
+            const userId = req.user?._id;
+            if (!userId) {
+                return res.status(401).send({ message: "User not found" });
+            }
+    
+            const hobbies = await hobbyService.getHobbiesByUserId(userId);
+            return res.status(200).json(hobbies);
+        } catch (err: unknown) {
+            const errMsg = err instanceof Error ? err.message : 'Unknown error occurred';
+            return res.status(404).json({ message: errMsg });
         }
-        
-      }
+    }
       
       getUserLikes = async (req:AuthRequest, res: Response) : Promise<Response> => {
         try {
