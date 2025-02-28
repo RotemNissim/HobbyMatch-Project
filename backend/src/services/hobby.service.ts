@@ -19,7 +19,7 @@ class HobbyService {
     } else if  (!user.hobbies.length) {
       throw new Error('Hobbies not found');
     }
-    const hobbies = await Hobby.find({_id: {$in: user.hobbies}});
+    const hobbies = await Hobby.find({_id: {$in:user.hobbies}});
     return hobbies;
   
   }

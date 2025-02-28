@@ -4,10 +4,11 @@ import eventService from '../services/event.service';
 import likeService from '../services/like.service';
 import hobbyService from '../services/hobby.service';
 import commentService from '../services/comment.service';
+import mongoose from 'mongoose';
 
 
 export interface AuthRequest extends Request {
-  user?: { id: string};
+  user?: { _id: string};
 }
 class UserController {
   
@@ -32,7 +33,7 @@ async updateProfile(req: Request, res: Response) {
 
     createEvent = async (req:AuthRequest, res:Response): Promise<Response> => {
       try {
-        const userId = req.user?.id;
+        const userId = req.user?._id;
         if (!userId) {
           return res.status(401).send("user not found");
         }
@@ -46,7 +47,7 @@ async updateProfile(req: Request, res: Response) {
 
        updateEvent = async (req: AuthRequest, res: Response) : Promise<Response> => {
           try {
-            const userId = req.user?.id;
+            const userId = req.user?._id;
             if (!userId) {
               return res.status(401).send("user not found");
             }
@@ -62,7 +63,10 @@ async updateProfile(req: Request, res: Response) {
 
       getUserHobbies = async (req:AuthRequest, res:Response) : Promise<Response> => {
         try {
-          const userId = (req.user?.id) as string;
+          const userId = req.user?._id;
+          if (!userId) {
+            return res.status(401).send("user not found");
+          }
           const hobbies = await hobbyService.getHobbiesByUserId(userId);
           return res.status(200).send(hobbies);
         } catch (err) {
@@ -73,7 +77,7 @@ async updateProfile(req: Request, res: Response) {
       
       getUserLikes = async (req:AuthRequest, res: Response) : Promise<Response> => {
         try {
-          const userId = (req.user?.id) as string;
+          const userId = (req.user?._id) as string;
           const likes = await likeService.getUserLikes(userId);
           return res.status(200).send(likes);
         } catch (err) {
@@ -83,9 +87,15 @@ async updateProfile(req: Request, res: Response) {
 
       addCommentToEvent = async (req:AuthRequest, res:Response) : Promise<Response> => {
         try {
-          const userId = (req.user?.id) as string;
+          const userId = req.user?._id;
+          if (!userId) {
+            return res.status(401).send("user not found");
+          }
           const eventId = req.params.id;
-          const comment = req.body;
+          const comment = req.body.content;
+          if (!comment) {
+            return res.status(400).send("comment is required");
+          }
           const newComment = await commentService.addCommentToEvent(userId, eventId, comment);
           return res.status(201).send(newComment);
         } catch (err) {
