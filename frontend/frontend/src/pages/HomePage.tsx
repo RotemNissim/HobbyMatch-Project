@@ -17,7 +17,7 @@ const HomePage: React.FC = () => {
     useEffect(() => {
         const fetchEvents = async () => {
             try {
-                console.log("📡 Fetching events...");
+                console.log("📡 Fetching events directly from backend...");
                 const response = await axios.get('/events');
                 console.log("✅ Events fetched:", response.data);
                 setEvents(response.data);
@@ -37,7 +37,7 @@ const HomePage: React.FC = () => {
 
     return (
         <div style={{ padding: '20px' }}>
-            <h1>All Events</h1>
+            <h1>All Events (Direct Fetch - No Proxy)</h1>
             {events.length === 0 ? (
                 <p>No events found.</p>
             ) : (
