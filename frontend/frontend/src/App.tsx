@@ -1,20 +1,12 @@
-import { BrowserRouter } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
+import React from 'react';
 import AppRouter from './router/AppRouter';
 
-function App() {
+const App: React.FC = () => {
     return (
-        <BrowserRouter>
-            <div className="app-container">
-                <Navbar />
-                <main className="main-content">
-                    <AppRouter />
-                </main>
-                <Footer />
-            </div>
-        </BrowserRouter>
+        <div>
+            <AppRouter />
+        </div>
     );
-}
+};
 
 export default App;
