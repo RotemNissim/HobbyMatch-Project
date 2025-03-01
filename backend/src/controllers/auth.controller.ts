@@ -1,332 +1,242 @@
-import  express , {NextFunction, Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import userModel, { IUser } from '../models/User.models';
-import adminModel, {IAdmin} from '../models/Admin.models';
+import adminModel, { IAdmin } from '../models/Admin.models';
 import bcrypt from 'bcrypt';
-import jwt, { JwtPayload} from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { Document } from "mongoose";
+import { AuthRequest } from '../middleware/AuthRequest';
 import dotenv from 'dotenv';
 dotenv.config();
 
+// ✅ Post-creation user & admin types with guaranteed _id
+type tUser = Document<unknown, {}, IUser> & IUser & Required<{ _id: string }> & { __v: number };
+type tAdmin = Document<unknown, {}, IAdmin> & IAdmin & Required<{ _id: string; role: 'admin' }> & { __v: number };
+
 const register = async (req: Request, res: Response): Promise<Response> => {
-  try {
-    console.log("🔍 Debug: Received request body:", req.body);
+    try {
+        console.log("🔍 Debug: Received request body:", req.body);
 
-    const { firstName, lastName, email, password, role } = req.body;
+        const { firstName, lastName, email, password, role } = req.body;
 
-    if (!firstName || !lastName || !email || !password) {
-      console.log("❌ Missing required fields!");
-      return res.status(400).json({ message: 'All fields are required' });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // 🔥 If registering an admin, enforce authentication
-    if (role === 'admin') {
-      const authHeader = req.headers['authorization'];
-      const token = authHeader && authHeader.split(' ')[1];
-
-      if (!token) {
-        console.log("❌ No token provided for admin registration");
-        return res.status(401).json({ message: 'Access Denied' });
-      }
-
-      try {
-        const decoded = jwt.verify(token, process.env.TOKEN_SECRET as string) as { role: string };
-
-        console.log("✅ Token decoded successfully:", decoded);
-
-        if (decoded.role !== 'admin') {
-          console.log("❌ Forbidden: Requesting user is not an admin!");
-          return res.status(403).json({ message: 'Only admins can create new admins' });
+        if (!firstName || !lastName || !email || !password) {
+            console.log("❌ Missing required fields!");
+            return res.status(400).json({ message: 'All fields are required' });
         }
-      } catch (err) {
-        console.log("❌ Invalid Token");
-        return res.status(403).json({ message: 'Invalid token' });
-      }
 
-      console.log("✅ Admin authorization passed!");
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-      const admin = await adminModel.create({
-        firstName,
-        lastName,
-        email,
-        password: hashedPassword,
-        role: 'admin'
-      });
+        if (role === 'admin') {
+            const authHeader = req.headers['authorization'];
+            const token = authHeader && authHeader.split(' ')[1];
 
-      return res.status(201).json({ message: 'Admin registered successfully', admin });
+            if (!token) {
+                console.log("❌ No token provided for admin registration");
+                return res.status(401).json({ message: 'Access Denied' });
+            }
+
+            try {
+                const decoded = jwt.verify(token, process.env.TOKEN_SECRET as string) as { role: string };
+
+                if (decoded.role !== 'admin') {
+                    console.log("❌ Forbidden: Requesting user is not an admin!");
+                    return res.status(403).json({ message: 'Only admins can create new admins' });
+                }
+            } catch (err) {
+                return res.status(403).json({ message: 'Invalid token' });
+            }
+
+            const admin = await adminModel.create({ firstName, lastName, email, password: hashedPassword, role: 'admin' });
+            return res.status(201).json({ message: 'Admin registered successfully', admin });
+        }
+
+        const user = await userModel.create({ firstName, lastName, email, password: hashedPassword });
+
+        return res.status(201).json({ message: 'User registered successfully', user });
+
+    } catch (err) {
+        return res.status(400).json({ message: 'Error registering user', error: err });
     }
-
-    // Default: Register as a user (No authentication required)
-    const user = await userModel.create({
-      firstName,
-      lastName,
-      email,
-      password: hashedPassword
-    });
-
-    return res.status(201).json({ message: 'User registered successfully', user });
-
-  } catch (err) {
-    console.log("❌ Error registering user:", err);
-    return res.status(400).json({ message: 'Error registering user', error: err });
-  }
 };
 
 type tTokens = {
-  accessToken: string,
-  refreshToken: string
+    accessToken: string,
+    refreshToken: string
 }
 
-const generateToken = (userId: string, role?: string): tTokens | null => {
-  const sk = process.env.TOKEN_SECRET as string;
-  const random = Math.random().toString();
-  const payload: any = {
-    _id: userId, 
-    random: random
-  };
-  if (role) {
-    payload.role = role;
-  }
-  const expiresIn = process.env.TOKEN_EXPIRES || '3h'; // Fallback in case of undefined
-  const refreshExpiresIn = process.env.REFRESH_TOKEN_EXPIRES || '7d';
-  if (!sk) {
-      return null;
-  }
-  
-  // generate access token
-  const accessToken = jwt.sign(payload, sk, { expiresIn: expiresIn as jwt.SignOptions["expiresIn"]});
+// ✅ Generate token directly from user/admin object
+const generateToken = (account: tUser | tAdmin): tTokens => {
+    const sk = process.env.TOKEN_SECRET as string;
 
-  // generate refresh token
-  const refreshToken = jwt.sign(payload, sk, { expiresIn: refreshExpiresIn as jwt.SignOptions["expiresIn"]});
+    if (!sk) {
+      throw new Error("Missing TOKEN_SECRET in environment")
+    }
 
-  return {
-      accessToken,
-      refreshToken
-  };
+    const payload = {
+        _id: account._id.toString(),
+        role: 'role' in account ? account.role : 'user'
+    };
+
+    const expiresIn = process.env.TOKEN_EXPIRES || '3h'; 
+    const refreshExpiresIn = process.env.REFRESH_TOKEN_EXPIRES || '7d';
+
+    const accessToken = jwt.sign(payload, sk, { expiresIn: expiresIn as jwt.SignOptions["expiresIn"]});
+    const refreshToken = jwt.sign(payload, sk, { expiresIn: refreshExpiresIn as jwt.SignOptions["expiresIn"]});
+
+    return { accessToken, refreshToken };
 };
 
 const login = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const { email, password } = req.body;
+      const { email, password } = req.body;
 
-    console.log(`🔍 Logging in: ${email}`);
+      const user = await userModel.findOne({ email }).select("+password") as tUser | null;
 
-    // 🔥 Force Mongoose to return password using select()
-    let account = await userModel.findOne({ email }).select("+password");
+      if (user) {
+          const validPassword = await bcrypt.compare(password, user.password);
+          if (!validPassword) {
+              return res.status(400).json({ message: 'Invalid email or password' });
+          }
 
-    if (!account) {
-      account = await adminModel.findOne({ email }).select("+password");
-    }
+          const tokens = generateToken(user);
+          user.refreshToken = user.refreshToken || [];
+          user.refreshToken.push(tokens.refreshToken);
+          await user.save();
 
-    if (!account) {
-      console.log('❌ No account found with this email');
+          return res.status(200).json({
+              accessToken: tokens.accessToken,
+              refreshToken: tokens.refreshToken,
+              _id: user._id,
+              role: 'user'
+          });
+      }
+
+      const admin = await adminModel.findOne({ email }).select("+password") as tAdmin | null;
+
+      if (admin) {
+          const validPassword = await bcrypt.compare(password, admin.password);
+          if (!validPassword) {
+              return res.status(400).json({ message: 'Invalid email or password' });
+          }
+
+          const tokens = generateToken(admin);
+          admin.refreshToken = admin.refreshToken || [];
+          admin.refreshToken.push(tokens.refreshToken);
+          await admin.save();
+
+          return res.status(200).json({
+              accessToken: tokens.accessToken,
+              refreshToken: tokens.refreshToken,
+              _id: admin._id,
+              role: 'admin'
+          });
+      }
+
       return res.status(400).json({ message: 'Invalid email or password' });
-    }
-
-    console.log(`✅ Account found: ${account.email}, Role: ${(account as any).role}`);
-    console.log("🔍 Debug: Retrieved account object:", account);
-
-    if (!account.password) {
-      console.log('❌ Error: Password is still missing in the database!');
-      return res.status(500).json({ message: 'Server error: Password field not retrieved' });
-    }
-
-    // Compare password
-    const validPassword = await bcrypt.compare(password, account.password);
-    if (!validPassword) {
-      console.log('❌ Password does not match');
-      return res.status(400).json({ message: 'Invalid email or password' });
-    }
-
-    // Ensure role is assigned correctly
-    const role = (account as any).role || 'user';
-
-    console.log(`🔑 Assigning role: ${role}`);
-
-    // Generate JWT token with role
-    const tokens = generateToken(account._id.toString(), role);
-
-    if (!tokens) {
-      console.log('❌ Token generation failed');
-      return res.status(500).json({ message: 'Token generation failed' });
-    }
-
-    console.log(`✅ Token generated for ${email}`);
-
-    if (!account.refreshToken) {
-      account.refreshToken = [];
-    }
-    account.refreshToken.push(tokens.refreshToken);
-    await account.save();
-
-    console.log(`✅ User logged in: ${email}`);
-
-    return res.status(200).json({
-      accessToken: tokens.accessToken,
-      refreshToken: tokens.refreshToken,
-      _id: account._id,
-      role: role,
-    });
 
   } catch (err) {
-    console.error('❌ Error in login function:', err);
-    return res.status(400).json({ message: 'Error logging in', error: err });
+      return res.status(400).json({ message: 'Error logging in', error: err });
   }
 };
-
-type tUser = Document<unknown, {}, IUser> & IUser & Required<{
-  _id: string;
-}> & {
-  __v: number;
-}
 const verifyRefreshToken = (refreshToken: string | undefined) => {
-  return new Promise<tUser>((resolve, reject) => {
-    if (!refreshToken) {
-      console.log("❌ No refresh token provided");
-      return reject("fail");
-    }
+  return new Promise<tUser | tAdmin>((resolve, reject) => {
+      if (!refreshToken) return reject("fail");
 
-    if (!process.env.TOKEN_SECRET) {
-      console.log("❌ No TOKEN_SECRET found");
-      return reject("fail");
-    }
+      jwt.verify(refreshToken, process.env.TOKEN_SECRET!, async (err, payload: any) => {
+          if (err) return reject("fail");
 
-    jwt.verify(refreshToken, process.env.TOKEN_SECRET, async (err: any, payload: any) => {
-      if (err) {
-        console.log("❌ Token verification failed:", err.message);
-        return reject("fail");
-      }
+          const userId = payload._id;
 
-      const userId = payload._id;
-      try {
-        // 🔥 Check both user and admin collections
-        let user = await userModel.findById(userId);
-        if (!user) {
-          user = await adminModel.findById(userId);  // ✅ Try finding an admin
-        }
+          const user = await userModel.findById(userId) as tUser | null;
+          if (user && user.refreshToken?.includes(refreshToken)) {
+              user.refreshToken = user.refreshToken.filter(token => token !== refreshToken);
+              await user.save();
+              return resolve(user);
+          }
 
-        if (!user) {
-          console.log("❌ User/Admin not found");
+          const admin = await adminModel.findById(userId) as tAdmin | null;
+          if (admin && admin.refreshToken?.includes(refreshToken)) {
+              admin.refreshToken = admin.refreshToken.filter(token => token !== refreshToken);
+              await admin.save();
+              return resolve(admin);
+          }
+
           return reject("fail");
-        }
-
-        if (!user.refreshToken || !user.refreshToken.includes(refreshToken)) {
-          console.log("❌ Refresh token not found in user/admin database");
-          user.refreshToken = [];
-          await user.save();
-          return reject("fail");
-        }
-
-        user.refreshToken = user.refreshToken.filter((token) => token !== refreshToken);
-        await user.save();
-
-        resolve(user);
-      } catch (err) {
-        console.log("❌ Database error:", err);
-        return reject("fail");
-      }
-    });
+      });
   });
 };
 
 const logout = async (req: Request, res: Response) => {
-  try {
-    const { refreshToken } = req.body;  // ✅ Extract refresh token from request body
+    try {
+        const { refreshToken } = req.body;
 
-    console.log("🔍 Logout request received with refreshToken:", refreshToken);  // Debugging
+        const account = await verifyRefreshToken(refreshToken);
+        if (!account) return res.status(400).json({ message: "Invalid refresh token" });
 
-    if (!refreshToken) {
-      console.log("❌ No refresh token provided");
-      return res.status(400).json({ message: "No refresh token provided" });
+        account.refreshToken = (account.refreshToken || []).filter(token => token !== refreshToken);
+        await account.save();
+
+        res.status(200).json({ message: "Logged out successfully" });
+    } catch (err) {
+        res.status(400).json({ message: "Logout failed", error: err });
     }
-
-    const user = await verifyRefreshToken(refreshToken);
-    if (!user) {
-      console.log("❌ Invalid refresh token");
-      return res.status(400).json({ message: "Invalid refresh token" });
-    }
-
-    console.log("✅ User found, removing refresh token");
-
-    // Remove the refresh token from the database
-    user.refreshToken = user.refreshToken?.filter(token => token !== refreshToken);
-    await user.save();
-
-    return res.status(200).json({ message: "Logged out successfully" });
-
-  } catch (err) {
-    console.error("❌ Logout error:", err);
-    return res.status(400).json({ message: "Logout failed", error: err });
-  }
 };
 
-  const refresh = async (req: Request, res: Response) => {
+const refresh = async (req: Request, res: Response) => {
     try {
-        const user = await verifyRefreshToken(req.body.refreshToken);
-        if (!user) {
-            res.status(400).send("fail");
-            return;
-        }
-        const tokens = generateToken(user._id);
+        const account = await verifyRefreshToken(req.body.refreshToken);
+        if (!account) return res.status(400).send("fail");
 
-        if (!tokens) {
-            res.status(500).send('Server Error');
-            return;
-        }
-        if (!user.refreshToken) {
-            user.refreshToken = [];
-        }
-        user.refreshToken.push(tokens.refreshToken);
-        await user.save();
-        res.status(200).send(
-            {
-                accessToken: tokens.accessToken,
-                refreshToken: tokens.refreshToken,
-                _id: user._id
-            });
-        //send new token
+        const tokens = generateToken(account);
+        (account.refreshToken || []).push(tokens.refreshToken);
+        await account.save();
+
+        res.status(200).json({
+            accessToken: tokens.accessToken,
+            refreshToken: tokens.refreshToken,
+            _id: account._id
+        });
     } catch (err) {
         res.status(400).send("fail");
     }
 };
-export interface AuthPayLoad extends JwtPayload {
-  _id: string;
-  role?: string;
-}
-export interface AuthRequest extends Request {
-  user?: AuthPayLoad;
-}
-export const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
-    const authorization = req.header('authorization');
-    const token = authorization && authorization.split(' ')[1];
 
-    if (!token) {
-        res.status(401).send('Access Denied');
-        return;
-    }
-    console.log("🔑 Current TOKEN_SECRET:", process.env.TOKEN_SECRET);
+export const authMiddleware = async (req: Request, res: Response, next: NextFunction) : Promise<void> => {
+  const authorization = req.header('authorization');
+  const token = authorization?.split(' ')[1];
 
-    if (!process.env.TOKEN_SECRET) {
-        res.status(500).send('Server Error');
-        return;
-    }
+  if (!token) {res.status(401).json({ message: 'Access Denied' });
+  return;}
+    
 
-    jwt.verify(token, process.env.TOKEN_SECRET, (err, payload) => {
-        if (err) {
-          console.log("❌ Invalid Token Signature");
-            res.status(401).send('Access Denied');
-            return;
-        }
-        req.user = payload as AuthPayLoad; 
-        next();
-    });
+  try {
+      const { _id } = jwt.verify(token, process.env.TOKEN_SECRET!) as { _id: string };
+
+      const user = await userModel.findById(_id) as tUser | null;
+      if (user) {
+          (req as any).user = user;
+          return next();
+      }
+
+      const admin = await adminModel.findById(_id) as tAdmin | null;
+      if (admin) {
+          (req as any).user = admin;
+          return next();
+      }
+
+       res.status(401).json({ message: 'User not found' });
+       return;
+
+  } catch (err) {
+      res.status(401).json({ message: 'Invalid Token' });
+      return ;
+  }
 };
 
 export default {
     register: register as unknown as express.RequestHandler,
-    login : login as unknown as express.RequestHandler,
-    refresh,
-    logout : logout as unknown as express.RequestHandler,
-    generateToken
+    login: login as unknown as express.RequestHandler,
+    refresh: refresh as unknown as express.RequestHandler,
+    logout: logout as unknown as express.RequestHandler,
+    generateToken,
+    authMiddleware: authMiddleware as unknown as express.RequestHandler
 };

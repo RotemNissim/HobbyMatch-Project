@@ -7,24 +7,37 @@ import passport from 'passport';
 // Redirect to Google
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-// Callback (Google redirects back here after user approves)
-router.get('/google/callback', passport.authenticate('google', {
-    failureRedirect: 'http://localhost:5173/login',
-}), (req, res) => {
-    // Successful login - Redirect to frontend with token in URL (optional)
-    const user = req.user as any;
-    const tokens = authController.generateToken(user._id.toString());
+router.get('/google/callback', passport.authenticate('google', { failureRedirect: 'http://localhost:5173/login' }), 
+    async (req, res) => {
+        const user = req.user as any;
 
-    if (tokens) {
-        // Option 1: Store in cookie
-        res.cookie('accessToken', tokens.accessToken, { httpOnly: true });
+        if (!user || !user._id) {
+            return res.redirect('http://localhost:5173/login?error=user_not_found');
+        }
 
-        // Option 2: Redirect with token in URL (less secure)
-        res.redirect(`http://localhost:5173/profile?token=${tokens.accessToken}`);
-    } else {
-        res.redirect('http://localhost:5173/login?error=token');
+        const tokens = authController.generateToken(user._id.toString());
+
+        if (!tokens) {
+            return res.redirect('http://localhost:5173/login?error=token_generation_failed');
+        }
+
+        // Set both tokens in secure HttpOnly cookies
+        res.cookie('accessToken', tokens.accessToken, {
+            httpOnly: true,
+            secure: false,    // Set to true in production (https)
+            sameSite: 'strict'
+        });
+
+        res.cookie('refreshToken', tokens.refreshToken, {
+            httpOnly: true,
+            secure: false,
+            sameSite: 'strict'
+        });
+
+        // Redirect to profile (no token in URL!)
+        res.redirect('http://localhost:5173/profile');
     }
-});
+);
 
 
 router.post("/login", authController.login);
