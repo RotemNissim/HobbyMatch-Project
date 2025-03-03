@@ -1,8 +1,9 @@
-
 import React, { useEffect, useState } from 'react';
 import { joinEvent, leaveEvent } from '../services/eventService';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
+import '../styles/global.css';
+
 interface Event {
     _id: string;
     title: string;
@@ -16,21 +17,19 @@ const HomePage: React.FC = () => {
     const [events, setEvents] = useState<Event[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const [userId, setUserId] = useState<string>(''); // Replace with actual user ID from auth
+    const [userId, setUserId] = useState<string>('');
 
-    
     useEffect(() => {
         const token = localStorage.getItem('accessToken');
         if (token) {
             try {
                 const decodedToken: any = jwtDecode(token);
-                setUserId(decodedToken._id); // Adjust according to JWT structure
+                setUserId(decodedToken._id);
             } catch (error) {
                 console.error("❌ Failed to decode token:", error);
             }
         }
     }, []);
-
 
     useEffect(() => {
         const fetchEvents = async () => {
@@ -49,8 +48,6 @@ const HomePage: React.FC = () => {
 
         fetchEvents();
     }, [userId]);
-  
-
 
     const handleJoinLeave = async (eventId: string, isParticipant: boolean) => {
         try {
@@ -69,32 +66,33 @@ const HomePage: React.FC = () => {
         }
     };
 
-    if (loading) return <p>Loading events...</p>;
-    if (error) return <p style={{ color: 'red' }}>{error}</p>;
+    if (loading) return <p className="loading">Loading events...</p>;
+    if (error) return <p className="error">{error}</p>;
 
     return (
-        <div style={{ padding: '20px' }}>
-            <h1>All Events (Direct Fetch - No Proxy)</h1>
+        <div className="container">
             {events.length === 0 ? (
-                <p>No events found.</p>
+                <p className="no-events">No events found.</p>
             ) : (
-                <ul>
-                    {events.map(event => (
-                        <li key={event._id} style={{ marginBottom: '20px', padding: '10px', border: '1px solid black' }}>
+                events.map(event => (
+                    <div key={event._id} className="card">
+                        <div className="content">
                             <h3>{event.title}</h3>
                             <p>{event.description}</p>
                             <p><strong>Date:</strong> {new Date(event.date).toLocaleDateString()}</p>
                             <p><strong>Location:</strong> {event.location}</p>
-                            <button onClick={() => handleJoinLeave(event._id, event.participants.includes(userId))}>
+                            <button 
+                                className="join-leave-button" 
+                                onClick={() => handleJoinLeave(event._id, event.participants.includes(userId))}
+                            >
                                 {event.participants.includes(userId) ? 'Leave Event' : 'Join Event'}
                             </button>
-                        </li>
-                    ))}
-                </ul>
+                        </div>
+                    </div>
+                ))
             )}
         </div>
     );
-
 };
 
 export default HomePage;
