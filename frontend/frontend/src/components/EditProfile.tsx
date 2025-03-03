@@ -38,7 +38,7 @@ const EditProfile: React.FC<Props> = ({ initialUser, onProfileUpdated }) => {
         <div className="space-y-4">
             <input type="text" name="firstName" value={form.firstName} onChange={handleChange} placeholder="First Name" />
             <input type="text" name="lastName" value={form.lastName} onChange={handleChange} placeholder="Last Name" />
-            <input type="email" name="email" value={form.email} onChange={handleChange} placeholder="Email" />
+            <input type="email" name="email" value={form.email} onChange={handleChange} placeholder="Email" readOnly/>
             <input type="file" onChange={handlePictureChange} />
             <button onClick={handleSave} className="bg-green-500 text-white px-4 py-2">💾 Save</button>
             <button onClick={onProfileUpdated} className="ml-4 bg-gray-500 text-white px-4 py-2">Cancel</button>
