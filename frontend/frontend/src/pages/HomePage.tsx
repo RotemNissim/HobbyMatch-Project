@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { joinEvent, leaveEvent } from '../services/eventService';
 import axios from 'axios';
@@ -48,6 +49,9 @@ const HomePage: React.FC = () => {
 
         fetchEvents();
     }, [userId]);
+    fetchEvents();
+  }, []);
+
 
     const handleJoinLeave = async (eventId: string, isParticipant: boolean) => {
         try {
@@ -91,6 +95,7 @@ const HomePage: React.FC = () => {
             )}
         </div>
     );
+
 };
 
 export default HomePage;
