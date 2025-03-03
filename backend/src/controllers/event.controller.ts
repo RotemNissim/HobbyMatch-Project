@@ -21,6 +21,7 @@ class EventController {
    */
   async updateEvent(req: Request, res: Response) {
     try {
+       // Only authenticated users can update events, so include userId in the request params.
       const eventId = req.params.id;
       const updates = req.body;
       const updatedEvent = await eventService.updateEvent(eventId, updates);

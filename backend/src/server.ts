@@ -7,13 +7,16 @@ import adminRoute from './routes/admin.routes';
 import userRoute from './routes/user.routes';
 import eventRoute from './routes/event.routes';
 import authRoute from './routes/auth.routes';
-import adminAuthRoute from './routes/adminAuth.routes';
 import hobbyRoute from './routes/hobby.routes';
 import likeRoute from './routes/like.routes';
-import messageRoute from './routes/comment.routes';
-import notificationRoute from './routes/notification.routes';
+import commentRoute from './routes/comment.routes';
+import passport from "passport";
+import './config/auth.google';
 
 const app = express();
+
+app.use(passport.initialize());
+// app.use(passport.session());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use((req,res,next) => {
@@ -27,13 +30,12 @@ app.use("/users", userRoute);
 app.use("/admins", adminRoute);
 app.use("/events", eventRoute);
 app.use("/auth", authRoute);
-app.use("/adminAuth", adminAuthRoute);
 app.use("/hobbies", hobbyRoute);
 app.use("/likes", likeRoute);
-app.use("/comments", messageRoute);
-app.use("/notifications", notificationRoute);
+app.use("/comments", commentRoute);
 app.use("/public", express.static("public"));
 app.use(express.static("front"));
+
 
 const db = mongoose.connection;
 db.once("error", (error) => console.error(error));

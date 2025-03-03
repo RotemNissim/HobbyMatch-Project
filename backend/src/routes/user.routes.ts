@@ -1,55 +1,26 @@
-import express, { Request, Response, NextFunction } from 'express';
-import User from '../models/User.models';
-import { authenticateToken, AuthRequest } from '../middleware/authMiddleware';
+import express from 'express';
+import userController from '../controllers/user.controller';
+import { authMiddleware } from '../controllers/auth.controller';
+import  asyncHandler  from '../middleware/asyncHandler';
 
 const router = express.Router();
 
-// Get user profile
-router.get('/:id', authenticateToken, async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    const user = await User.findById(req.params.id).select('-password');
-    if (!user) {
-      res.status(404).json({ message: 'User not found' });
-      return;
-    }
-    res.json(user);
-  } catch (err) {
-    next(err);
-  }
-});
-
-// Update user profile
-router.put('/:id', authenticateToken, async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    if (!req.user || (req.user as any).id !== req.params.id) {
-      res.status(403).json({ message: 'Unauthorized' });
-      return;
-    }
-
-    const updates = req.body;
-    const user = await User.findByIdAndUpdate(req.params.id, updates, { new: true }).select('-password');
-
-    if (!user) {
-      res.status(404).json({ message: 'User not found' });
-      return;
-    }
-
-    res.json(user);
-  } catch (err) {
-    next(err);
-  }
-});
+router.get('/me', authMiddleware, asyncHandler(userController.getCurrentUser));
+router.get('/hobbies', authMiddleware, asyncHandler(userController.getUserHobbies));
+router.get('/likes', authMiddleware, asyncHandler(userController.getUserLikes));
 
 /**
- * Error handling middleware for user routes
+ * User Profile Routes
  */
-router.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
-  if (err instanceof Error) {
-    console.error(err.message);
-    res.status(500).json({ error: err.message });
-  } else {
-    res.status(500).json({ error: 'An unknown error occurred' });
-  }
-});
+router.get('/:id', authMiddleware, asyncHandler(userController.getUser));   // This expects AuthRequest
+router.put('/:id', authMiddleware, asyncHandler(userController.updateProfile));
+
+/**
+ * Event Management Routes
+ */
+router.post('/events', authMiddleware, asyncHandler(userController.createEvent));
+router.put('/events/:id', authMiddleware, asyncHandler(userController.updateEvent));
+
+router.post('/comments/:id', authMiddleware, asyncHandler(userController.addCommentToEvent));
 
 export default router;
