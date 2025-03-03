@@ -4,7 +4,7 @@ import LoginPage from '../pages/LoginPage';
 
 
 // import RegisterPage from '../pages/RegisterPage';
-// import UserProfile from '../pages/UserProfile';
+ import UserProfile from '../pages/UserProfile';
 // import EventDetails from '../pages/EventDetails';
 
 
@@ -13,9 +13,9 @@ function AppRouter() {
         <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
-            {/* <Route path="/register" element={<RegisterPage />} />
+            {/* <Route path="/register" element={<RegisterPage />} /> */}
             <Route path="/profile" element={<UserProfile />} />
-            <Route path="/events/:eventId" element={<EventDetails />} /> */}
+            {/* <Route path="/events/:eventId" element={<EventDetails />} />  */}
            
         </Routes>
     );
