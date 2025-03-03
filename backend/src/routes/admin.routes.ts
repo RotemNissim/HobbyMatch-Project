@@ -1,8 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import Admin from '../models/Admin.models';
 import { authMiddleware } from '../controllers/auth.controller';
-import { authenticateToken } from '../middleware/authMiddleware';
-import { authorizeAdmin } from '../middleware/authAdminMiddleware';
+import { AuthRequest } from '../middleware/AuthRequest';
 import AdminController from '../controllers/admin.controller';
 
 const router = express.Router();

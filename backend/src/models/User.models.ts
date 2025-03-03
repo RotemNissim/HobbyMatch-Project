@@ -10,6 +10,7 @@ export interface IUser {
   calendar: any[];
   profilePicture: string;
   likes: string[];
+  googleId?: string;
 }
 
 const UserSchema = new mongoose.Schema<IUser>({  

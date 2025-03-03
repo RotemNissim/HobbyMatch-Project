@@ -1,6 +1,26 @@
 import Event from '../models/Event.models';
-
+import mongoose from 'mongoose';
+import User from '../models/User.models';
 class EventService {
+
+  async joinEvent(eventId: string, userId: string) {
+    const event = await Event.findById(eventId);
+    if (!event) {
+      throw new Error('Event not found');
+    }
+
+    // Check if user is already a participant
+    if (event.participants.includes(new mongoose.Types.ObjectId(userId))) {
+      throw new Error('User already joined this event');
+    }
+
+    event.participants.push(new mongoose.Types.ObjectId(userId));
+    await event.save();
+    return event;
+  }
+
+  
+
   /**
    * Create a new event
    */
@@ -10,6 +30,18 @@ class EventService {
     return newEvent;
   }
 
+  async leaveEvent(eventId: string, userId: string) {
+    const event = await Event.findById(eventId);
+    if (!event) {
+      throw new Error('Event not found');
+    }
+
+    event.participants = event.participants.filter(
+      (participantId) => !participantId.equals(new mongoose.Types.ObjectId(userId))
+    );
+    await event.save();
+    return event;
+  }
   /**
    * Update an existing event
    */
@@ -35,24 +67,42 @@ class EventService {
   /**
    * List events with optional filtering
    */
-  async listEvents(filter: Partial<{ hobbies: string[]; location: string; date: Date }>) {
+  async listEvents(filter: Partial<{
+    hobbies: string[];
+    location: string;
+    date: Date;
+    createdBy: string;
+    participants: string[];
+}>) {
     const query: any = {};
 
     if (filter.hobbies) {
-      query.hobbies = { $in: filter.hobbies };
+        query.hobby = { $in: filter.hobbies.map(id => new mongoose.Types.ObjectId(id)) };
     }
 
     if (filter.location) {
-      query.location = filter.location;
+        query.location = filter.location;
     }
 
     if (filter.date) {
-      query.date = { $gte: filter.date };
+        query.date = { $gte: filter.date };
     }
 
-    const events = await Event.find(query);
+    if (filter.createdBy) {
+        query.createdBy = new mongoose.Types.ObjectId(filter.createdBy);
+    }
+
+    if (filter.participants) {
+        query.participants = { $in: filter.participants.map(id => new mongoose.Types.ObjectId(id)) };
+    }
+
+    const events = await Event.find(query).populate('hobby participants createdBy');
     return events;
-  }
 }
+
+
+}
+
+
 
 export default new EventService();
