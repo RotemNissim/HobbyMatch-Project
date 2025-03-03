@@ -4,7 +4,9 @@ import { Link } from 'react-router-dom';
 const Navbar: React.FC = () => {
     return (
         <nav style={navStyle}>
-            <h1>🔥 HobbyMatch</h1>
+             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <img src="/HobbyMatchLogo.png" alt="HobbyMatch Logo" style={{ height: '80px' }} />
+                </div>
             <div style={linkContainer}>
                 <Link to="/" style={linkStyle}>Home</Link>
                 <Link to="/profile" style={linkStyle}>Profile</Link>
