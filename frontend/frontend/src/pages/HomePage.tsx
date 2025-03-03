@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { joinEvent, leaveEvent } from '../services/eventService';
 import axios from 'axios';
-
+import { jwtDecode } from 'jwt-decode';
 interface Event {
     _id: string;
     title: string;
@@ -15,7 +15,21 @@ const HomePage: React.FC = () => {
     const [events, setEvents] = useState<Event[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const [userId, setUserId] = useState<string>('your-user-id'); // Replace with actual user ID from auth
+    const [userId, setUserId] = useState<string>(''); // Replace with actual user ID from auth
+
+    
+    useEffect(() => {
+        const token = localStorage.getItem('accessToken');
+        if (token) {
+            try {
+                const decodedToken: any = jwtDecode(token);
+                setUserId(decodedToken._id); // Adjust according to JWT structure
+            } catch (error) {
+                console.error("❌ Failed to decode token:", error);
+            }
+        }
+    }, []);
+
 
     useEffect(() => {
         const fetchEvents = async () => {
@@ -33,7 +47,7 @@ const HomePage: React.FC = () => {
         };
 
         fetchEvents();
-    }, []);
+    }, [userId]);
 
     const handleJoinLeave = async (eventId: string, isParticipant: boolean) => {
         try {
