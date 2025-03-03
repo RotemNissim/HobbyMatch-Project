@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
-
 interface User {
     _id: string;
     firstName: string;
@@ -11,11 +10,12 @@ interface User {
     hobbies: { _id: string; name: string }[];
     calendar: { _id: string; title: string; date: string; location: string }[];
 }
-const UserProfile = () => {
+
+const UserProfile: React.FC = () => {
     const { id } = useParams();
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string|null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchUserProfile = async () => {
@@ -33,11 +33,13 @@ const UserProfile = () => {
 
     if (loading) return <p>Loading profile...</p>;
     if (error) return <p style={{ color: 'red' }}>{error}</p>;
+    if (!user) return <p>User not found.</p>;
 
     return (
         <div style={{ padding: '20px' }}>
             <h1>{user.firstName} {user.lastName}</h1>
-            <img src={user.profilePicture || '/default-profile.png'} alt="Profile" style={{ width: '150px', height: '150px', borderRadius: '50%' }} />
+            <img src={user.profilePicture || '/default-profile.png'} alt="Profile"
+                 style={{ width: '150px', height: '150px', borderRadius: '50%' }} />
             <h2>Hobbies</h2>
             <ul>
                 {user.hobbies.length > 0 ? user.hobbies.map(hobby => (
