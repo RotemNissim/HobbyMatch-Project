@@ -1,5 +1,13 @@
 import apiClient from './axiosInstance';
 
+export const joinEvent = async (eventId: string) => {
+    await apiClient.post(`/events/${eventId}/join`);
+};
+
+export const leaveEvent = async (eventId: string) => {
+    await apiClient.post(`/events/${eventId}/leave`);
+};
+
 export const createEvent = async (eventData: Record<string, any>) => {
     const { data } = await apiClient.post('/users/events', eventData);
     return data;
