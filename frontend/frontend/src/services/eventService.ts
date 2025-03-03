@@ -18,3 +18,13 @@ export const getUserEvents = async () => {
     const { data } = await apiClient.get('/events/mine');
     return data; // { createdEvents: [...], joinedEvents: [...] }
 };
+
+export const getEventsCreatedByUser = async (userId: string) => {
+    const { data } = await apiClient.get(`/events?createdBy=${userId}`);
+    return data;
+};
+
+export const getEventsUserIsAttending = async (userId: string) => {
+    const { data } = await apiClient.get(`/events?participants=${userId}`);
+    return data;
+};
