@@ -11,3 +11,4 @@ router.post('/:senderId/send', authMiddleware, commentController.sendComment);
 router.get('/:userId1/:userId2', authMiddleware, commentController.getComments);
 
 export default router;
+c

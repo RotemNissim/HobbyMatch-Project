@@ -38,7 +38,7 @@ const AuthPage: React.FC = () => {
       return;
     }
 
-    const url = isLogin ? "/api/auth/login" : "/api/auth/register";
+    const url = isLogin ? "/auth/login" : "/auth/register";
     const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
