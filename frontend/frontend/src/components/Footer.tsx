@@ -13,9 +13,10 @@ const footerStyle:React.CSSProperties = {
     padding: '10px',
     backgroundColor: '#333',
     color: 'white',
-    position: 'absolute',
+    position: 'sticky',
     width: '100%',
-    bottom: 0
+    marginTop:'auto',
+    
 };
 
 export default Footer;
