@@ -1,24 +1,26 @@
 import express from 'express';
-import UserController from '../controllers/user.controller';
+import userController from '../controllers/user.controller';
 import { authMiddleware } from '../controllers/auth.controller';
-import { asyncHandler } from '../middleware/asyncHandler';
+import  asyncHandler  from '../middleware/asyncHandler';
 
 const router = express.Router();
-router.get('/hobbies', authMiddleware,asyncHandler(UserController.getUserHobbies));
-router.get('/likes', authMiddleware, asyncHandler(UserController.getUserLikes));
+
+router.get('/me', authMiddleware, asyncHandler(userController.getCurrentUser));
+router.get('/hobbies', authMiddleware, asyncHandler(userController.getUserHobbies));
+router.get('/likes', authMiddleware, asyncHandler(userController.getUserLikes));
+
 /**
  * User Profile Routes
  */
-router.get('/:id', authMiddleware, (req, res) => UserController.getUser(req, res));
-router.put('/:id', authMiddleware, (req, res) => UserController.updateProfile(req, res));
+router.get('/:id', authMiddleware, asyncHandler(userController.getUser));   // This expects AuthRequest
+router.put('/:id', authMiddleware, asyncHandler(userController.updateProfile));
 
 /**
  * Event Management Routes
  */
-router.post('/events', authMiddleware, asyncHandler(UserController.createEvent));
-router.put('/events/:id', authMiddleware, asyncHandler(UserController.updateEvent));
+router.post('/events', authMiddleware, asyncHandler(userController.createEvent));
+router.put('/events/:id', authMiddleware, asyncHandler(userController.updateEvent));
 
-
-router.post('/comments/:id', authMiddleware, asyncHandler(UserController.addCommentToEvent));
+router.post('/comments/:id', authMiddleware, asyncHandler(userController.addCommentToEvent));
 
 export default router;
