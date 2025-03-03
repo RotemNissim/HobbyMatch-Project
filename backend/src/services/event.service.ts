@@ -1,4 +1,5 @@
 import Event from '../models/Event.models';
+import mongoose from 'mongoose';
 
 class EventService {
   /**
@@ -35,24 +36,41 @@ class EventService {
   /**
    * List events with optional filtering
    */
-  async listEvents(filter: Partial<{ hobbies: string[]; location: string; date: Date }>) {
+  async listEvents(filter: Partial<{
+    hobbies: string[];
+    location: string;
+    date: Date;
+    createdBy: string;
+    participants: string[];
+}>) {
     const query: any = {};
 
     if (filter.hobbies) {
-      query.hobbies = { $in: filter.hobbies };
+        query.hobby = { $in: filter.hobbies.map(id => new mongoose.Types.ObjectId(id)) };
     }
 
     if (filter.location) {
-      query.location = filter.location;
+        query.location = filter.location;
     }
 
     if (filter.date) {
-      query.date = { $gte: filter.date };
+        query.date = { $gte: filter.date };
     }
 
-    const events = await Event.find(query);
+    if (filter.createdBy) {
+        query.createdBy = new mongoose.Types.ObjectId(filter.createdBy);
+    }
+
+    if (filter.participants) {
+        query.participants = { $in: filter.participants.map(id => new mongoose.Types.ObjectId(id)) };
+    }
+
+    const events = await Event.find(query).populate('hobby participants createdBy');
     return events;
-  }
 }
+
+}
+
+
 
 export default new EventService();

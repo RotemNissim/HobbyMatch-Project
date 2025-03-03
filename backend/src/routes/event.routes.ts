@@ -7,6 +7,7 @@ const router = express.Router();
 /**
  * Event Management Routes
  */
+
 router.post('/', authMiddleware, async (req, res) => await EventController.createEvent(req, res));
 router.put('/:id', authMiddleware, async (req, res) => await EventController.updateEvent(req, res));
 router.delete('/:id', authMiddleware, async (req, res) => await EventController.deleteEvent(req, res));
