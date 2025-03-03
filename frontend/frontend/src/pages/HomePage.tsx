@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { joinEvent, leaveEvent } from '../services/eventService';
 import axios from 'axios';
@@ -17,23 +18,24 @@ const HomePage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [userId, setUserId] = useState<string>('your-user-id'); // Replace with actual user ID from auth
 
-    useEffect(() => {
-        const fetchEvents = async () => {
-            try {
-                console.log("📡 Fetching events directly from backend...");
-                const response = await axios.get('/events');
-                console.log("✅ Events fetched:", response.data);
-                setEvents(response.data);
-            } catch (err) {
-                console.error("❌ Error fetching events:", err);
-                setError('Failed to fetch events');
-            } finally {
-                setLoading(false);
-            }
-        };
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        console.log("📡 Fetching events directly from backend...");
+        const response = await axios.get("/events");
+        console.log("✅ Events fetched:", response.data);
+        setEvents(response.data);
+      } catch (err) {
+        console.error("❌ Error fetching events:", err);
+        setError("Failed to fetch events");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-        fetchEvents();
-    }, []);
+    fetchEvents();
+  }, []);
+
 
     const handleJoinLeave = async (eventId: string, isParticipant: boolean) => {
         try {
@@ -77,6 +79,7 @@ const HomePage: React.FC = () => {
             )}
         </div>
     );
+
 };
 
 export default HomePage;
