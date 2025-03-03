@@ -41,28 +41,50 @@ const AuthPage = () => {
     };
 
     return (
-        <div className="flex items-center justify-center h-screen bg-gray-100">
-            <div className="bg-white p-6 rounded-lg shadow-md w-80">
-                <h2 className="text-xl font-semibold mb-4 text-center">
-                    {isLogin ? 'Login' : 'Sign Up'}
-                </h2>
-                {error && <p className="text-red-500 text-center">{error}</p>}
-                <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="auth-wrapper">
+            <div className="auth-container">
+                <h2>{isLogin ? 'Login' : 'Sign Up'}</h2>
+                {error && <p className="text-red-500">{error}</p>}
+                <form onSubmit={handleSubmit} className="input-container">
                     {!isLogin && (
                         <>
-                            <input type="text" name="firstName" placeholder="First Name" value={formData.firstName} onChange={handleChange} className="w-full p-2 border rounded" />
-                            <input type="text" name="lastName" placeholder="Last Name" value={formData.lastName} onChange={handleChange} className="w-full p-2 border rounded" />
+                            <input
+                                type="text"
+                                name="firstName"
+                                placeholder="First Name"
+                                value={formData.firstName}
+                                onChange={handleChange}
+                            />
+                            <input
+                                type="text"
+                                name="lastName"
+                                placeholder="Last Name"
+                                value={formData.lastName}
+                                onChange={handleChange}
+                            />
                         </>
                     )}
-                    <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} className="w-full p-2 border rounded" />
-                    <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} className="w-full p-2 border rounded" />
-                    <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
+                    <input
+                        type="email"
+                        name="email"
+                        placeholder="Email"
+                        value={formData.email}
+                        onChange={handleChange}
+                    />
+                    <input
+                        type="password"
+                        name="password"
+                        placeholder="Password"
+                        value={formData.password}
+                        onChange={handleChange}
+                    />
+                    <button type="submit">
                         {isLogin ? 'Login' : 'Sign Up'}
                     </button>
                 </form>
-                <p className="text-center mt-4">
+                <p>
                     {isLogin ? "Don't have an account?" : "Already have an account?"}{' '}
-                    <button onClick={toggleMode} className="text-blue-500">
+                    <button onClick={toggleMode}>
                         {isLogin ? 'Sign up' : 'Login'}
                     </button>
                 </p>
