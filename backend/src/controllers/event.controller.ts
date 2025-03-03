@@ -2,6 +2,30 @@ import { Request, Response } from 'express';
 import eventService from '../services/event.service';
 
 class EventController {
+
+  async joinEvent(req: Request, res: Response) {
+    try {
+      const userId = (req as any).user._id;
+      const eventId = req.params.id;
+      const updatedEvent = await eventService.joinEvent(eventId, userId);
+      res.status(200).json(updatedEvent);
+    } catch (error: unknown) {
+      const errMsg = error instanceof Error ? error.message : 'Failed to join event';
+      res.status(400).json({ message: errMsg });
+    }
+  }
+
+  async leaveEvent(req: Request, res: Response) {
+    try {
+      const userId = (req as any).user._id;
+      const eventId = req.params.id;
+      const updatedEvent = await eventService.leaveEvent(eventId, userId);
+      res.status(200).json(updatedEvent);
+    } catch (error: unknown) {
+      const errMsg = error instanceof Error ? error.message : 'Failed to leave event';
+      res.status(400).json({ message: errMsg });
+    }
+  }
   /**
    * Create a new event
    */

@@ -12,5 +12,7 @@ router.post('/', authMiddleware, async (req, res) => await EventController.creat
 router.put('/:id', authMiddleware, async (req, res) => await EventController.updateEvent(req, res));
 router.delete('/:id', authMiddleware, async (req, res) => await EventController.deleteEvent(req, res));
 router.get('/', async (req, res) => await EventController.listEvents(req, res));
+router.post('/:id/join', authMiddleware, async (req, res) => await EventController.joinEvent(req, res));
+router.post('/:id/leave', authMiddleware, async (req, res) => await EventController.leaveEvent(req, res));
 
 export default router;
