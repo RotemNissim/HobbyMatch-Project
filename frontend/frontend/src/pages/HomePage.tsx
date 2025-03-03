@@ -49,8 +49,7 @@ const HomePage: React.FC = () => {
 
         fetchEvents();
     }, [userId]);
-    fetchEvents();
-  }, []);
+  
 
 
     const handleJoinLeave = async (eventId: string, isParticipant: boolean) => {
