@@ -144,6 +144,7 @@ const HomePage: React.FC = () => {
                   className="event-card w-1/3 bg-white shadow-md p-4 rounded-lg"
                   whileHover={{ scale: 1.05 }}
                 >
+                  
                   <h3 className="event-title font-bold">{event.title}</h3>
                   <p className="event-description">{event.description}</p>
                   <p className="event-info">
