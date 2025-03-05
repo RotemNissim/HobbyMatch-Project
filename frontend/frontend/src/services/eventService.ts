@@ -1,10 +1,10 @@
 import apiClient from './axiosInstance';
 
-export const joinEvent = async (eventId: string) => {
+export const joinEvent = async (eventId: string, userId: string) => {
     await apiClient.post(`/events/${eventId}/join`);
 };
 
-export const leaveEvent = async (eventId: string) => {
+export const leaveEvent = async (eventId: string, userId: string) => {
     await apiClient.post(`/events/${eventId}/leave`);
 };
 
