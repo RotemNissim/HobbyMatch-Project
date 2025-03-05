@@ -21,6 +21,8 @@ const HomePage: React.FC = () => {
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState<"left" | "right">("right");
 
+// Retrieve user ID from JWT before fetching events
+
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (token) {
@@ -35,12 +37,13 @@ const HomePage: React.FC = () => {
     }
   }, []);
 
+  // Fetch events only after userId is set
   useEffect(() => {
-    if (userId === null) return;
+    if (userId === null) return; // Don't fetch if userId is not set
 
     const fetchEvents = async () => {
       try {
-        console.log("📡 Fetching events...");
+        console.log("📡 Fetching events directly from backend...");
         const response = await axios.get("/events");
         console.log("✅ Events fetched:", response.data);
         setEvents(response.data);
@@ -98,6 +101,7 @@ const HomePage: React.FC = () => {
 
   if (loading) return <p>Loading events...</p>;
   if (error) return <p className="text-red-500">{error}</p>;
+
   if (events.length === 0)
     return <p className="text-center">No events found.</p>;
 
@@ -173,6 +177,54 @@ const HomePage: React.FC = () => {
           </motion.div>
         </div>
       </div>
+
+  return (
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold text-center mb-6">
+        All Events (Direct Fetch - No Proxy)
+      </h1>
+      {events.length === 0 ? (
+        <p className="text-center">No events found.</p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {events.map((event) => (
+            <div
+              key={event._id}
+              className="bg-white p-6 border rounded-lg shadow-md hover:shadow-xl transition-all transform hover:scale-105"
+            >
+              <h3 className="text-xl font-semibold text-center mb-3">
+                {event.title}
+              </h3>
+              <p className="text-gray-600 mb-4">{event.description}</p>
+              <p className="text-sm">
+                <strong>Date:</strong>{" "}
+                {new Date(event.date).toLocaleDateString()}
+              </p>
+              <p className="text-sm">
+                <strong>Location:</strong> {event.location}
+              </p>
+              {userId && (
+                <div className="mt-4">
+                  <button
+                    onClick={() =>
+                      handleJoinLeave(
+                        event._id,
+                        event.participants.map((p) => p._id).includes(userId),
+                        userId
+                      )
+                    }
+                    className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
+                  >
+                    {event.participants.map((p) => p._id).includes(userId)
+                      ? "Leave Event"
+                      : "Join Event"}
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

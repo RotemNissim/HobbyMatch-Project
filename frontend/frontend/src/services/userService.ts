@@ -5,7 +5,7 @@ export const getCurrentUser = async () => {
     return data;
 };
 
-export const updateProfile = async (userId: string, updates: Partial<{firstName: string; lastName: string; email: string; hobbies: string[]; profilePicture: string;}>) => {
+export const updateProfile = async (userId: string, updates: Partial<{firstName: string; lastName: string; hobbies: string[]; profilePicture: string;}>) => {
     const { data } = await apiClient.put(`/users/${userId}`, updates);
     return data;
 };

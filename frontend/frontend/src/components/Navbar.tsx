@@ -5,7 +5,7 @@ const Navbar: React.FC = () => {
     return (
         <nav style={navStyle}>
              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <img src="/HobbyMatchLogo.png" alt="HobbyMatch Logo" style={{ height: '80px' }} />
+               <a href = "/"> <img src="/HobbyMatchLogo.png" alt="HobbyMatch Logo" style={{ height: '80px' }} /></a>
                 </div>
             <div style={linkContainer}>
                 <Link to="/" style={linkStyle}>Home</Link>
