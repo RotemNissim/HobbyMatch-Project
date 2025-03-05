@@ -19,6 +19,7 @@ const HomePage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [index, setIndex] = useState(0);
+  const [direction, setDirection] = useState<"left" | "right">("right");
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
@@ -55,43 +56,19 @@ const HomePage: React.FC = () => {
   }, [userId]);
 
   const nextSlide = () => {
-    setIndex((prev) => (prev + 1) % events.length);
+    setDirection("right");
+    setIndex((prev) => (prev + 3) % events.length);
   };
 
   const prevSlide = () => {
-    setIndex((prev) => (prev - 1 + events.length) % events.length);
-  };
-
-  const handleJoinLeave = async (eventId: string, isJoined: boolean, userId: string) => {
-    try {
-      if (isJoined) {
-        await leaveEvent(eventId, userId);
-      } else {
-        await joinEvent(eventId, userId);
-      }
-      setEvents((prevEvents) =>
-        prevEvents.map((event) =>
-          event._id === eventId
-            ? {
-                ...event,
-                participants: isJoined
-                  ? event.participants.filter((p) => p._id !== userId)
-                  : [...event.participants, { _id: userId }],
-              }
-            : event
-        )
-      );
-    } catch (error) {
-      console.error("❌ Error updating event participation:", error);
-    }
+    setDirection("left");
+    setIndex((prev) => (prev - 3 + events.length) % events.length);
   };
 
   if (loading) return <p>Loading events...</p>;
   if (error) return <p className="text-red-500">{error}</p>;
-
   if (events.length === 0) return <p className="text-center">No events found.</p>;
 
-  // מציג רק שלושה אירועים בכל פעם
   const visibleEvents = [
     events[index % events.length],
     events[(index + 1) % events.length],
@@ -101,25 +78,30 @@ const HomePage: React.FC = () => {
   return (
     <div className="container">
       <h1 className="text-2xl font-bold text-center mb-6">All Events</h1>
-      <div className="carousel-container">
-        <button onClick={prevSlide} className="nav-button left-nav">⬅️</button>
-        <button onClick={nextSlide} className="nav-button right-nav">➡️</button>
+      <div className="carousel-container relative flex items-center justify-center overflow-hidden w-full">
+        <button onClick={prevSlide} className="nav-button left-nav absolute left-0 z-10">⬅️</button>
+        <button onClick={nextSlide} className="nav-button right-nav absolute right-0 z-10">➡️</button>
 
-        <div className="event-cards-container">
+        <div className="event-cards-container w-full flex justify-center overflow-hidden">
           <motion.div
-            key={index} // גורם לרינדור מחדש במקום אנימציה שגויה
-            className="event-cards flex"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.3 }}
+            key={index}
+            className="event-cards flex gap-4"
+            initial={{ x: direction === "right" ? 100 : -100, opacity: 0.8 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: direction === "right" ? -100 : 100, opacity: 0.8 }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
           >
             {visibleEvents.map((event) => (
-              <div key={event._id} className="event-card">
-                <h3 className="event-title">{event.title}</h3>
+              <motion.div
+                key={event._id}
+                className="event-card w-1/3 bg-white shadow-md p-4 rounded-lg"
+                whileHover={{ scale: 1.05 }}
+              >
+                <h3 className="event-title font-bold">{event.title}</h3>
                 <p className="event-description">{event.description}</p>
                 <p className="event-info"><strong>Date:</strong> {new Date(event.date).toLocaleDateString()}</p>
                 <p className="event-info"><strong>Location:</strong> {event.location}</p>
-              </div>
+              </motion.div>
             ))}
           </motion.div>
         </div>
