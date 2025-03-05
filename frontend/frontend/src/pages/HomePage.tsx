@@ -21,8 +21,6 @@ const HomePage: React.FC = () => {
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState<"left" | "right">("right");
 
-// Retrieve user ID from JWT before fetching events
-
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (token) {
@@ -37,13 +35,12 @@ const HomePage: React.FC = () => {
     }
   }, []);
 
-  // Fetch events only after userId is set
   useEffect(() => {
-    if (userId === null) return; // Don't fetch if userId is not set
+    if (userId === null) return;
 
     const fetchEvents = async () => {
       try {
-        console.log("📡 Fetching events directly from backend...");
+        console.log("📡 Fetching events...");
         const response = await axios.get("/events");
         console.log("✅ Events fetched:", response.data);
         setEvents(response.data);
@@ -60,12 +57,12 @@ const HomePage: React.FC = () => {
 
   const nextSlide = () => {
     setDirection("right");
-    setIndex((prev) => (prev + 1) % events.length);
+    setIndex((prev) => (prev + 3) % events.length);
   };
 
   const prevSlide = () => {
     setDirection("left");
-    setIndex((prev) => (prev - 1 + events.length) % events.length);
+    setIndex((prev) => (prev - 3 + events.length) % events.length);
   };
 
   const handleJoinLeave = async (
@@ -101,7 +98,6 @@ const HomePage: React.FC = () => {
 
   if (loading) return <p>Loading events...</p>;
   if (error) return <p className="text-red-500">{error}</p>;
-
   if (events.length === 0)
     return <p className="text-center">No events found.</p>;
 
@@ -117,13 +113,13 @@ const HomePage: React.FC = () => {
       <div className="carousel-container relative flex items-center justify-center overflow-hidden w-full">
         <button
           onClick={prevSlide}
-          className="nav-button left-nav absolute left-0 z-10 p-2 bg-blue-500 text-white rounded-md"
+          className="nav-button left-nav absolute left-0 z-10"
         >
           ⬅️
         </button>
         <button
           onClick={nextSlide}
-          className="nav-button right-nav absolute right-0 z-10 p-2 bg-blue-500 text-white rounded-md"
+          className="nav-button right-nav absolute right-0 z-10"
         >
           ➡️
         </button>
@@ -137,94 +133,44 @@ const HomePage: React.FC = () => {
             exit={{ x: direction === "right" ? -100 : 100, opacity: 0.8 }}
             transition={{ duration: 0.5, ease: "easeInOut" }}
           >
-            {visibleEvents.map((event) => {
-              const isParticipant = event.participants
-                .map((p) => p._id)
-                .includes(userId || "");
-
-              return (
-                <motion.div
-                  key={event._id}
-                  className="event-card w-1/3 bg-white shadow-md p-4 rounded-lg"
-                  whileHover={{ scale: 1.05 }}
-                >
-                  
-                  <h3 className="event-title font-bold">{event.title}</h3>
-                  <p className="event-description">{event.description}</p>
-                  <p className="event-info">
-                    <strong>Date:</strong>{" "}
-                    {new Date(event.date).toLocaleDateString()}
-                  </p>
-                  <p className="event-info">
-                    <strong>Location:</strong> {event.location}
-                  </p>
-
-                  {userId && (
-                    <div className="mt-4">
-                      <button
-                        onClick={() =>
-                          handleJoinLeave(event._id, isParticipant, userId)
-                        }
-                        className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
-                      >
-                        {isParticipant ? "Leave Event" : "Join Event"}
-                      </button>
-                    </div>
-                  )}
-                </motion.div>
-              );
-            })}
+            {visibleEvents.map((event) => (
+              <motion.div
+                key={event._id}
+                className="event-card w-1/3 bg-white shadow-md p-4 rounded-lg"
+                whileHover={{ scale: 1.05 }}
+              >
+                <h3 className="event-title font-bold">{event.title}</h3>
+                <p className="event-description">{event.description}</p>
+                <p className="event-info">
+                  <strong>Date:</strong>{" "}
+                  {new Date(event.date).toLocaleDateString()}
+                </p>
+                <p className="event-info">
+                  <strong>Location:</strong> {event.location}
+                </p>
+                {userId && (
+                  <div className="mt-4">
+                    <button
+                      onClick={() =>
+                        handleJoinLeave(
+                          event._id,
+                          event.participants.map((p) => p._id).includes(userId),
+                          userId
+                        )
+                      }
+                      className="join-leave-btn w-full p-2 rounded-md"
+                    >
+                      {event.participants.map((p) => p._id).includes(userId)
+                        ? "Leave Event"
+                        : "Join Event"}
+                    </button>
+                  </div>
+                )}
+              </motion.div>
+            ))}
           </motion.div>
         </div>
       </div>
-
-  return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold text-center mb-6">
-        All Events (Direct Fetch - No Proxy)
-      </h1>
-      {events.length === 0 ? (
-        <p className="text-center">No events found.</p>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {events.map((event) => (
-            <div
-              key={event._id}
-              className="bg-white p-6 border rounded-lg shadow-md hover:shadow-xl transition-all transform hover:scale-105"
-            >
-              <h3 className="text-xl font-semibold text-center mb-3">
-                {event.title}
-              </h3>
-              <p className="text-gray-600 mb-4">{event.description}</p>
-              <p className="text-sm">
-                <strong>Date:</strong>{" "}
-                {new Date(event.date).toLocaleDateString()}
-              </p>
-              <p className="text-sm">
-                <strong>Location:</strong> {event.location}
-              </p>
-              {userId && (
-                <div className="mt-4">
-                  <button
-                    onClick={() =>
-                      handleJoinLeave(
-                        event._id,
-                        event.participants.map((p) => p._id).includes(userId),
-                        userId
-                      )
-                    }
-                    className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
-                  >
-                    {event.participants.map((p) => p._id).includes(userId)
-                      ? "Leave Event"
-                      : "Join Event"}
-                  </button>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 };
