@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
 import { getEventsCreatedByUser, deleteEvent } from '../services/eventService';
 import { getCurrentUser } from '../services/userService';
+import { motion } from 'framer-motion';
 
 const MyCreatedEvents = () => {
     const [events, setEvents] = useState<any[]>([]);
     const [userId, setUserId] = useState<string>('');
+    const [index, setIndex] = useState(0);
+    const [direction, setDirection] = useState<"left" | "right">("right");
 
     useEffect(() => {
         const loadEvents = async () => {
@@ -25,21 +28,76 @@ const MyCreatedEvents = () => {
         }
     };
 
+    const nextSlide = () => {
+        setDirection("right");
+        setIndex((prev) => (prev + 3) % events.length);
+    };
+
+    const prevSlide = () => {
+        setDirection("left");
+        setIndex((prev) => (prev - 3 + events.length) % events.length);
+    };
+
+    if (events.length === 0)
+        return <p>No events found.</p>;
+
+    const visibleEvents = [
+        events[index % events.length],
+        events[(index + 1) % events.length],
+        events[(index + 2) % events.length],
+    ];
+
     return (
         <div>
-            <h2>Events You Created</h2>
-            {events.length === 0 ? (
-                <p>No events found.</p>
-            ) : (
-                <ul>
-                    {events.map(event => (
-                        <li key={event._id}>
-                            {event.title} - {new Date(event.date).toLocaleDateString()}
-                            <button onClick={() => handleDelete(event._id)}>🗑️ Delete</button>
-                        </li>
-                    ))}
-                </ul>
-            )}
+            <div className="carousel-container relative flex items-center justify-center overflow-hidden w-full">
+                <button
+                    onClick={prevSlide}
+                    className="nav-button left-nav absolute left-0 z-10"
+                >
+                    ⬅️
+                </button>
+                <button
+                    onClick={nextSlide}
+                    className="nav-button right-nav absolute right-0 z-10"
+                >
+                    ➡️
+                </button>
+
+                <div className="event-cards-container w-full flex justify-center overflow-hidden">
+                    <motion.div
+                        key={index}
+                        className="event-cards flex gap-4"
+                        initial={{ x: direction === "right" ? 100 : -100, opacity: 0.8 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        exit={{ x: direction === "right" ? -100 : 100, opacity: 0.8 }}
+                        transition={{ duration: 0.5, ease: "easeInOut" }}
+                    >
+                        {visibleEvents.map((event) => (
+                            <motion.div
+                                key={event._id}
+                                className="event-card w-1/3 bg-white shadow-md p-4 rounded-lg"
+                                whileHover={{ scale: 1.05 }}
+                            >
+                                <h3 className="event-title font-bold">{event.title}</h3>
+                                <p className="event-description">{event.description}</p>
+                                <p className="event-info">
+                                    <strong>Date:</strong>{" "}
+                                    {new Date(event.date).toLocaleDateString()}
+                                </p>
+                                <p className="event-info">
+                                    <strong>Location:</strong> {event.location}
+                                </p>
+                                <button
+                                    onClick={() => handleDelete(event._id)}
+                                    className="bg-red-500 text-white px-4 py-2 rounded mt-4"
+                                >
+                                    🗑️ Delete
+                                </button>
+                            </motion.div>
+                        ))}
+                    </motion.div>
+                </div>
+            </div>
         </div>
     );
 };

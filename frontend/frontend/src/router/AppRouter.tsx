@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import HomePage from '../pages/HomePage';
 import LoginPage from '../pages/LoginPage';
+import EventSearchPage from '../pages/EventSearchPage';
 
 
 // import RegisterPage from '../pages/RegisterPage';
@@ -16,7 +17,7 @@ function AppRouter() {
             {/* <Route path="/register" element={<RegisterPage />} /> */}
             <Route path="/profile" element={<UserProfile />} />
             {/* <Route path="/events/:eventId" element={<EventDetails />} />  */}
-           
+            <Route path="/events" element={<EventSearchPage/>} />           
         </Routes>
     );
 }
