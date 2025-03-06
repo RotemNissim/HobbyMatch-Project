@@ -65,16 +65,13 @@ const HomePage: React.FC = () => {
     setIndex((prev) => (prev - 3 + events.length) % events.length);
   };
 
-  const handleJoinLeave = async (
-    eventId: string,
-    isParticipant: boolean,
-    userId: string
-  ) => {
+  const handleJoinLeave = async (eventId: string, isParticipant: boolean) => {
+    if (!userId) return;
     try {
       if (isParticipant) {
-        await leaveEvent(eventId);
+        await leaveEvent(eventId, userId);
       } else {
-        await joinEvent(eventId);
+        await joinEvent(eventId, userId);
       }
       setEvents((prevEvents) =>
         prevEvents.map((event) =>
@@ -83,10 +80,7 @@ const HomePage: React.FC = () => {
                 ...event,
                 participants: isParticipant
                   ? event.participants.filter((p) => p._id !== userId)
-                  : [
-                      ...event.participants.map((p) => ({ _id: p._id })),
-                      { _id: userId },
-                    ],
+                  : [...event.participants, { _id: userId }],
               }
             : event
         )
@@ -98,8 +92,7 @@ const HomePage: React.FC = () => {
 
   if (loading) return <p>Loading events...</p>;
   if (error) return <p className="text-red-500">{error}</p>;
-  if (events.length === 0)
-    return <p className="text-center">No events found.</p>;
+  if (events.length === 0) return <p className="text-center">No events found.</p>;
 
   const visibleEvents = [
     events[index % events.length],
@@ -142,8 +135,7 @@ const HomePage: React.FC = () => {
                 <h3 className="event-title font-bold">{event.title}</h3>
                 <p className="event-description">{event.description}</p>
                 <p className="event-info">
-                  <strong>Date:</strong>{" "}
-                  {new Date(event.date).toLocaleDateString()}
+                  <strong>Date:</strong> {new Date(event.date).toLocaleDateString()}
                 </p>
                 <p className="event-info">
                   <strong>Location:</strong> {event.location}
@@ -154,13 +146,12 @@ const HomePage: React.FC = () => {
                       onClick={() =>
                         handleJoinLeave(
                           event._id,
-                          event.participants.map((p) => p._id).includes(userId),
-                          userId
+                          event.participants.some((p) => p._id === userId)
                         )
                       }
                       className="join-leave-btn w-full p-2 rounded-md"
                     >
-                      {event.participants.map((p) => p._id).includes(userId)
+                      {event.participants.some((p) => p._id === userId)
                         ? "Leave Event"
                         : "Join Event"}
                     </button>
