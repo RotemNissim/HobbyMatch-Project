@@ -57,7 +57,13 @@ class UserController {
 
         return res.status(201).send(newEvent);
     };
+    deleteUserEvent = async (req: AuthRequest, res: Response): Promise<Response> => {
+        const user = req.user;
+        const eventId = req.params.id;
+        const deletedEvent = await eventService.deleteEvent(eventId);
 
+        return res.status(200).send(deletedEvent);
+    }
     updateEvent = async (req: AuthRequest, res: Response): Promise<Response> => {
         const user = req.user;
         const eventId = req.params.id;
