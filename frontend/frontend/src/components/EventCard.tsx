@@ -6,30 +6,84 @@ interface Event {
   description: string;
   date: string;
   location: string;
-  participants: string[];
-  createdBy: string;
-  hobby: string[];
+  participants: { _id: string }[];
+  createdBy?: string;
+  hobby?: string[];
   image?: string;
-  likes: string[];
+  likes?: string[];
   comments?: string[];
 }
 
 interface EventCardProps {
   event: Event;
+  userId?: string | null;
+  onJoinLeave?: (eventId: string, isParticipant: boolean, userId: string) => void;
+  onDelete?: (eventId: string) => void;
+  isCreatedByUser?: boolean;
 }
 
-const EventCard: React.FC<EventCardProps> = ({ event }) => {
+const EventCard: React.FC<EventCardProps> = ({ 
+  event, 
+  userId, 
+  onJoinLeave, 
+  onDelete,
+  isCreatedByUser = false
+}) => {
+  // פונקציה עזר להצגת תאריך בפורמט קריא
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('he-IL', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  };
+
+  // בדוק אם המשתמש משתתף באירוע
+  const isParticipant = userId ? event.participants.some(p => p._id === userId) : false;
+
   return (
-    <div className="border rounded-lg shadow-lg p-4">
-      {event.image && (
-        <img src={event.image} alt={event.title} className="w-full h-40 object-cover rounded-md" />
+    <div className="event-card">
+      {/* כותרת האירוע */}
+      <h3 className="event-title">{event.title}</h3>
+      
+      {/* תיאור האירוע */}
+      <p className="event-description">{event.description}</p>
+      
+      {/* מידע על האירוע */}
+      <div className="mt-auto">
+        <p className="event-info">
+          <strong>📅 תאריך:</strong> {formatDate(event.date)}
+        </p>
+        <p className="event-info">
+          <strong>📍 מיקום:</strong> {event.location}
+        </p>
+        
+        {/* מספר משתתפים */}
+        <p className="event-info">
+          <strong>👥 משתתפים:</strong> {event.participants.length}
+        </p>
+      </div>
+      
+      {/* כפתור הצטרפות/עזיבה (במסך הבית) */}
+      {userId && onJoinLeave && (
+        <button
+          onClick={() => onJoinLeave(event._id, isParticipant, userId)}
+          className={`join-leave-btn ${isParticipant ? 'bg-red-500 hover:bg-red-600' : ''}`}
+        >
+          {isParticipant ? "❌ עזוב אירוע" : "✅ הצטרף לאירוע"}
+        </button>
       )}
-      <h2 className="text-lg font-bold mt-2">{event.title}</h2>
-      <p className="text-gray-600">📅 {new Date(event.date).toLocaleDateString()}</p>
-      <p className="text-gray-600">📍 {event.location}</p>
-      <button className="bg-blue-500 text-white px-4 py-2 mt-4 rounded hover:bg-blue-600 w-full">
-        View Details
-      </button>
+
+      {/* כפתור מחיקה (באירועים שנוצרו ע"י המשתמש) */}
+      {isCreatedByUser && onDelete && (
+        <button
+          onClick={() => onDelete(event._id)}
+          className="delete-btn"
+        >
+          🗑️ מחק אירוע
+        </button>
+      )}
     </div>
   );
 };
