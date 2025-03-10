@@ -1,5 +1,8 @@
 import { Request, Response } from 'express';
 import eventService from '../services/event.service';
+import { AuthUser, AuthRequest }  from '../middleware/AuthRequest';
+import mongoose from 'mongoose';
+import Event from '../models/Event.models';
 
 class EventController {
 
@@ -105,7 +108,69 @@ class EventController {
     }
 }
 
+getEvent = async (req: Request, res: Response): Promise<Response> => {
+  try {
+      const eventId = req.params.id;
+      const event = await Event.findById(eventId).populate('createdBy', ' _id firstName lastName email').populate({
+        path: "comments",
+        populate: {
+            path: "sender", // If you want the comment's author's details
+            select: "email" // Adjust fields as needed
+        },
+    })
+    .exec();
 
+      if (!event) {
+          return res.status(404).json({ message: "Event not found" });
+      }
+
+      return res.json({
+          _id: event._id,
+          title: event.title,
+          description: event.description,
+          date: event.date,
+          location: event.location,
+          participants: event.participants.map(p => p._id.toString()),
+          createdBy: event.createdBy.toString(),
+          hobby: event.hobby.map(h => h._id.toString()),
+          image: event.image,
+          likes: event.likes.map(l => l._id.toString()),
+          comments: event.comments?.map(comment=> ({
+            _id: comment._id,
+            content: (comment as any).content,
+            sender: {
+              _id: (comment as any).sender._id,
+              username: (comment as any).sender.username,
+              email: (comment as any).sender.email,
+            },
+          })) || [],
+      });
+  } catch (error) {
+      console.error("❌ Error fetching event:", error);
+      return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+getCommentsToEvent = async (req:Request, res:Response):Promise<Response> => {
+  try {
+      const eventId = req.params.id;
+      const comments = await Event.findById(eventId).populate({
+        path: "comments",
+        populate: {
+            path: "sender", // If you want the comment's author's details
+            select: "email" // Adjust fields as needed
+        },
+    })
+    .exec();
+      if (!comments) {
+          return res.status(404).json({ message: "Event not found" });
+      }
+      return res.json(comments.comments);
+  } catch (error) {
+      console.error("Error fetching comments to event:", error);
+      return res.status(500).json({ message: "Internal Server Error" });
+  }
+}
 
 }
 

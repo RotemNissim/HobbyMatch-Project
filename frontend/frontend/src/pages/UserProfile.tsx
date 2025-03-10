@@ -6,6 +6,12 @@ import CreateEventForm from '../components/CreateEventForm';
 import MyCreatedEvents from '../components/MyCreatedEvents';
 import '../styles/profile.css';
 
+interface Event {
+  _id: string;
+  title: string;
+  description: string;
+}
+
 const UserProfile = () => {
     const [user, setUser] = useState<any>(null);
     const [isEditingProfile, setIsEditingProfile] = useState(false);
@@ -54,6 +60,7 @@ const UserProfile = () => {
                             ➕ Create Event
                         </button>
                     </div>
+                    </div>
                 </div>
             )}
 
@@ -67,7 +74,9 @@ const UserProfile = () => {
 
             <div className="mt-8">
                 <h2 className="text-xl font-semibold">Events You Created</h2>
-                <MyCreatedEvents />
+                <div className="carousel">
+                    <MyCreatedEvents />
+                </div>
             </div>
         </div>
     );

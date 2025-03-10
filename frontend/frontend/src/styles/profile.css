@@ -1,3 +1,12 @@
+
+
+/* Profile Page Styles */
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
 /* מיכל פרופיל */
 .profile-container {
   max-width: 1200px;
@@ -94,5 +103,47 @@
 @media (max-width: 768px) {
   .profile-buttons {
     flex-direction: column;
-  }
+    align-items: center;
+}
+
+.event-cards-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    overflow: hidden;
+}
+
+.event-cards {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: nowrap;
+}
+
+.event-card {
+    flex: 0 0 calc(33.33% - 20px);
+    max-width: calc(33.33% - 20px);
+}
+
+.nav-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.left-nav {
+    left: 10px;
+}
+
+.right-nav {
+    right: 10px;
+}
+
 }
