@@ -111,11 +111,11 @@ class EventController {
 getEvent = async (req: Request, res: Response): Promise<Response> => {
   try {
       const eventId = req.params.id;
-      const event = await Event.findById(eventId).populate({
+      const event = await Event.findById(eventId).populate('createdBy', ' _id firstName lastName email').populate({
         path: "comments",
         populate: {
             path: "sender", // If you want the comment's author's details
-            select: "username email" // Adjust fields as needed
+            select: "email" // Adjust fields as needed
         },
     })
     .exec();
@@ -154,7 +154,14 @@ getEvent = async (req: Request, res: Response): Promise<Response> => {
 getCommentsToEvent = async (req:Request, res:Response):Promise<Response> => {
   try {
       const eventId = req.params.id;
-      const comments = await Event.findById(eventId).populate("comments").exec();
+      const comments = await Event.findById(eventId).populate({
+        path: "comments",
+        populate: {
+            path: "sender", // If you want the comment's author's details
+            select: "email" // Adjust fields as needed
+        },
+    })
+    .exec();
       if (!comments) {
           return res.status(404).json({ message: "Event not found" });
       }

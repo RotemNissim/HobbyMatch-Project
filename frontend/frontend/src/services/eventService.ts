@@ -54,3 +54,8 @@ export const getCommentsToEvent = async (eventId:string) => {
     const { data } = await apiClient.get(`/events/${eventId}/comments`);
     return data;
 }
+
+export const addCommentToEvent = async (eventId:string, comment: {content:string}) => {
+    const { data } = await apiClient.post(`/events/${eventId}/comments`, comment);
+    return data;
+}

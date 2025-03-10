@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getEventsCreatedByUser, deleteEvent } from '../services/eventService';
+import { getEventsCreatedByUser, deleteEvent, updateEvent } from '../services/eventService';
 import { getCurrentUser } from '../services/userService';
 import { motion } from 'framer-motion';
 
@@ -27,6 +27,11 @@ const MyCreatedEvents = () => {
             setEvents(events.filter(e => e._id !== eventId));
         }
     };
+
+    const handleUpdate = async (eventId: string, updates: Partial<{ title: string; description: string; date: Date; location: string; hobbies: string[] }>) => {
+        await updateEvent(eventId, updates);
+        setEvents(prevEvents => prevEvents.map(e => e._id === eventId? {...e,...updates} : e));
+    }
 
     const nextSlide = () => {
         setDirection("right");
