@@ -2,9 +2,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getCurrentUser } from '../services/userService';
 import EditProfile from '../components/EditProfile';
-import CreateEventForm from '../components/CreateEventForm';
 import MyCreatedEvents from '../components/MyCreatedEvents';
-import '../styles/profile.css';
+import CreateEventForm from '../components/CreateEventForm';
 
 interface Event {
   _id: string;
@@ -43,7 +42,7 @@ const UserProfile = () => {
                 setUser(currentUser);
             } catch (error) {
                 console.error("User not authenticated, redirecting...");
-                navigate('/login');
+                navigate('/login'); // מפנה ללוגין אם אין משתמש מחובר
             }
         };
         fetchUser();
@@ -94,7 +93,10 @@ const UserProfile = () => {
             )}
 
             {isCreatingEvent && (
-                <CreateEventForm onEventCreated={handleEventCreated} onCancel={() => setIsCreatingEvent(false)} />
+                <CreateEventForm
+                    onEventCreated={handleEventCreated}
+                    onCancel={() => setIsCreatingEvent(false)}
+                />
             )}
 
             <div className="mt-8">
