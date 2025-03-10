@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { getCurrentUser } from '../services/userService';
 import EditProfile from '../components/EditProfile';
 import MyCreatedEvents from '../components/MyCreatedEvents';
@@ -33,20 +32,14 @@ const UserProfile = () => {
     const [user, setUser] = useState<any>(null);
     const [isEditingProfile, setIsEditingProfile] = useState(false);
     const [isCreatingEvent, setIsCreatingEvent] = useState(false);
-    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchUser = async () => {
-            try {
-                const currentUser = await getCurrentUser();
-                setUser(currentUser);
-            } catch (error) {
-                console.error("User not authenticated, redirecting...");
-                navigate('/login'); // מפנה ללוגין אם אין משתמש מחובר
-            }
+            const currentUser = await getCurrentUser();
+            setUser(currentUser);
         };
         fetchUser();
-    }, [navigate]);
+    }, []);
 
     const handleProfileUpdated = async () => {
         const updatedUser = await getCurrentUser();
