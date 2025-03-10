@@ -23,9 +23,12 @@ router.post('/:id/leave', authMiddleware, async (req, res) => await EventControl
 
 router.get('/:id', authMiddleware ,asyncHandler(EventController.getEvent));
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
 router.get('/:id/comments', authMiddleware, asyncHandler(EventController.getCommentsToEvent));
 
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 export default router;

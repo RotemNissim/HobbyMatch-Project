@@ -38,6 +38,7 @@ export const getEventsUserIsAttending = async (userId: string) => {
 };
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 export const getCurrentEvent = async (eventId: string) => {
     console.log(`📡 API Request: GET /events/${eventId}`);
     try {
@@ -55,6 +56,12 @@ export const getCommentsToEvent = async (eventId:string) => {
     const { data } = await apiClient.get(`/events/${eventId}/comments`);
     return data;
 }
+=======
+export const getCurrentEvent = async () => {
+    const { data } = await apiClient.get('/events/:id');
+    return data;
+};
+>>>>>>> Stashed changes
 =======
 export const getCurrentEvent = async () => {
     const { data } = await apiClient.get('/events/:id');

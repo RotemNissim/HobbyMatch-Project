@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 import { useParams } from 'react-router-dom';
 import { getCurrentEvent } from '../services/eventService';
 import Comments from '../components/Comments';
+=======
+import { useParams } from 'react-router-dom'; // הוספנו את useParams
+import { getCurrentEvent} from '../services/eventService';
+>>>>>>> Stashed changes
 =======
 import { useParams } from 'react-router-dom'; // הוספנו את useParams
 import { getCurrentEvent} from '../services/eventService';
@@ -18,6 +23,7 @@ interface Event {
     image?: string;
     createdBy: string;
     participants: { _id: string }[];
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
     hobby: { _id: string }[];
     likes: { _id: string }[];
@@ -48,6 +54,8 @@ const EventPage: React.FC = () => {
                 console.log("✅ Event Data Received:", eventData);
                 setEvent(eventData); // ✅ Correctly set event state
 =======
+=======
+>>>>>>> Stashed changes
     comments: { _id: string }[];
     hobby: { _id: string }[];
     likes:  { _id: string }[];
@@ -71,6 +79,9 @@ const EventPage: React.FC = () => {
                 setEvent(currentEvent);
                 console.log("✅ Event fetched:", currentEvent.data);
                 setEvent(currentEvent.data);
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
             } catch (err) {
                 console.error("❌ Error fetching event:", err);
@@ -79,6 +90,7 @@ const EventPage: React.FC = () => {
                 setLoading(false);
             }
         };
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
     
         fetchEvent();
@@ -92,6 +104,8 @@ const EventPage: React.FC = () => {
         const action = isParticipant ? 'leave' : 'join';
 
 =======
+=======
+>>>>>>> Stashed changes
 
         fetchEvent();
     }, [eventId]); // ה-ID משתנה, אז נעשה fetch מחדש כאשר הוא משתנה
@@ -102,6 +116,9 @@ const EventPage: React.FC = () => {
         const isParticipant = event.participants.some(p => p._id === userId);
         const action = isParticipant ? 'leave' : 'join';
     
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
         try {
             const response = await axios.post(`/events/${event._id}/${action}`);
@@ -117,7 +134,10 @@ const EventPage: React.FC = () => {
         }
     };
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
     
 
     const handleAddComment = async () => {
@@ -134,6 +154,9 @@ const EventPage: React.FC = () => {
             console.error("❌ Error adding comment:", err);
         }
     };
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
     if (loading) return <p>Loading event...</p>;
@@ -141,6 +164,7 @@ const EventPage: React.FC = () => {
 
     return (
         <div style={{ padding: '20px' }}>
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
             {event ? (
                 <>
@@ -172,6 +196,8 @@ const EventPage: React.FC = () => {
                 <p style={{ color: 'red' }}>Event not found.</p>
             )}
 =======
+=======
+>>>>>>> Stashed changes
             <h1>{event?.title}</h1>
             <img src={event?.image} alt="Event" style={{ maxWidth: '100%', marginBottom: '10px' }} />
             <p>{event?.description}</p>
@@ -208,6 +234,9 @@ const EventPage: React.FC = () => {
                 />
                 <button onClick={handleAddComment}>Post Comment</button>
             </div>
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
         </div>
     );
