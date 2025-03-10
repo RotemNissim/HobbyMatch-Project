@@ -36,3 +36,8 @@ export const getEventsUserIsAttending = async (userId: string) => {
     const { data } = await apiClient.get(`/events?participants=${userId}`);
     return data;
 };
+
+export const getCurrentEvent = async () => {
+    const { data } = await apiClient.get('/events/:id');
+    return data;
+};

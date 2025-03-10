@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useParams } from 'react-router-dom'; // הוספנו את useParams
+import { getCurrentEvent} from '../services/eventService';
 
 interface Event {
     _id: string;
@@ -9,24 +11,30 @@ interface Event {
     location: string;
     image?: string;
     createdBy: string;
-    participants: string[];
-    comments: string[];
+    participants: { _id: string }[];
+    comments: { _id: string }[];
+    hobby: { _id: string }[];
+    likes:  { _id: string }[];
 }
 
-const EventPage: React.FC<{ eventId: string }> = ({ eventId }) => {
+const EventPage: React.FC = () => {
+    const { eventId } = useParams(); // מקבלים את ה-ID מה-URL
     const [event, setEvent] = useState<Event | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const [userId, setUserId] = useState<string>(''); // אתה יכול לשים כאן את ה־userId מה־JWT
+    const [userId, setUserId] = useState<string | null>(null); // אתה יכול לשים כאן את ה־userId מה־JWT
     const [newComment, setNewComment] = useState<string>('');
 
     useEffect(() => {
+        if (!eventId) return;
+
         const fetchEvent = async () => {
             try {
                 console.log("📡 Fetching event from backend...");
-                const response = await axios.get(`/events/${eventId}`);
-                console.log("✅ Event fetched:", response.data);
-                setEvent(response.data);
+                const currentEvent = await getCurrentEvent();
+                setEvent(currentEvent);
+                console.log("✅ Event fetched:", currentEvent.data);
+                setEvent(currentEvent.data);
             } catch (err) {
                 console.error("❌ Error fetching event:", err);
                 setError('Failed to fetch event');
@@ -36,23 +44,28 @@ const EventPage: React.FC<{ eventId: string }> = ({ eventId }) => {
         };
 
         fetchEvent();
-    }, [eventId]);
+    }, [eventId]); // ה-ID משתנה, אז נעשה fetch מחדש כאשר הוא משתנה
 
     const handleJoinLeave = async () => {
-        if (!event) return;
-
-        const action = event.participants.includes(userId) ? 'leave' : 'join';
+        if (!event || !userId) return;
+    
+        const isParticipant = event.participants.some(p => p._id === userId);
+        const action = isParticipant ? 'leave' : 'join';
+    
         try {
             const response = await axios.post(`/events/${event._id}/${action}`);
             console.log(response.data);
             setEvent(prevEvent => ({
                 ...prevEvent!,
-                participants: action === 'join' ? [...prevEvent!.participants, userId] : prevEvent!.participants.filter(id => id !== userId),
+                participants: isParticipant
+                    ? prevEvent!.participants.filter(p => p._id !== userId)
+                    : [...prevEvent!.participants, { _id: userId }],
             }));
         } catch (err) {
             console.error("❌ Error updating participation:", err);
         }
     };
+    
 
     const handleAddComment = async () => {
         if (!newComment || !event) return;
@@ -82,7 +95,8 @@ const EventPage: React.FC<{ eventId: string }> = ({ eventId }) => {
 
             {/* Join/Leave button */}
             <button onClick={handleJoinLeave}>
-                {event?.participants.includes(userId) ? 'Leave Event' : 'Join Event'}
+                
+                {event?.participants.some(p => p._id === userId) ? 'Leave Event' : 'Join Event'}
             </button>
 
             {/* Edit and Delete buttons */}
@@ -96,10 +110,11 @@ const EventPage: React.FC<{ eventId: string }> = ({ eventId }) => {
             <div>
                 <h3>Comments</h3>
                 <ul>
-                    {event?.comments.map((comment, index) => (
-                        <li key={index}>{comment}</li>
-                    ))}
+                     {event?.comments.map((commentId, index) => (
+                <li key={index}>{event?.comments.some(p => p._id === commentId)}</li> // Placeholder until comments are populated
+                  ))}
                 </ul>
+
 
                 <textarea
                     value={newComment}

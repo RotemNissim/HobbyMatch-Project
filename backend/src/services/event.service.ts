@@ -52,10 +52,22 @@ class EventService {
     }
     return event;
   }
+  async getEvent(eventid: string) {
+    const event = await Event.findById(eventid).populate('participants', '_id')
+    .populate('createdBy', '_id')
+    .populate('hobby', '_id')
+    .populate('likes', '_id')
+    .populate('comments', '_id')
+    .lean();
+    if (!event) {
+      throw new Error('Event not found');
+    }
+    return event;
+  }
 
   /**
    * Delete an event
-   */
+  */
   async deleteEvent(eventId: string) {
     const event = await Event.findByIdAndDelete(eventId);
     if (!event) {
@@ -66,24 +78,24 @@ class EventService {
 
   /**
    * List events with optional filtering
-   */
-  async listEvents(filter: Partial<{
-    hobbies: string[];
-    location: string;
-    date: Date;
-    createdBy: string;
-    participants: string[];
-}>) {
+  */
+ async listEvents(filter: Partial<{
+   hobbies: string[];
+   location: string;
+   date: Date;
+   createdBy: string;
+   participants: string[];
+  }>) {
     const query: any = {};
-
+    
     if (filter.hobbies) {
-        query.hobby = { $in: filter.hobbies.map(id => new mongoose.Types.ObjectId(id)) };
+      query.hobby = { $in: filter.hobbies.map(id => new mongoose.Types.ObjectId(id)) };
     }
-
+    
     if (filter.location) {
-        query.location = filter.location;
+      query.location = filter.location;
     }
-
+    
     if (filter.date) {
         query.date = { $gte: filter.date };
     }
