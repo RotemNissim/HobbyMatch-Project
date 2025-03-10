@@ -116,9 +116,42 @@ getEvent = async (req: Request, res: Response): Promise<Response> => {
         populate: {
             path: "sender", // If you want the comment's author's details
             select: "username email" // Adjust fields as needed
+<<<<<<< Updated upstream
         },
     })
     .exec();
+=======
+        }
+    });
+
+      if (!event) {
+          return res.status(404).json({ message: "Event not found" });
+      }
+
+      return res.json({
+          _id: event._id,
+          title: event.title,
+          description: event.description,
+          date: event.date,
+          location: event.location,
+          participants: event.participants.map(p => p._id.toString()),
+          createdBy: event.createdBy.toString(),
+          hobby: event.hobby.map(h => h._id.toString()),
+          image: event.image,
+          likes: event.likes.map(l => l._id.toString()),
+          comments: event.comments!.map(comment => ({
+            _id: comment._id,
+            content: comment.content,
+            sender: comment.sender// Make sure the comment model includes `text`
+          })),
+      });
+  } catch (error) {
+      console.error("❌ Error fetching event:", error);
+      return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+>>>>>>> Stashed changes
 
       if (!event) {
           return res.status(404).json({ message: "Event not found" });

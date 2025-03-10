@@ -11,6 +11,12 @@ interface Event {
   description: string;
 }
 
+interface Event {
+  _id: string;
+  title: string;
+  description: string;
+}
+
 const UserProfile = () => {
     const [user, setUser] = useState<any>(null);
     const [isEditingProfile, setIsEditingProfile] = useState(false);
