@@ -18,20 +18,6 @@ class CommentService {
     await newComment.save();
     return newComment;
   }
-
-  /**
-   * Get all comments between two users
-   */
-  async getComments(userId1: string, userId2: string) {
-    const comments = await Comment.find({
-      $or: [
-        { sender: userId1, receiver: userId2 },
-        { sender: userId2, receiver: userId1 },
-      ],
-    }).sort({ timestamp: 1 });
-
-    return comments;
-  }
  async addCommentToEvent(userId:string, eventId: string, comment:string) {
   const event = await Event.findById(eventId);
   if (!event) {

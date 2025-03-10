@@ -89,7 +89,7 @@ const MyCreatedEvents = () => {
                                 </p>
                                 <button
                                     onClick={() => handleDelete(event._id)}
-                                    className="bg-red-500 text-white px-4 py-2 rounded mt-4"
+                                    className="delete-button"
                                 >
                                     🗑️ Delete
                                 </button>
