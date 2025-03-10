@@ -2,9 +2,14 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 import { useParams } from 'react-router-dom';
 import { getCurrentEvent } from '../services/eventService';
 import Comments from '../components/Comments';
+=======
+import { useParams } from 'react-router-dom'; // הוספנו את useParams
+import { getCurrentEvent} from '../services/eventService';
+>>>>>>> Stashed changes
 =======
 import { useParams } from 'react-router-dom'; // הוספנו את useParams
 import { getCurrentEvent} from '../services/eventService';
@@ -23,6 +28,7 @@ interface Event {
     image?: string;
     createdBy: string;
     participants: { _id: string }[];
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
     hobby: { _id: string }[];
@@ -56,6 +62,8 @@ const EventPage: React.FC = () => {
 =======
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
     comments: { _id: string }[];
     hobby: { _id: string }[];
     likes:  { _id: string }[];
@@ -80,6 +88,9 @@ const EventPage: React.FC = () => {
                 console.log("✅ Event fetched:", currentEvent.data);
                 setEvent(currentEvent.data);
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -90,6 +101,7 @@ const EventPage: React.FC = () => {
                 setLoading(false);
             }
         };
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
     
@@ -106,6 +118,8 @@ const EventPage: React.FC = () => {
 =======
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 
         fetchEvent();
     }, [eventId]); // ה-ID משתנה, אז נעשה fetch מחדש כאשר הוא משתנה
@@ -117,6 +131,9 @@ const EventPage: React.FC = () => {
         const action = isParticipant ? 'leave' : 'join';
     
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -135,7 +152,10 @@ const EventPage: React.FC = () => {
     };
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
     
@@ -155,6 +175,9 @@ const EventPage: React.FC = () => {
         }
     };
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -164,6 +187,7 @@ const EventPage: React.FC = () => {
 
     return (
         <div style={{ padding: '20px' }}>
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
             {event ? (
@@ -196,6 +220,8 @@ const EventPage: React.FC = () => {
                 <p style={{ color: 'red' }}>Event not found.</p>
             )}
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
             <h1>{event?.title}</h1>
@@ -235,6 +261,9 @@ const EventPage: React.FC = () => {
                 <button onClick={handleAddComment}>Post Comment</button>
             </div>
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
