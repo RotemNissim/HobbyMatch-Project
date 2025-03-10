@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { joinEvent, leaveEvent } from '../services/eventService';
 import { useParams } from 'react-router-dom';
 import { getCurrentEvent } from '../services/eventService';
 import Comments from '../components/Comments';
+import { jwtDecode } from 'jwt-decode';
+import handleDelete from '../components/MyCreatedEvents'
+import handleUpdate from '../components/MyCreatedEvents'
 
 interface Event {
     _id: string;
@@ -19,11 +22,27 @@ interface Event {
 
 const EventPage: React.FC = () => {
     const { eventId } = useParams();
-    console.log("🛠️ eventId from useParams:", eventId);
     const [event, setEvent] = useState<Event | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const [userId, setUserId] = useState<string | null>(null); // Get user ID from authentication
+    const [userId, setUserId] = useState<string | null>(null);
+    const [userRole, setUserRole] = useState<string | null>(null);
+
+    useEffect(() => {
+        const token = localStorage.getItem("accessToken");
+        if (token) {
+          try {
+            const decodedToken: any = jwtDecode(token);
+            setUserId(decodedToken._id);
+            setUserRole(decodedToken.role);
+          } catch (error) {
+            console.error("❌ Failed to decode token:", error);
+          }
+        } else {
+          setUserId(null);
+          setUserRole(null);
+        }
+      }, []);
 
     useEffect(() => {
         if (!eventId) return;
@@ -50,35 +69,39 @@ const EventPage: React.FC = () => {
         };
     
         fetchEvent();
-    }, [eventId]);
+    }, [eventId, userId]);
     
+    const isParticipant = event?.participants?.some(p => p._id === userId) || false;
 
-    const handleJoinLeave = async () => {
-        if (!event || !userId) return;
-
-        const isParticipant = event.participants.some(p => p._id === userId);
-        const action = isParticipant ? 'leave' : 'join';
-
+    const handleJoinLeave = async (
+        eventId: string,
+        isParticipant: boolean,
+        userId: string
+      ) => {
         try {
-            const response = await axios.post(`/events/${event._id}/${action}`);
-            console.log(response.data);
-            setEvent(prevEvent => ({
-                ...prevEvent!,
-                participants: isParticipant
-                    ? prevEvent!.participants.filter(p => p._id !== userId)
-                    : [...prevEvent!.participants, { _id: userId }],
-            }));
+          if (isParticipant) {
+            await leaveEvent(eventId);
+          } else {
+            await joinEvent(eventId);
+          }
+          setEvent(prevEvent => ({
+            ...prevEvent!,
+            participants: isParticipant
+                ? prevEvent!.participants.filter(p => p._id !== userId)
+                : [...prevEvent!.participants, { _id: userId }],
+        }));
         } catch (err) {
-            console.error("❌ Error updating participation:", err);
+        console.error("❌ Error updating participation:", err);
         }
-    };
+    
+      };
 
     if (loading) return <p>Loading event...</p>;
     if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
     return (
         <div style={{ padding: '20px' }}>
-            {event ? (
+            {userId && event ?  (
                 <>
                     <h1>{event.title}</h1>
                     {event.image && (
@@ -89,20 +112,28 @@ const EventPage: React.FC = () => {
                     <p><strong>Location:</strong> {event.location}</p>
 
                     {/* Join/Leave button */}
-                    <button onClick={handleJoinLeave}>
-                        {event.participants.some(p => p._id === userId) ? 'Leave Event' : 'Join Event'}
+                    <button  onClick={() =>
+                    handleJoinLeave(
+                      event._id,
+                      event.participants.some((p) => p._id === userId),
+                      userId
+                    )
+                  }>
+                         {isParticipant
+                    ? "Leave Event"
+                    : "Join Event"}
                     </button>
 
                     {/* Edit and Delete buttons */}
-                    {(event.createdBy === userId || /* Check if user is admin */ true) && (
+                    {event && (event.createdBy === userId ||userRole === "admin") && (
                         <div>
-                            <button>Edit</button>
-                            <button>Delete</button>
+                            <button onClick={handleUpdate}>Edit</button>
+                            <button onClick={handleDelete}>Delete</button>
                         </div>
                     )}
 
                     {/* Comments Component (Only Renders if Event Exists) */}
-                    <Comments eventId={event._id} />
+                 {event && <Comments eventId={event._id} />}
                 </>
             ) : (
                 <p style={{ color: 'red' }}>Event not found.</p>

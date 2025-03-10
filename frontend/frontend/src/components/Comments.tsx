@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { getCommentsToEvent } from '../services/eventService'; // ✅ Import the function
+import { getCommentsToEvent, addCommentToEvent } from '../services/eventService'; // ✅ Import the function
 
 interface Comment {
     _id: string;
     content: string;
     sender: {
         _id: string;
-        username: string;
+        email: string;
     };
 }
 
@@ -42,20 +41,25 @@ const Comments: React.FC<CommentsProps> = ({ eventId }) => {
     // ✅ Handle adding a comment
     const handleAddComment = async () => {
         if (!newComment) return;
-
+    
+        console.log("📩 Sending Comment to Event:", eventId, newComment);
+    
         try {
-            const response = await axios.post(`/events/${eventId}/comments`, { comment: newComment });
-
-            if (response.data && response.data.comment) {
-                setComments(prevComments => [...prevComments, response.data.comment]); // ✅ Update state
+            const response = await addCommentToEvent(eventId, { content: newComment });
+    
+            console.log("✅ API Response:", response); // 🔍 Debug Response
+    
+            if (response) {  // ✅ Fix: Use `response` directly
+                setComments(prevComments => [...prevComments, response]); // ✅ Add response directly
                 setNewComment('');
             } else {
-                console.error("Unexpected API response:", response.data);
+                console.error("Unexpected API response:", response);
             }
         } catch (err) {
             console.error("❌ Error adding comment:", err);
         }
     };
+    
 
     return (
         <div>
@@ -69,7 +73,7 @@ const Comments: React.FC<CommentsProps> = ({ eventId }) => {
                 <ul>
                     {comments.map(comment => (
                         <li key={comment._id}>
-                            <strong>{comment.sender.username}:</strong> {comment.content}
+                            <strong>{comment.sender.email}:</strong> {comment.content}
                         </li>
                     ))}
                 </ul>
