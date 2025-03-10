@@ -112,7 +112,13 @@ class EventService {
     return events;
 }
 
-
+async getCommentsToEvent(eventId: string) { 
+  const event = await Event.findById(eventId).populate('comments', '_id user comment');
+  if (!event) {
+    throw new Error('Event not found');
+  }
+  return event.comments;
+}
 }
 
 

@@ -116,8 +116,9 @@ getEvent = async (req: Request, res: Response): Promise<Response> => {
         populate: {
             path: "sender", // If you want the comment's author's details
             select: "username email" // Adjust fields as needed
-        }
-    });
+        },
+    })
+    .exec();
 
       if (!event) {
           return res.status(404).json({ message: "Event not found" });
@@ -134,11 +135,15 @@ getEvent = async (req: Request, res: Response): Promise<Response> => {
           hobby: event.hobby.map(h => h._id.toString()),
           image: event.image,
           likes: event.likes.map(l => l._id.toString()),
-          comments: event.comments!.map(comment => ({
+          comments: event.comments?.map(comment=> ({
             _id: comment._id,
-            content: comment.content,
-            sender: comment.sender// Make sure the comment model includes `text`
-          })),
+            content: (comment as any).content,
+            sender: {
+              _id: (comment as any).sender._id,
+              username: (comment as any).sender.username,
+              email: (comment as any).sender.email,
+            },
+          })) || [],
       });
   } catch (error) {
       console.error("❌ Error fetching event:", error);
@@ -146,7 +151,19 @@ getEvent = async (req: Request, res: Response): Promise<Response> => {
   }
 };
 
-
+getCommentsToEvent = async (req:Request, res:Response):Promise<Response> => {
+  try {
+      const eventId = req.params.id;
+      const comments = await Event.findById(eventId).populate("comments").exec();
+      if (!comments) {
+          return res.status(404).json({ message: "Event not found" });
+      }
+      return res.json(comments.comments);
+  } catch (error) {
+      console.error("Error fetching comments to event:", error);
+      return res.status(500).json({ message: "Internal Server Error" });
+  }
+}
 
 }
 

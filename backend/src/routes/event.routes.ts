@@ -22,4 +22,7 @@ router.post('/:id/join', authMiddleware, async (req, res) => await EventControll
 router.post('/:id/leave', authMiddleware, async (req, res) => await EventController.leaveEvent(req, res));
 
 router.get('/:id', authMiddleware ,asyncHandler(EventController.getEvent));
+
+router.get('/:id/comments', authMiddleware, asyncHandler(EventController.getCommentsToEvent));
+
 export default router;
