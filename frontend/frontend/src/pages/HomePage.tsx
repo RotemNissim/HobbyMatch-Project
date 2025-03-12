@@ -87,6 +87,13 @@ const HomePage: React.FC = () => {
   if (events.length === 0)
     return <p className="text-center">No events found.</p>;
 
+  const visibleEvents = [
+    events[index % events.length],
+    events[(index + 1) % events.length],
+    events[(index + 2) % events.length],
+  ];
+
+
   return (
     <div className="container">
       <h1 className="text-2xl font-bold text-center mb-6">All Events</h1>
