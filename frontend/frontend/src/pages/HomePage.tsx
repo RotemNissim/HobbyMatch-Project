@@ -90,13 +90,6 @@ const HomePage: React.FC = () => {
   if (loading) return <div className="container text-center py-8">טוען אירועים...</div>;
   if (error) return <div className="container text-center py-8 text-red-500">{error}</div>;
 
-  const visibleEvents = [
-    events[index % events.length],
-    events[(index + 1) % events.length],
-    events[(index + 2) % events.length],
-  ];
-
-
   return (
     <div className="container">
       <h1 className="text-2xl font-bold text-center mb-6">כל האירועים</h1>
