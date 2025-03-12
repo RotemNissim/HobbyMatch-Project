@@ -2,12 +2,13 @@ import express from 'express';
 import userController from '../controllers/user.controller';
 import { authMiddleware } from '../controllers/auth.controller';
 import  asyncHandler  from '../middleware/asyncHandler';
-
+import { getEventRecommendation } from "../controllers/recommendationController";
 const router = express.Router();
 
 router.get('/me', authMiddleware, asyncHandler(userController.getCurrentUser));
 router.get('/hobbies', authMiddleware, asyncHandler(userController.getUserHobbies));
 router.get('/likes', authMiddleware, asyncHandler(userController.getUserLikes));
+router.get('/me', authMiddleware, asyncHandler(getEventRecommendation));
 
 /**
  * User Profile Routes
