@@ -3,7 +3,8 @@ import { joinEvent, leaveEvent } from "../services/eventService";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import Carousel from "../components/Carousel";
-
+import EventCard from "../components/EventCard";
+import "../styles/home.css";
 
 interface Event {
   _id: string;
@@ -20,6 +21,7 @@ const HomePage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
 
+  // חילוץ מזהה המשתמש מהטוקן
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (token) {
@@ -34,9 +36,8 @@ const HomePage: React.FC = () => {
     }
   }, []);
 
+  // טעינת האירועים
   useEffect(() => {
-    if (userId === null) return;
-
     const fetchEvents = async () => {
       try {
         console.log("📡 Fetching events...");
@@ -54,6 +55,7 @@ const HomePage: React.FC = () => {
     fetchEvents();
   }, [userId]);
 
+  // טיפול בהצטרפות/עזיבה של אירוע
   const handleJoinLeave = async (
     eventId: string,
     isParticipant: boolean,
@@ -65,6 +67,8 @@ const HomePage: React.FC = () => {
       } else {
         await joinEvent(eventId);
       }
+      
+      // עדכון המצב המקומי
       setEvents((prevEvents) =>
         prevEvents.map((event) =>
           event._id === eventId
@@ -82,10 +86,9 @@ const HomePage: React.FC = () => {
     }
   };
 
-  if (loading) return <p>Loading events...</p>;
-  if (error) return <p className="text-red-500">{error}</p>;
-  if (events.length === 0)
-    return <p className="text-center">No events found.</p>;
+  // הצגת מצבי טעינה ושגיאה
+  if (loading) return <div className="container text-center py-8">טוען אירועים...</div>;
+  if (error) return <div className="container text-center py-8 text-red-500">{error}</div>;
 
   const visibleEvents = [
     events[index % events.length],
@@ -96,38 +99,17 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="container">
-      <h1 className="text-2xl font-bold text-center mb-6">All Events</h1>
+      <h1 className="text-2xl font-bold text-center mb-6">כל האירועים</h1>
+      
+      {/* קרוסלת האירועים */}
       <Carousel
         items={events}
         renderItem={(event) => (
-          <div className="event-card w-1/3 bg-white shadow-md p-4 rounded-lg">
-            <h3 className="event-title font-bold">{event.title}</h3>
-            <p className="event-description">{event.description}</p>
-            <p className="event-info">
-              <strong>Date:</strong> {new Date(event.date).toLocaleDateString()}
-            </p>
-            <p className="event-info">
-              <strong>Location:</strong> {event.location}
-            </p>
-            {userId && (
-              <div className="mt-4">
-                <button
-                  onClick={() =>
-                    handleJoinLeave(
-                      event._id,
-                      event.participants.some((p) => p._id === userId),
-                      userId
-                    )
-                  }
-                  className="join-leave-btn w-full p-2 rounded-md"
-                >
-                  {event.participants.some((p) => p._id === userId)
-                    ? "Leave Event"
-                    : "Join Event"}
-                </button>
-              </div>
-            )}
-          </div>
+          <EventCard
+            event={event}
+            userId={userId}
+            onJoinLeave={handleJoinLeave}
+          />
         )}
       />
     </div>
