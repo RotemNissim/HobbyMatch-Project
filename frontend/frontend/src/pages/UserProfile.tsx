@@ -7,11 +7,7 @@ import CreateEventForm from '../components/CreateEventForm';
 import MyCreatedEvents from '../components/MyCreatedEvents';
 import '../styles/profile.css';
 
-interface Event {
-  _id: string;
-  title: string;
-  description: string;
-}
+
 
 const UserProfile = () => {
     const [user, setUser] = useState<any>(null);
