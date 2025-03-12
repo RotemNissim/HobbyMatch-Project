@@ -1,9 +1,14 @@
-import apiClient from './axiosInstance';
+import apiClient, { apiClientWithAuth } from './axiosInstance';
 
 export const getCurrentUser = async () => {
     const { data } = await apiClient.get('/users/me');
     return data;
 };
+
+export const getGoogleUser = async () => {
+    const { data } = await apiClientWithAuth.get('/users/me');
+    return data;
+}
 
 export const updateProfile = async (userId: string, updates: Partial<{firstName: string; lastName: string; hobbies: string[]; profilePicture: string;}>) => {
     const { data } = await apiClient.put(`/users/${userId}`, updates);

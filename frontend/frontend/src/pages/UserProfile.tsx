@@ -1,11 +1,12 @@
 
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getCurrentUser } from '../services/userService';
+import { getCurrentUser, getGoogleUser } from '../services/userService';
 import EditProfile from '../components/EditProfile';
 import CreateEventForm from '../components/CreateEventForm';
 import MyCreatedEvents from '../components/MyCreatedEvents';
 import '../styles/profile.css';
+import { logout } from '../services/authService';
 
 
 
@@ -19,6 +20,10 @@ const UserProfile = () => {
         const fetchUser = async () => {
             try {
                 const currentUser = await getCurrentUser();
+                if (!currentUser) {
+                    const googleCurrentUser = await getGoogleUser();
+                    setUser(googleCurrentUser);
+                }
                 setUser(currentUser);
             } catch (error) {
                 console.error("User not authenticated, redirecting...");
@@ -63,6 +68,10 @@ const UserProfile = () => {
                         >
                             ➕ Create Event
                         </button>
+                        <button 
+                        className='bg-red-500 text-white px-4 py-2 rounded'
+                        onClick={logout}
+                        >Logout</button>
                     </div>
                     </div>
                 </div>

@@ -18,11 +18,12 @@ const UserSchema = new mongoose.Schema<IUser>({
   lastName: { type: String, required: true},
   email: { type: String, required: true, unique: true },
   refreshToken: {type: [String], default:[]},
-  password: { type: String, required: true },
+  password:{ type: String, required: function () { return !this.googleId; } } ,
   hobbies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Hobby' }],
   calendar: [{ type: Object }],
   profilePicture: { type: String, default: '' },
   likes: [{ type: String }],
+  googleId: { type: String, unique: true, sparse: true }
 });
 
 

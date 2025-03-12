@@ -1,43 +1,50 @@
 import express from "express";
 const router = express.Router();
 import authController from "../controllers/auth.controller";
+import userModel from '../models/User.models';
 
 import passport from 'passport';
 
 // Redirect to Google
-router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+router.get('/login/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-router.get('/google/callback', passport.authenticate('google', { failureRedirect: 'http://localhost:5173/login' }), 
-    async (req, res) => {
-        const user = req.user as any;
+router.get('/google/callback', passport.authenticate('google', { session: false, failureRedirect: 'http://localhost:5173/login' }),
+  async (req, res) => {
+    try {
+      if (!req.user) {
+        return res.redirect('http://localhost:5173/login?error=user_not_found');
+      }
 
-        if (!user || !user._id) {
-            return res.redirect('http://localhost:5173/login?error=user_not_found');
-        }
+      const user = req.user as any;
+      console.log("Authenticated User:", user); // ✅ Debugging
 
-        const tokens = authController.generateToken(user._id.toString());
+      if (!user._id) {
+        return res.redirect('http://localhost:5173/login?error=missing_id');
+      }
+      const userId = user._id.toString();
+      console.log("User ID:", userId); // ✅ Debugging
 
-        if (!tokens) {
-            return res.redirect('http://localhost:5173/login?error=token_generation_failed');
-        }
+      const tokens = authController.generateToken(user);
+      console.log("Generated tokens:", tokens);
 
-        // Set both tokens in secure HttpOnly cookies
-        res.cookie('accessToken', tokens.accessToken, {
-            httpOnly: true,
-            secure: false,    // Set to true in production (https)
-            sameSite: 'strict'
-        });
+      await userModel.findByIdAndUpdate(user._id, { 
+        $push: { refreshToken: tokens.refreshToken } 
+      });
 
-        res.cookie('refreshToken', tokens.refreshToken, {
-            httpOnly: true,
-            secure: false,
-            sameSite: 'strict'
-        });
+      res.cookie("accessToken", tokens.accessToken, {
+        httpOnly: true,
+        secure: false, // Set to true in production
+        sameSite: "strict",
+      });
 
-        // Redirect to profile (no token in URL!)
-        res.redirect('http://localhost:5173/profile');
+      return res.redirect('http://localhost:5173/profile');
+    } catch (error) {
+      console.error("Google Auth Callback Error:", error);
+      return res.redirect('http://localhost:5173/login?error=server_error');
     }
+  }
 );
+
 
 
 router.post("/login", authController.login);

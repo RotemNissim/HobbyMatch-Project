@@ -65,6 +65,7 @@ type tTokens = {
 
 // ✅ Generate token directly from user/admin object
 const generateToken = (account: tUser | tAdmin): tTokens => {
+    console.log("generateToken account:" ,account);
     const sk = process.env.TOKEN_SECRET as string;
 
     if (!sk) {
@@ -73,7 +74,7 @@ const generateToken = (account: tUser | tAdmin): tTokens => {
 
     const payload = {
         _id: account._id.toString(),
-        role: 'role' in account ? account.role : 'user'
+        role: ('role' in account && account.role) ? account.role : 'user' 
     };
 
     const expiresIn = process.env.TOKEN_EXPIRES || '3h'; 
@@ -201,8 +202,16 @@ const refresh = async (req: Request, res: Response) => {
 };
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) : Promise<void> => {
-  const authorization = req.header('authorization');
-  const token = authorization?.split(' ')[1];
+    const authorization = req.header("authorization");
+    let token;
+    if (authorization && authorization.startsWith("Bearer ")) {
+        token = authorization.split(" ")[1];
+    }
+
+    // 🔥 2️⃣ If no token, check the cookie (Google login)
+    if (!token && req.cookies && req.cookies.accessToken) {
+        token = req.cookies.accessToken;
+    }
 
   if (!token) {res.status(401).json({ message: 'Access Denied' });
   return;}
