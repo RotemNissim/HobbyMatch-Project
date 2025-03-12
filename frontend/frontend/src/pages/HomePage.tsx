@@ -3,7 +3,7 @@ import { joinEvent, leaveEvent } from "../services/eventService";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import Carousel from "../components/Carousel";
-import "../styles/global.css";
+
 
 interface Event {
   _id: string;
