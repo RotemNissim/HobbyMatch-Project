@@ -1,5 +1,16 @@
 /* עיצוב כללי למיכל */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-align: center;
+}
+body {
+  margin: 0;
+}
+
 .container {
+  padding: 8px;
   max-width: 1200px;
   margin: 0 auto;
   padding: 1rem;
@@ -7,10 +18,11 @@
 
 /* עיצוב לקרוסלה */
 .carousel-container {
+  padding: 8px;
   position: relative;
   width: 100%;
   padding: 0 50px; /* מרווח בצדדים עבור הכפתורים */
-  margin: 2rem 0;
+  margin: 0;
 }
 
 /* כפתורי ניווט */
