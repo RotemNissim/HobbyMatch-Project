@@ -1,4 +1,16 @@
+import { CredentialResponse } from '@react-oauth/google';
 import apiClient, { apiClientWithAuth } from './axiosInstance';
+
+export interface IUser {
+    email: string,
+    password: string,
+    profilePicture: string,
+    _id?:string,
+    accessToken?:string,
+    refreshToken?: string,
+    firstName?:string,
+    lastName?:string
+}
 
 export const getCurrentUser = async () => {
     const { data } = await apiClient.get('/users/me');
@@ -28,4 +40,17 @@ export const updateProfilePicture = async (userId: string, file: File) => {
 export const getUserHobbies = async () => {
     const { data } = await apiClient.get('/users/hobbies');
     return data;
+};
+
+export const googleSignIn = (credentialResponse: CredentialResponse) => {
+    return new Promise<IUser>((resolve, reject) => {
+        console.log("Google Sign In Success");
+        apiClient.post("/auth/google", credentialResponse).then((response) => {
+            console.log(response);
+            resolve(response.data);
+        }).catch((error) => {
+            console.error(error);
+            reject(error);
+        })
+})
 };

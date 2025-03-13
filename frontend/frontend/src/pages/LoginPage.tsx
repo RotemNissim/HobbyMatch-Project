@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { login, register, googleLogin } from "../services/authService";
+import { login, register, onGoogleLoginSuccess, onGoogleLoginFailure } from "../services/authService";
 import { AuthFormData } from "../types";
+import { GoogleLogin } from "@react-oauth/google";
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -80,12 +81,9 @@ const AuthPage = () => {
           />
           <button type="submit">{isLogin ? "Login" : "Sign Up"}</button>
         </form>
-        <button onClick={googleLogin} className="google-login-btn">
-          Sign in with Google
-        </button>
         <p>
           {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
-          <button onClick={toggleMode}>{isLogin ? "Sign up" : "Login"}</button>
+          <GoogleLogin onSuccess={onGoogleLoginSuccess} onError={onGoogleLoginFailure} />
         </p>
       </div>
     </div>

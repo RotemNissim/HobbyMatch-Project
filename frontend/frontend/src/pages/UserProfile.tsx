@@ -7,12 +7,6 @@ import MyCreatedEvents from '../components/MyCreatedEvents';
 import '../styles/profile.css';
 import { logout } from '../services/authService';
 
-interface Event {
-  _id: string;
-  title: string;
-  description: string;
-}
-
 const UserProfile = () => {
     const [user, setUser] = useState<any>(null);
     const [isEditingProfile, setIsEditingProfile] = useState(false);
