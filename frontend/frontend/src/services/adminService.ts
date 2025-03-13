@@ -96,8 +96,10 @@ export const deleteAdmin = async (adminId: string) => {
     return apiClient.delete(`/admin/admins/${adminId}`);
 };
 
-export const getAdmins = async () => {
+export const listAdmins = async () => {
     const { data } = await apiClient.get("/admin/admins");
     return data;
 };
+
+
 

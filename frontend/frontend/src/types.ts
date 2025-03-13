@@ -9,7 +9,7 @@ export interface IUser {
     
         email: string,
         password: string,
-        profilePicture: string,
+        profilePicture?: string,
         _id?:string,
         accessToken?:string,
         refreshToken?: string,
@@ -21,7 +21,7 @@ export interface IUser {
 export interface IAdmin {
     email: string,
     password: string,
-    profilePicture: string,
+    profilePicture?: string,
     _id?:string,
     accessToken?:string,
     refreshToken?: string,
@@ -40,12 +40,12 @@ export interface IEvent {
     createdBy: string,
     hobby:  string[],
     image?: string,
-    likes: string[],
+    likes?: string[],
     comments?:string[]
 }
 
 export interface IHobby {
     name: string,
     category: string,
-    users: string[]
+    users?: string[]
 }
