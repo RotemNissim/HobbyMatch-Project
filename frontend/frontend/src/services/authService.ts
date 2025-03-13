@@ -4,12 +4,6 @@ import { CredentialResponse } from '@react-oauth/google';
 import { googleSignIn } from './userService';
 import { globalFlag, setGlobalFlag } from '../globalState';
 
-const authUrl = import.meta.env.VITE_API_BASE_URL;
-export const googleLogin = () => {
-    window.location.href = `${authUrl}/google`; 
-    
-};
-
 export const login = async (email: string, password: string) => {
     const { data } = await apiClient.post('/auth/login', { email, password });
 

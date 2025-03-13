@@ -2,11 +2,9 @@ import { Routes, Route } from "react-router-dom";
 import HomePage from "../pages/HomePage";
 import LoginPage from "../pages/LoginPage";
 import EventSearchPage from "../pages/EventSearchPage";
-
-// import RegisterPage from '../pages/RegisterPage';
 import UserProfile from "../pages/UserProfile";
 import EventPage from "../pages/EventPage";
-// import EventDetails from '../pages/EventDetails';
+import AdminPanel from "../pages/AdminPanel";
 
 function AppRouter() {
   return (
@@ -18,6 +16,7 @@ function AppRouter() {
       {/* <Route path="/events/:eventId" element={<EventDetails />} />  */}
       <Route path="/events" element={<EventSearchPage />} />
       <Route path="/events/:eventId" element={<EventPage />} />
+      <Route path="/admin" element={<AdminPanel />} />
     </Routes>
   );
 }
