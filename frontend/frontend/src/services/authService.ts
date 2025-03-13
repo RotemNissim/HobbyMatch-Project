@@ -2,7 +2,8 @@ import apiClient from './axiosInstance';
 import { AuthFormData } from '../types';
 import { CredentialResponse } from '@react-oauth/google';
 import { googleSignIn } from './userService';
-import { globalFlag, setGlobalFlag } from '../globalState';
+import { setGlobalFlag } from '../globalState';
+
 
 export const login = async (email: string, password: string) => {
     const { data } = await apiClient.post('/auth/login', { email, password });

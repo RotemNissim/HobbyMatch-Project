@@ -7,7 +7,8 @@ import CreateEventForm from '../components/CreateEventForm';
 import MyCreatedEvents from '../components/MyCreatedEvents';
 import '../styles/profile.css';
 import { logout } from '../services/authService';
-import { globalFlag, setGlobalFlag } from '../globalState';
+import { setGlobalFlag } from '../globalState';
+
 
 
 const UserProfile = () => {
@@ -42,12 +43,13 @@ const UserProfile = () => {
     const handleEventCreated = () => {
         setIsCreatingEvent(false);
     };
-    const handleLogout = () => {
-        logout();  // מבצע את ה-logout
-        navigate('/');  // רידיירקט לעמוד הבית
-        setGlobalFlag (false);
-
-    }
+    
+        const handleLogout = () => {
+            logout();
+            setGlobalFlag(false);  // מעדכן גם את localStorage
+            navigate('/');
+        };
+    
 
     return (
         <div className="carousel-container">
