@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface CarouselProps<T> {
   items: T[];
@@ -10,51 +10,51 @@ const Carousel = <T,>({ items, renderItem }: CarouselProps<T>) => {
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState<"left" | "right">("right");
 
+  if (items.length === 0) return <p className="text-center py-4">No events found.</p>;
+
+  const itemsPerPage = window.innerWidth >= 768 ? 3 : 1;
+  const totalItems = items.length;
+
   const nextSlide = () => {
     setDirection("right");
-    setIndex((prev) => (prev + 3) % items.length);
+    setIndex((prev) => (prev + 3) % totalItems);
   };
 
   const prevSlide = () => {
     setDirection("left");
-    setIndex((prev) => (prev - 3 + items.length) % items.length);
+    setIndex((prev) => (prev - 3 + totalItems) % totalItems);
   };
 
+  // מעגליות - אם מגיעים לסוף, נמשיך מההתחלה
   const visibleItems = [
-    items[index % items.length],
-    items[(index + 1) % items.length],
-    items[(index + 2) % items.length],
-  ];
+    ...items,
+    ...items
+  ].slice(index, index + itemsPerPage);
 
   return (
-    <div className="carousel-container relative flex items-center justify-center overflow-hidden w-full">
-      <button onClick={prevSlide} className="nav-button left-nav absolute left-0 z-10">
-        ⬅️
-      </button>
-      <button onClick={nextSlide} className="nav-button right-nav absolute right-0 z-10">
-        ➡️
-      </button>
+    <div className="carousel-container">
+      <button onClick={prevSlide} className="nav-button">⬅️</button>
 
-      <div className="event-cards-container w-full flex justify-center overflow-hidden">
-        <motion.div
-          key={index}
-          className="event-cards flex gap-4"
-          initial={{ x: direction === "right" ? 100 : -100, opacity: 0.8 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: direction === "right" ? -100 : 100, opacity: 0.8 }}
-          transition={{ duration: 0.5, ease: "easeInOut" }}
-        >
-          {visibleItems.map((item, i) => (
-            <motion.div
-              key={i}
-              className="event-card w-1/3 bg-white shadow-md p-4 rounded-lg"
-              whileHover={{ scale: 1.05 }}
-            >
-              {renderItem(item)}
-            </motion.div>
-          ))}
-        </motion.div>
+      <div className="event-cards-container">
+        <AnimatePresence initial={false} mode="wait">
+          <motion.div
+            key={index}
+            className="event-cards"
+            initial={{ x: direction === "right" ? 100 : -100, opacity: 0.8 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: direction === "right" ? -100 : 100, opacity: 0.8 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+          >
+            {visibleItems.map((item, i) => (
+              <motion.div key={i} className="event-card-wrapper" whileHover={{ scale: 1.03 }}>
+                {renderItem(item)}
+              </motion.div>
+            ))}
+          </motion.div>
+        </AnimatePresence>
       </div>
+      
+      <button onClick={nextSlide} className="nav-button">➡️</button>
     </div>
   );
 };

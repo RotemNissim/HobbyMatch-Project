@@ -1,10 +1,14 @@
+
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getCurrentUser } from '../services/userService';
+import { getCurrentUser, getGoogleUser } from '../services/userService';
 import EditProfile from '../components/EditProfile';
 import CreateEventForm from '../components/CreateEventForm';
 import MyCreatedEvents from '../components/MyCreatedEvents';
 import '../styles/profile.css';
+import { logout } from '../services/authService';
+
+
 
 const UserProfile = () => {
     const [user, setUser] = useState<any>(null);
@@ -16,6 +20,10 @@ const UserProfile = () => {
         const fetchUser = async () => {
             try {
                 const currentUser = await getCurrentUser();
+                if (!currentUser) {
+                    const googleCurrentUser = await getGoogleUser();
+                    setUser(googleCurrentUser);
+                }
                 setUser(currentUser);
             } catch (error) {
                 console.error("User not authenticated, redirecting...");
@@ -36,11 +44,12 @@ const UserProfile = () => {
     };
 
     return (
-        <div className="container mx-auto p-6 space-y-6">
+        <div className="carousel-container">
             <h1 className="text-2xl font-bold">My Profile</h1>
 
             {user && !isEditingProfile && (
                 <div className="mt-4 space-y-2">
+                    <div className='text-and-buttons'>
                     <p><strong>Name:</strong> {user.firstName} {user.lastName}</p>
                     <p><strong>Email:</strong> {user.email}</p>
                     {user.profilePicture && (
@@ -59,6 +68,11 @@ const UserProfile = () => {
                         >
                             ➕ Create Event
                         </button>
+                        <button 
+                        className='bg-red-500 text-white px-4 py-2 rounded'
+                        onClick={logout}
+                        >Logout</button>
+                    </div>
                     </div>
                 </div>
             )}
@@ -73,7 +87,9 @@ const UserProfile = () => {
 
             <div className="mt-8">
                 <h2 className="text-xl font-semibold">Events You Created</h2>
-                <MyCreatedEvents />
+                <div className="carousel">
+                    <MyCreatedEvents />
+                </div>
             </div>
         </div>
     );
