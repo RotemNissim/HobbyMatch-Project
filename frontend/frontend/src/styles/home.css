@@ -78,7 +78,7 @@ body {
 
 /* כרטיס האירוע */
 .event-card {
-  height: 300px; /* גובה קבוע */
+  max-height: 300px; /* גובה קבוע */
   overflow: auto; /* אפשרות לגלילה אם התוכן גדול מדי */
   display: flex;
   flex-direction: column;
@@ -87,6 +87,7 @@ body {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   padding: 1rem;
   transition: transform 0.3s, box-shadow 0.3s;
+  max-width: 300px;
 }
 
 .event-card:hover {
