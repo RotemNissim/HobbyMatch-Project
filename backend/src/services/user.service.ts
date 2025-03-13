@@ -37,15 +37,18 @@ class UserService {
     return { message: 'User Deleted successfully'};
   }
 
-  async listUsers(filter: Partial<{username: string; email:string}>) {
+  async listUsers(filter: Partial<{firstName: string; email:string, lastName: string}>) {
     const query: any = {};
-    if (filter.username) {
-      query.username = { $regex: filter.username,$options: 'i' };
+    if (filter.firstName) {
+      query.firstName = { $regex: filter.firstName,$options: 'i' };
     }
     if (filter.email) {
       query.email = { $regex: filter.email,$options: 'i' };
      }
-
+    if (filter.lastName) {
+      query.lastName = { $regex: filter.lastName,$options: 'i' };
+ 
+    }
      const users = await User.find(query).select('-password');
      return users;
     }

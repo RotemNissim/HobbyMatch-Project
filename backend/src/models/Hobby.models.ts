@@ -3,7 +3,7 @@ import mongoose, { Document, Schema } from 'mongoose';
 export interface IHobby extends Document {
   name: string;
   category: string;
-  users: mongoose.Types.ObjectId[];
+  users?: mongoose.Types.ObjectId[];
 }
 
 const HobbySchema: Schema = new Schema({
