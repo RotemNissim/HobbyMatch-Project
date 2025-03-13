@@ -40,6 +40,10 @@ const UserProfile = () => {
     const handleEventCreated = () => {
         setIsCreatingEvent(false);
     };
+    const handleLogout = () => {
+        logout();  // מבצע את ה-logout
+        navigate('/');  // רידיירקט לעמוד הבית
+    }
 
     return (
         <div className="carousel-container">
@@ -68,7 +72,7 @@ const UserProfile = () => {
                         </button>
                         <button 
                         className='bg-red-500 text-white px-4 py-2 rounded'
-                        onClick={logout}
+                        onClick={handleLogout}
                         >Logout</button>
                     </div>
                     </div>
