@@ -2,6 +2,7 @@ import apiClient from './axiosInstance';
 import { AuthFormData } from '../types';
 import { CredentialResponse } from '@react-oauth/google';
 import { googleSignIn } from './userService';
+import { globalFlag, setGlobalFlag } from '../globalState';
 
 const authUrl = import.meta.env.VITE_API_BASE_URL;
 export const googleLogin = () => {
@@ -14,6 +15,7 @@ export const login = async (email: string, password: string) => {
 
     localStorage.setItem('accessToken', data.accessToken);
     localStorage.setItem('refreshToken', data.refreshToken);
+    setGlobalFlag (true);
 
     return data; // could include user data if your backend sends it
 };
@@ -23,6 +25,7 @@ export const register = async (formData: AuthFormData) => {
 
     localStorage.setItem('accessToken', data.accessToken);
     localStorage.setItem('refreshToken', data.refreshToken);
+    setGlobalFlag (true);
 
     return data;
 };
@@ -34,6 +37,8 @@ export const onGoogleLoginSuccess = async (credentialResponse: CredentialRespons
             console.log(res);
             localStorage.setItem("accessToken", res.accessToken!);
             localStorage.setItem("refreshToken", res.refreshToken!);
+            setGlobalFlag (true);
+            
     } catch (err) {
         console.log(err);
     } 

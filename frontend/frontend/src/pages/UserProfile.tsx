@@ -7,6 +7,8 @@ import CreateEventForm from '../components/CreateEventForm';
 import MyCreatedEvents from '../components/MyCreatedEvents';
 import '../styles/profile.css';
 import { logout } from '../services/authService';
+import { globalFlag, setGlobalFlag } from '../globalState';
+
 
 const UserProfile = () => {
     const [user, setUser] = useState<any>(null);
@@ -43,6 +45,8 @@ const UserProfile = () => {
     const handleLogout = () => {
         logout();  // מבצע את ה-logout
         navigate('/');  // רידיירקט לעמוד הבית
+        setGlobalFlag (false);
+
     }
 
     return (
