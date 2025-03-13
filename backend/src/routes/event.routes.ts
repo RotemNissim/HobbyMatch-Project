@@ -27,4 +27,8 @@ router.get('/:id', authMiddleware ,asyncHandler(EventController.getEvent));
 router.get('/:id/comments', authMiddleware, asyncHandler(EventController.getCommentsToEvent));
 router.post('/:id/comments', authMiddleware, asyncHandler(CommentController.addCommentToEvent));
 
+/** ✅ נתיב להמלצות אירועים */
+router.post("/recommend",authMiddleware, async (req, res) => await EventController.recommendEvents(req, res));
+
 export default router;
+
