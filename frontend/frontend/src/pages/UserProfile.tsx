@@ -8,8 +8,6 @@ import MyCreatedEvents from '../components/MyCreatedEvents';
 import '../styles/profile.css';
 import { logout } from '../services/authService';
 
-
-
 const UserProfile = () => {
     const [user, setUser] = useState<any>(null);
     const [isEditingProfile, setIsEditingProfile] = useState(false);

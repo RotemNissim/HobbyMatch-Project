@@ -1,6 +1,7 @@
 import apiClient from './axiosInstance';
 import { AuthFormData } from '../types';
-
+import { CredentialResponse } from '@react-oauth/google';
+import { googleSignIn } from './userService';
 
 const authUrl = import.meta.env.VITE_API_BASE_URL;
 export const googleLogin = () => {
@@ -24,6 +25,23 @@ export const register = async (formData: AuthFormData) => {
     localStorage.setItem('refreshToken', data.refreshToken);
 
     return data;
+};
+
+export const onGoogleLoginSuccess = async (credentialResponse: CredentialResponse) => {
+    try {
+            console.log(credentialResponse);
+            const res = await googleSignIn(credentialResponse);
+            console.log(res);
+            localStorage.setItem("accessToken", res.accessToken!);
+            localStorage.setItem("refreshToken", res.refreshToken!);
+    } catch (err) {
+        console.log(err);
+    } 
+
+};
+
+export const onGoogleLoginFailure = () => {
+    console.log("Google Login Failed");
 };
 
 export const logout = () => {

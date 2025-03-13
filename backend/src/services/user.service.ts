@@ -1,4 +1,4 @@
-import User from '../models/User.models';
+import User, {IUser} from '../models/User.models';
 
 class UserService {
 
@@ -49,6 +49,8 @@ class UserService {
      const users = await User.find(query).select('-password');
      return users;
     }
+
+   
   
 }
 

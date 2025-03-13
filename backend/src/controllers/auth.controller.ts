@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken';
 import { Document } from "mongoose";
 import { AuthRequest } from '../middleware/AuthRequest';
 import dotenv from 'dotenv';
+import { OAuth2Client } from "google-auth-library";
 dotenv.config();
 
 // ✅ Post-creation user & admin types with guaranteed _id
@@ -241,11 +242,44 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
   }
 };
 
+const client = new OAuth2Client(); 
+const googleSignIn = async (req: Request, res:Response) => {
+    console.log(req.body);
+    try {
+const ticket = await client.verifyIdToken({
+        idToken: req.body.credential,
+        audience: process.env.GOOGLE_CLIENT_ID
+    });
+    const payload = ticket.getPayload();
+    const email = payload?.email;
+    if (email != null) {
+        let user = await userModel.findOne({ 'email': email }) as tUser;
+        if (user == null) {
+            const rs = await userModel.create(
+                {
+                    'email': email,
+                    'password': '',
+                    'profilePicture': payload?.picture,
+                    'firstName': payload?.given_name,
+                    'lastName': payload?.family_name,
+                    'googleId': payload?.sub,
+                }
+            )
+        }
+        const tokens = await generateToken(user);
+        res.status(200).send({email: user.email, _id: user._id, ...tokens});
+    }
+    } catch (err) {
+        return res.status(400).send(String(err));
+    }  
+}
+
 export default {
     register: register as unknown as express.RequestHandler,
     login: login as unknown as express.RequestHandler,
     refresh: refresh as unknown as express.RequestHandler,
     logout: logout as unknown as express.RequestHandler,
     generateToken,
-    authMiddleware: authMiddleware as unknown as express.RequestHandler
+    authMiddleware: authMiddleware as unknown as express.RequestHandler,
+    googleSignIn: googleSignIn as unknown as express.RequestHandler
 };
