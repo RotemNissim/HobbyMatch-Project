@@ -41,10 +41,6 @@ class CommentController {
     }
   }
 
-  /**
-   * Get comments between two users
-   */
-
 }
 
 export default new CommentController();

@@ -1,145 +1,217 @@
 import { Request, Response } from "express";
-import adminService from "../services/admin.service";
+import { AuthRequest } from "../middleware/AuthRequest";
 import User from "../models/User.models";
-import bcrypt from "bcrypt";
 import Event from "../models/Event.models";
+import Hobby from "../models/Hobby.models";
+import Admin from "../models/Admin.models";
+import adminService from "../services/admin.service";
+import hobbyService from "../services/hobby.service";
+import userService from "../services/user.service";
+import eventService from "../services/event.service";
 
 class AdminController {
-  
-    async getAdmin(req: Request, res: Response) {
-      try {
-        const adminId = req.params.id;
-        const admin = await adminService.getAdminById(adminId);
-        res.status(200).json(admin);} catch (error: unknown) {
-        const errMsg = error instanceof Error ? error.message : 'Failed to get admin';
-        res.status(404).json({ message: errMsg });
-      }
-    }
-    
-    async createUser(req: Request, res: Response) : Promise<void> {
-      try{ 
-        const {username , password, email, firstName, lastName } = req.body;
-        if (!firstName || !lastName || !username || !email || !password) {
-           res.status(400).json({ message: 'All fields are required: firstName, lastName, username, email, password' });
-           return;
-        }
-  
-        const existingUser = await User.findOne({ email: email});
-        if(existingUser){
-         res.status(400).json({ message:  'Email already in use' });
-         return;
-        }
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const data = {
-          username: username,
-          password: hashedPassword,
-          email: email,
-          firstName: firstName,
-          lastName: lastName
-        };
-        const newUser = await adminService.createUser(data);
-        res.status(201).json({ message: 'User created successfully', newUser });
-      } catch (error: unknown) {
-        const errMsg = error instanceof Error? error.message : 'Failed to create user';
-        res.status(400).json({ message: errMsg });
-      }
-    }
-    
-    async updateUser(req: Request, res: Response) {
-      try {
-        const userId = req.params.id;
-        const updates = req.body;
-        const updatedAdmin = await adminService.updateUser(userId, updates);
-        res.status(200).json(updatedAdmin);} catch (error: unknown) {
-        const errMsg = error instanceof Error ? error.message : 'Failed to update admin';
-        res.status(400).json({ message: errMsg });
-      }
-    }
 
-  async deleteUser(req: Request, res: Response) {
+   //Admin Management
+
+    getCurrentAdmin = async (req: AuthRequest, res: Response): Promise<Response> => {
+    try {
+      const admin = req.admin;
+      return res.status(200).send({
+        id: admin._id,
+        email: admin.email,
+        role: 'admin',
+      });
+     } catch (err) {
+     return res.status(400).send("Failed to get current admin");
+    }
+   }
+
+   createAdmin = async (req: AuthRequest, res: Response): Promise<Response> => { 
+    try {
+
+      const newAdmin = await adminService.createAdmin({
+        ...req.body
+      })
+
+      return res.status(201).send(newAdmin);
+
+    } catch (err) {
+      return res.status(400).send("Failed to create new admin");
+    }
+   } 
+
+   updateAdmin = async (req: AuthRequest, res: Response): Promise<Response> => {
+    try {
+      const adminId = req.params.id;
+      const updates = req.body;
+      const updatedAdmin = await adminService.updateAdmin(adminId, updates);
+      return res.status(200).send(updatedAdmin);
+
+    } catch (err) {
+      return res.status(400).send("Failed to update admin");
+
+    }
+   }
+
+   deleteAdmin = async (req: AuthRequest, res: Response): Promise<Response> => {
+    try { 
+      const adminId = req.params.id;
+      await adminService.deleteAdmin(adminId);
+      return res.status(200).send("Admin deleted successfully");
+    } catch (err) {
+      return res.status(400).send("Failed to delete admin");
+    }
+  }
+
+  listAdmins = async (req: AuthRequest, res: Response): Promise<Response> => {
+    try {
+      const admins = await adminService.listAdmins();
+      return res.status(200).send(admins);
+    } catch (err) {
+      return res.status(400).send("Failed to list admins");
+    }
+  }
+
+   //Users Management
+
+   createUser = async (req: AuthRequest, res: Response): Promise<Response> => {
+    try {
+      const newUser = await userService.createUser({
+        ...req.body
+      })
+      return res.status(201).send(newUser);
+    } catch (err) {
+      return res.status(400).send("Failed to create new user");
+    }
+   }
+
+   updateUser = async (req: AuthRequest, res: Response): Promise<Response> => {
     try {
       const userId = req.params.id;
-      await adminService.deleteUser(userId);
-      res.status(204).json({ message: "User deleted successfully" });
-    } catch (error: unknown) {
-      const errMsg =
-        error instanceof Error ? error.message : "Failed to delete user";
-      res.status(400).json({ message: errMsg });
-    }
-  }
-  // לא בטוח אם פילטר יהיה אוביקט מהצורה הנדרשת
-  async listUsers(req: Request, res: Response) {
-    try {
-      const filter = req.query;
-      const users = await adminService.listUsers(filter);
-      res.status(200).json(users);
-    } catch (error: unknown) {
-      const errMsg =
-        error instanceof Error ? error.message : "Failed to list users";
-      res.status(400).json({ message: errMsg });
+      const updates = req.body;
+      const updatedUser = await userService.updateUser(userId, updates);
+      return res.status(200).send(updatedUser);
+    } catch (err) {
+      return res.status(400).send("Failed to update user");
     }
   }
 
-    async createEvent (req: Request, res: Response): Promise<void> {
-      try{
-        const { title, description, location, date, hobbies, createdBy } = req.body;
-        if (!title ||!description ||!location ||!date ||!hobbies ||!createdBy) {
-         res.status(400).json({ message: 'All fields are required: title, description, location, date, hobbies, createdBy' });
-         return;
-        }
-        const existingEvent = await Event.findOne({title: title, description: description, location: location, date: date, hobbies: hobbies})
-      const data ={
-        title: title,
-        description: description,
-        location: location,
-        date: date,
-        hobbies: hobbies,
-        createdBy: createdBy,
-        participants: createdBy, // Add the current user as a participant by default. You can modify this to include other users later.
-      };
-      const newEvent = await adminService.createEvent({ data });
-      res.status(201).json({ message: "Event created successfully", newEvent });
-    } catch (error: unknown) {
-      const errMsg =
-        error instanceof Error ? error.message : "Failed to create event";
-      res.status(400).json({ message: errMsg });
+  deleteUser = async (req: AuthRequest, res: Response): Promise<Response> => {
+    try {
+       const userId = req.params.id;
+      await userService.deleteUser(userId);
+      return res.status(200).send("User deleted successfully");
+    } catch (err) { 
+      return res.status(400).send("Failed to delete user");
     }
   }
 
-  async updateEvent(req: Request, res: Response) {
+  listUsers = async (req: AuthRequest, res: Response): Promise<Response> => {
     try {
+      const users = await userService.listUsers({
+        firstName: req.query.firstName as string,
+        email: req.query.email as string,
+        lastName: req.query.lastName as string,
+      });
+      return res.status(200).send(users);
+    } catch (err) {
+      return res.status(400).send("Failed to list users");
+    }
+  }
+
+
+   //Events Management
+   createEvent = async (req: AuthRequest, res: Response): Promise<Response> => {
+    try { 
+      const newEvent = await eventService.createEvent({
+       ...req.body,
+        createdBy: req.user._id.toString()
+      })
+      return res.status(201).send(newEvent);
+    } catch (err) { 
+      return res.status(400).send("Failed to create new event");
+    }
+  }
+
+  updateEvent = async (req: AuthRequest, res: Response): Promise<Response> => {
+    try {
+      const user = req.user;
       const eventId = req.params.id;
       const updates = req.body;
-      const updatedEvent = await adminService.updateEvent(eventId, updates);
-      res.status(200).json(updatedEvent);
-    } catch (error: unknown) {
-      const errMsg =
-        error instanceof Error ? error.message : "Failed to update event";
-      res.status(400).json({ message: errMsg });
+      const updatedEvent = await eventService.updateEvent(eventId, updates,user._id.toString());
+      return res.status(200).send(updatedEvent);
+    } catch (err) {
+      return res.status(400).send("Failed to update event");
     }
   }
 
-  async deleteEvent(req: Request, res: Response) {
-    try {
+  deleteEvent = async (req: AuthRequest, res: Response): Promise<Response> => {
+    try { 
       const eventId = req.params.id;
-      await adminService.deleteEvent(eventId);
-      res.status(204).json({ message: "Event deleted successfully" });
-    } catch (error: unknown) {
-      const errMsg =
-        error instanceof Error ? error.message : "Failed to delete event";
-      res.status(400).json({ message: errMsg });
+      await eventService.deleteEvent(eventId);
+      return res.status(204).json({ message: "Event deleted successfully" });
+    } catch (err) {
+      return res.status(400).send("Failed to delete event");
     }
   }
-  async listEvents(req: Request, res: Response) {
+
+  listEvents = async (req: AuthRequest, res: Response): Promise<Response> => {
+    try { 
+      const events = await eventService.listEvents({
+        hobbies: req.query.hobbies as string[],
+        location: req.query.location as string,
+        date: new Date,
+        createdBy: req.query.createdBy as string,
+        participants: req.query.participants as string[],
+      });
+      return res.status(200).send(events);
+    } catch (err) { 
+      return res.status(400).send("Failed to list events");
+    }
+  }
+
+   //Hobbies Management
+
+   createHobby = async (req: AuthRequest, res: Response): Promise<Response> => {
+    try { 
+      const newHobby = await hobbyService.createHobby({
+        ...req.body
+      })
+      return res.status(201).send(newHobby);
+    } catch (err) { 
+      return res.status(400).send("Failed to create new hobby");
+    }
+  }
+
+  updateHobby = async (req: AuthRequest, res: Response): Promise<Response> => {
+    try { 
+      const hobbyId = req.params.id;
+      const updates = req.body;
+      const updatedHobby = await hobbyService.updateHobby(hobbyId, updates);
+      return res.status(200).send(updatedHobby);
+    } catch (err) {
+      return res.status(400).send("Failed to update hobby");
+    }
+  }
+
+  deleteHobby = async (req: AuthRequest, res: Response): Promise<Response> => {
     try {
-      const filter = req.query;
-      const events = await adminService.listEvents(filter);
-      res.status(200).json(events);
-    } catch (error: unknown) {
-      const errMsg =
-        error instanceof Error ? error.message : "Failed to list events";
-      res.status(400).json({ message: errMsg });
+      const hobbyId = req.params.id;
+      await hobbyService.deleteHobby(hobbyId);
+      return res.status(204).json({ message: "Hobby deleted successfully" });
+    } catch (err) { 
+      return res.status(400).send("Failed to delete hobby");
     }
   }
+
+  listHobbies = async (req: AuthRequest, res: Response): Promise<Response> => {
+    try {
+      const hobbies = await hobbyService.listHobbies();
+      return res.status(200).send(hobbies);
+    } catch (err) { 
+      return res.status(400).send("Failed to list hobbies");
+    }
+  }
+
 }
 export default new AdminController();
