@@ -10,7 +10,7 @@ interface Event {
   description: string;
   date: string;
   location: string;
-  participants: string[];
+  participants: { _id: string }[];
   createdBy: string;
   hobby: string[];
   image?: string;
