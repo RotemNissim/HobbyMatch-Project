@@ -17,7 +17,8 @@ const AdminUsersList = () => {
   const fetchUsers = async () => {
     try {
       const response = await listUsers();
-      setUsers(response.data);
+      console.log("Users response:", response.data); 
+      setUsers(response.data || []);
     } catch (error) {
       console.error("Error fetching users", error);
     }

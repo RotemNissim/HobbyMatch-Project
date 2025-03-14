@@ -15,13 +15,17 @@ class AdminController {
 
     getCurrentAdmin = async (req: AuthRequest, res: Response): Promise<Response> => {
     try {
-      const admin = req.admin;
+      console.log("🔥 Checking req.admin:", req.user);
+      const admin = req.user;
       return res.status(200).send({
         id: admin._id,
         email: admin.email,
+        firstName: admin.firstName,
+        lastName: admin.lastName,
         role: 'admin',
       });
      } catch (err) {
+      console.error("🔥 Error in getCurrentAdmin:", err);
      return res.status(400).send("Failed to get current admin");
     }
    }

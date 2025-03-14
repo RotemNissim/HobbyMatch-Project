@@ -17,6 +17,11 @@ const UserProfile = () => {
     const [isCreatingEvent, setIsCreatingEvent] = useState(false);
     const navigate = useNavigate();
 
+    
+    const handleAdminRedirect = () => {
+        navigate("/admin"); // 🔥 Change to your actual admin route
+    };
+
     useEffect(() => {
         const fetchUser = async () => {
             try {
@@ -80,6 +85,19 @@ const UserProfile = () => {
                         className='bg-red-500 text-white px-4 py-2 rounded'
                         onClick={handleLogout}
                         >Logout</button>
+                          <button 
+                onClick={handleAdminRedirect} 
+                style={{
+                    marginTop: "20px",
+                    padding: "10px 20px",
+                    backgroundColor: "#007bff",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer"
+                }}>
+                Go to Admin Panel
+            </button>
                     </div>
                     </div>
                 </div>

@@ -32,7 +32,7 @@ app.use((req, res, next) => {
 
 // הוספת הנתיבים לאפליקציה
 app.use("/users", userRoute);
-app.use("/admins", adminRoute);
+app.use("/admin", adminRoute);
 app.use("/events", eventRoute); // זה כבר כולל את ה-API של ההמלצות
 app.use("/auth", authRoute);
 app.use("/hobbies", hobbyRoute);
