@@ -3,6 +3,7 @@ import Admin from '../models/Admin.models';
 import { authMiddleware } from '../controllers/auth.controller';
 import  AsyncHandler from '../middleware/asyncHandler';
 import AdminController from '../controllers/admin.controller';
+import eventController from '../controllers/event.controller';
 
 const router = express.Router();
 
@@ -18,7 +19,7 @@ router.get('/users',authMiddleware,AsyncHandler(AdminController.listUsers));
 router.post('/events', authMiddleware,AsyncHandler(AdminController.createEvent));
 router.put('/events/:id', authMiddleware,AsyncHandler(AdminController.updateEvent));
 router.delete('/events/:id', authMiddleware,AsyncHandler(AdminController.deleteEvent));
-router.get('/events', authMiddleware,AsyncHandler(AdminController.listEvents));
+router.get('/events', authMiddleware,AsyncHandler(eventController.listEvents));
 
 //HOBBIES ROUTE MANAGEMENT - YET TO BE IMPLEMENTED
 router.post('/hobbies', authMiddleware,AsyncHandler(AdminController.createHobby));

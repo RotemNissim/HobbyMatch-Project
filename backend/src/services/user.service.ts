@@ -1,9 +1,14 @@
 import User, {IUser} from '../models/User.models';
+import bcrypt from 'bcrypt';
 
 class UserService {
 
   async createUser(data: { username: string; password: string, email: string, firstName: string, lastName: string}) {
-    const newUser = new User(data);
+    const hashedPassword = await bcrypt.hash(data.password, 10); 
+    const newUser = new User({
+      ...data,
+      password:hashedPassword
+    });
     await newUser.save();
     return newUser;
   }

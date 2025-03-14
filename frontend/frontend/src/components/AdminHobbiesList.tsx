@@ -14,11 +14,15 @@ const AdminHobbiesList = () => {
     useEffect(() => {
       fetchHobbies();
     }, []);
+
+    useEffect(() => {
+      console.log("Hobbies", hobbies);
+    }, [hobbies]);
   
     const fetchHobbies = async () => {
       try {
         const response = await listHobbies();
-        setHobbies(response.data);
+        setHobbies(response);
       } catch (error) {
         console.error("Error fetching hobbies", error);
       }

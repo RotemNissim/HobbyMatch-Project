@@ -2,6 +2,7 @@ import userService from './user.service';
 import eventService from './event.service';
 import Admin from '../models/Admin.models';
 import hobbyService from './hobby.service';
+import bcrypt from 'bcrypt';
 
 class AdminService {
 
@@ -16,7 +17,11 @@ class AdminService {
     }
 
    createAdmin = async (data: { email: string, password: string, firstName: string, lastName: string, role: 'admin'}) => {
-    const newAdmin = new Admin(data);
+    const hashedPassword = await bcrypt.hash(data.password, 10); 
+    const newAdmin = new Admin({
+      ...data,
+      password:hashedPassword
+    });
     await newAdmin.save();
     return newAdmin;
     }
