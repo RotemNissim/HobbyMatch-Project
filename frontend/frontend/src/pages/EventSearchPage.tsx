@@ -39,7 +39,9 @@ const EventSearchPage: React.FC = () => {
     fetchEvents();
   }, []);
 
-  const handleFilterChange = async (filters: Record<string, string | string[]>) => {
+  const handleFilterChange = async (
+    filters: Record<string, string | string[]>
+  ) => {
     try {
       const response = await axios.get<Event[]>("/events", { params: filters });
       setFilteredEvents(response.data);
