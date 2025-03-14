@@ -15,15 +15,19 @@ const AdminEventsList = () => {
     fetchEvents();
   }, []);
 
+  useEffect(() => {
+    console.log("Events state updated:", events);
+  }, [events]);
+
   const fetchEvents = async () => {
     try {
-      const response = await listEvents();
-      setEvents(response.data);
+      const eventsData = await listEvents();
+      console.log("Fetched events:", eventsData);
+      setEvents(eventsData || []);
     } catch (error) {
-      console.error("Error fetching events", error);
+      console.error("Error fetching events:", error);
     }
   };
-
   const handleAddEvent = async () => {
     try {
         await createEvent({

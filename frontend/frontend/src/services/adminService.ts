@@ -1,7 +1,5 @@
-import { apiClientWithAuth } from "./axiosInstance";
 import apiClient from "./axiosInstance";
 import { IAdmin, IUser, IEvent, IHobby } from "../types"
-import axios from 'axios';
 
 //Users
 
@@ -48,6 +46,7 @@ export const deleteEvent = async (eventId: string) => {
 
 export const listEvents = async () => {
     const { data } = await apiClient.get("/admin/events");
+    console.log("listEvents API response (adminService)", data);
     return  data; 
 };
 
