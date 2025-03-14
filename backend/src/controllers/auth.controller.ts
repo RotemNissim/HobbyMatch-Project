@@ -66,7 +66,6 @@ type tTokens = {
 
 // ✅ Generate token directly from user/admin object
 const generateToken = (account: tUser | tAdmin): tTokens => {
-    console.log("generateToken account:" ,account);
     const sk = process.env.TOKEN_SECRET as string;
 
     if (!sk) {
@@ -203,36 +202,56 @@ const refresh = async (req: Request, res: Response) => {
 };
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) : Promise<void> => {
+    console.log("🔥 Incoming request to:", req.url);
+    console.log("🔥 Headers Received:", req.headers);
+
     const authorization = req.header("authorization");
+    console.log("🔥 Authorization Header in Backend:", authorization);
+
     let token;
+
     if (authorization && authorization.startsWith("Bearer ")) {
         token = authorization.split(" ")[1];
+        console.log("🔥 Extracted Token:", token);
     }
 
     // 🔥 2️⃣ If no token, check the cookie (Google login)
     if (!token && req.cookies && req.cookies.accessToken) {
         token = req.cookies.accessToken;
+        console.log("🔥 Token Found in Cookies:", token);
     }
 
-  if (!token) {res.status(401).json({ message: 'Access Denied' });
-  return;}
+  if (!token) {
+    console.warn("🔥 No token found! Rejecting request.");
+    res.status(401).json({ message: 'Access Denied' });
+  return;
+}
     
 
   try {
       const { _id } = jwt.verify(token, process.env.TOKEN_SECRET!) as { _id: string };
+      console.log("🔥 Decoded Token ID:", _id);
 
+      const admin = await adminModel.findById(_id) as tAdmin | null;  
       const user = await userModel.findById(_id) as tUser | null;
+
       if (user) {
+        console.log("🔥 Regular User Found:", user.email);
           (req as any).user = user;
           return next();
       }
-
-      const admin = await adminModel.findById(_id) as tAdmin | null;
+      
       if (admin) {
+        console.log("🔥 Admin Found:", admin.email);
           (req as any).user = admin;
           return next();
       }
+      console.log("Auth Middleware - Token ID:", _id);
+        console.log("Checking User Model...");
+        console.log("User Found:", user);
 
+        console.log("Checking Admin Model...");
+        console.log("Admin Found:", admin);
        res.status(401).json({ message: 'User not found' });
        return;
 

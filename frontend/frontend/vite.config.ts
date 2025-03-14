@@ -10,9 +10,18 @@ export default defineConfig({
         target: 'http://localhost:3000', // Your backend URL
         changeOrigin: true,
       },
-      '/admins': {
+      '/admin': {
         target: 'http://localhost:3000',
         changeOrigin: true,
+        secure: false,
+        ws: true,
+        xfwd: true,
+        configure: (proxy) => {
+          proxy.on('proxyReq', (proxyReq, req, res) => {
+            console.log("proxying request to /admin:", req.url);
+            console.log("headers sent to backend:", req.headers);
+          });
+        }
       },
       '/events': {
         target: 'http://localhost:3000',

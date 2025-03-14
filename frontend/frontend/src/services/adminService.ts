@@ -1,5 +1,7 @@
+import { apiClientWithAuth } from "./axiosInstance";
 import apiClient from "./axiosInstance";
 import { IAdmin, IUser, IEvent, IHobby } from "../types"
+import axios from 'axios';
 
 //Users
 
@@ -46,7 +48,7 @@ export const deleteEvent = async (eventId: string) => {
 
 export const listEvents = async () => {
     const { data } = await apiClient.get("/admin/events");
-    return data; 
+    return  data; 
 };
 
 //Hobbies
@@ -76,6 +78,18 @@ export const listHobbies = async () => {
 };
 
 //Admins
+
+export const getCurrentAdmin = async () => {
+    console.log("🔥 Fetching admin user...");
+    
+    const token = localStorage.getItem("accessToken");
+    console.log("🔥 Manually Adding Header:", token);
+
+    const { data } = await apiClient.get("/admin/me");
+
+    console.log("🔥 Admin Response:", data);
+    return data;  
+}
 
 export const createAdmin = async (admin: IAdmin) => {
     return new Promise<IAdmin>((resolve, reject) => {

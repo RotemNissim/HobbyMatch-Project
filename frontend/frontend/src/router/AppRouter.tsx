@@ -11,9 +11,7 @@ function AppRouter() {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
-      {/* <Route path="/register" element={<RegisterPage />} /> */}
       <Route path="/profile" element={<UserProfile />} />
-      {/* <Route path="/events/:eventId" element={<EventDetails />} />  */}
       <Route path="/events" element={<EventSearchPage />} />
       <Route path="/events/:eventId" element={<EventPage />} />
       <Route path="/admin" element={<AdminPanel />} />

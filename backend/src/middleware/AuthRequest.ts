@@ -7,5 +7,5 @@ export type AuthUser = (IUser & { _id: string }) | (IAdmin & { _id: string });
 
 export interface AuthRequest extends Request {
     user: AuthUser;  // authMiddleware guarantees this exists
-    admin: AuthUser; 
+    
 }

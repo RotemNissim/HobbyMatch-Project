@@ -6,7 +6,7 @@ import AdminController from '../controllers/admin.controller';
 
 const router = express.Router();
 
-router.use(authMiddleware);
+
 
 //Users Management
 router.post('/users',authMiddleware, AsyncHandler(AdminController.createUser));
@@ -28,6 +28,7 @@ router.get('/hobbies/', authMiddleware,AsyncHandler(AdminController.listHobbies)
 
 
 //ADMINS ROUTE MANAGEMENT - YET TO BE IMPLEMENTED
+router.get('/me', authMiddleware,AsyncHandler(AdminController.getCurrentAdmin));
 router.post('/admins', authMiddleware,AsyncHandler(AdminController.createAdmin));
 router.put('/admins/:id', authMiddleware,AsyncHandler(AdminController.updateAdmin));
 router.delete('/admins/:id',authMiddleware,AsyncHandler(AdminController.deleteAdmin));
