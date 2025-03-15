@@ -2,39 +2,66 @@ import { useEffect, useState } from "react";
 import { listHobbies, toggleHobby } from "../services/hobbyService";
 import { getUserHobbies } from "../services/userService";
 
-const MyHobbies = ({user} : {user:any}) => {
+const MyHobbies = ({ user }: { user: any }) => {
     const [hobbies, setHobbies] = useState<string[]>([]);
     const [allHobbies, setAllHobbies] = useState<{ _id: string; name: string }[]>([]);
     const [isCollapsed, setIsCollapsed] = useState(true);
+    const [loading, setLoading] = useState(true);
+    const [isUpdating, setIsUpdating] = useState(false); 
 
     useEffect(() => {
         if (!user || !user._id) return;
 
         const fetchHobbies = async () => {
+            setLoading(true);
             try {
+                console.log("🔥 Fetching hobbies for user:", user._id);
                 const [userHobbies, hobbiesList] = await Promise.all([
                     getUserHobbies(user._id),
                     listHobbies(),
                 ]);
 
-                setHobbies(userHobbies);
+                console.log("✅ API Response - User Hobbies:", userHobbies);
+                console.log("✅ API Response - All Hobbies:", hobbiesList);
+
+                const userHobbyIds = userHobbies.map((hobby: { _id: string }) => hobby._id);
+
+                setHobbies(userHobbyIds);
                 setAllHobbies(hobbiesList);
             } catch (error) {
-                console.error("❌ Error fetching user or hobbies:", error);
+                console.error("❌ Error fetching hobbies:", error);
+            } finally {
+                setLoading(false);
             }
         };
 
         fetchHobbies();
-    }, [user]);
+    }, [user]); // ✅ Only fetch when user changes
 
     const handleHobbyToggle = async (hobbyId: string) => {
-        if (!user || !user._id) return;
+        if (!user || !user._id || isUpdating) return;
 
         try {
-            const updatedHobbies = await toggleHobby(user._id, hobbyId);
-            setHobbies(updatedHobbies);  // ✅ Update UI instantly
+            setIsUpdating(true);
+            console.log("🔥 Toggling hobby:", hobbyId);
+
+            // 🔥 Backend update first
+            await toggleHobby(user._id, hobbyId);
+
+            // 🔥 Refetch hobbies from backend
+            const [updatedHobbies, updatedHobbyList] = await Promise.all([
+                getUserHobbies(user._id),
+                listHobbies(),
+            ]);
+
+            const updatedHobbyIds = updatedHobbies.map((hobby: { _id: string }) => hobby._id);
+            setHobbies(updatedHobbyIds);
+            setAllHobbies(updatedHobbyList); // ✅ Ensures hobbies list stays in sync
+
         } catch (error) {
             console.error("❌ Error updating hobbies:", error);
+        } finally {
+            setIsUpdating(false);
         }
     };
 
@@ -47,7 +74,9 @@ const MyHobbies = ({user} : {user:any}) => {
             {!isCollapsed && (
                 <div className="hobbies-list">
                     <h3>My Hobbies</h3>
-                    {hobbies.length > 0 ? (
+                    {loading ? (
+                        <p>Loading hobbies...</p> 
+                    ) : hobbies.length > 0 ? (
                         <ul>
                             {hobbies.map((hobbyId) => {
                                 const hobby = allHobbies.find((h) => h._id === hobbyId);
@@ -59,9 +88,15 @@ const MyHobbies = ({user} : {user:any}) => {
                     )}
 
                     <h3>Add More Hobbies</h3>
-                    <select onChange={(e) => handleHobbyToggle(e.target.value)} className="hobby-dropdown">
+                    <select 
+                        onChange={(e) => handleHobbyToggle(e.target.value)} 
+                        className="hobby-dropdown"
+                        value=""
+                        disabled={isUpdating}
+                    >
+                        <option value="" disabled>Choose a hobby</option>
                         {allHobbies.map((hobby) => (
-                            <option key={hobby._id} value={hobby._id} selected={hobbies.includes(hobby._id)}>
+                            <option key={hobby._id} value={hobby._id}>
                                 {hobby.name} {hobbies.includes(hobby._id) ? "✅" : ""}
                             </option>
                         ))}
