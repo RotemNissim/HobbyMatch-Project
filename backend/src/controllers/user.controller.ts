@@ -20,7 +20,8 @@ class UserController {
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,
-            hobbies: 'hobbies' in user ? user.hobbies : []
+            hobbies: 'hobbies' in user ? user.hobbies : [],
+            
         });
     };
 

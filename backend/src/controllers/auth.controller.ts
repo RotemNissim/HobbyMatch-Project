@@ -89,16 +89,20 @@ const generateToken = (account: tUser | tAdmin): tTokens => {
 const login = async (req: Request, res: Response): Promise<Response> => {
   try {
       const { email, password } = req.body;
+      console.log("🙏 login attempt:", email);
 
       const user = await userModel.findOne({ email }).select("+password") as tUser | null;
 
       if (user) {
+            console.log("🙏 user found:", user.email);
           const validPassword = await bcrypt.compare(password, user.password);
           if (!validPassword) {
               return res.status(400).json({ message: 'Invalid email or password' });
           }
 
           const tokens = generateToken(user);
+          console.log("🔥 tokens:", tokens);
+
           user.refreshToken = user.refreshToken || [];
           user.refreshToken.push(tokens.refreshToken);
           await user.save();
@@ -112,14 +116,17 @@ const login = async (req: Request, res: Response): Promise<Response> => {
       }
 
       const admin = await adminModel.findOne({ email }).select("+password") as tAdmin | null;
+     
 
       if (admin) {
+        console.log("🔥 Admin Found:", admin.email);
           const validPassword = await bcrypt.compare(password, admin.password);
           if (!validPassword) {
               return res.status(400).json({ message: 'Invalid email or password' });
           }
 
           const tokens = generateToken(admin);
+          console.log("✅ Generated Tokens (Admin):", tokens);
           admin.refreshToken = admin.refreshToken || [];
           admin.refreshToken.push(tokens.refreshToken);
           await admin.save();

@@ -6,6 +6,13 @@ import { googleSignIn } from './userService';
 export const login = async (email: string, password: string) => {
     const { data } = await apiClient.post('/auth/login', { email, password });
 
+    console.log("✅ Login Success:", data);
+
+    if(!data.accessToken) {
+        console.error("❌ No accessToken received!");
+        throw new Error("Login failed: No access token received");
+    }
+
     localStorage.setItem('accessToken', data.accessToken);
     localStorage.setItem('refreshToken', data.refreshToken);
 
