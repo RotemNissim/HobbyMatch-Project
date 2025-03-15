@@ -9,6 +9,8 @@ const router = express.Router();
  *   name: Comment
  *   description: The comment API
  */
+
+
 // Send a comment from one user to another (Direct User-to-User Comment)
 router.post("/:senderId/send", authMiddleware, commentController.sendComment);
 

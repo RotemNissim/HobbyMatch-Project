@@ -45,7 +45,47 @@ import authController from "../controllers/auth.controller";
  *         lastName: 'marly'
  */
 
- 
+/**
+ * @swagger
+ * /auth/google:
+ *   post:
+ *     summary: Authenticate a user with Google OAuth
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               idToken:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     user:
+ *                       $ref: '#/components/schemas/User'
+ *     responses:
+ *       200:
+ *         description: Successfully authenticated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 accessToken:
+ *                   type: string
+ *                 refreshToken:
+ *                   type: string
+ *                 user:
+ *                   $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Invalid request
+ *       500:
+ *         description: Internal server error
+ */
+router.post("/google", authController.googleSignIn);
+
 /**
  * @swagger
  * /auth/login:
@@ -102,6 +142,18 @@ router.post("/login", authController.login);
  *     tags: [Auth]
  *     security:
  *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               refreshTokens:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Array of refresh tokens
  *     responses:
  *       200:
  *         description: New access token issued
@@ -127,11 +179,23 @@ router.post("/refresh", authController.refresh);
  *   post:
  *     summary: Log out the user
  *     tags: [Auth]
- *     security:
- *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               refreshTokens:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Array of refresh tokens to invalidate
  *     responses:
  *       200:
  *         description: Successfully logged out
+ *       400:
+ *         description: Bad request
  *       500:
  *         description: Internal server error
  */
@@ -160,36 +224,7 @@ router.post("/logout", authController.logout);
  *                 message:
  *                   type: string
  *                 user:
- *                   type: object
- *                   properties:
- *                     firstName:
- *                       type: string
- *                     lastName:
- *                       type: string
- *                     email:
- *                       type: string
- *                     refreshToken:
- *                       type: string
- *                     password:
- *                       type: string
- *                     hobbies:
- *                       type: array
- *                       items:
- *                         type: string
- *                     calendar:
- *                       type: array
- *                       items:
- *                         type: string
- *                     profilePicture:
- *                       type: string
- *                     likes:
- *                       type: array
- *                       items:
- *                         type: string
- *                     _id:
- *                       type: string
- *                     __v:
- *                       type: integer
+ *                   $ref: '#/components/schemas/User'
  *       400:
  *         description: Bad request
  *       500:
