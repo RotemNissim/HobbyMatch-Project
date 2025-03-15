@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getCurrentUser, getGoogleUser } from '../services/userService';
@@ -10,9 +9,6 @@ import '../styles/profile.css';
 import { logout } from '../services/authService';
 import axios, { AxiosError } from 'axios';
 import { setGlobalFlag } from '../globalState';
-
-
-
 
 const UserProfile = () => {
     const [user, setUser] = useState<any>(null);
@@ -77,7 +73,6 @@ const UserProfile = () => {
             navigate('/');
         };
     
-
     return (
         <div className="carousel-container">
             <h1 className="text-2xl font-bold">My Profile</h1>
@@ -105,7 +100,7 @@ const UserProfile = () => {
                             </button>
                             <button 
                                 className='bg-red-500 text-white px-4 py-2 rounded'
-                                onClick={logout}
+                                onClick={handleLogout}
                             >
                                 Logout
                             </button>
@@ -120,7 +115,6 @@ const UserProfile = () => {
                                 </button>
                             )}
                         </div>
-
                     </div>
                 </div>
             )}
