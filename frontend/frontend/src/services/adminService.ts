@@ -80,8 +80,6 @@ export const listHobbies = async () => {
 
 export const getCurrentAdmin = async () => {
     console.log("🔥 Fetching admin user...");
-    
-    const token = localStorage.getItem("accessToken");
 
     const { data } = await apiClient.get("/admin/me");
 

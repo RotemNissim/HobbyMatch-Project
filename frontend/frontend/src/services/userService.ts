@@ -37,8 +37,8 @@ export const updateProfilePicture = async (userId: string, file: File) => {
     return data;
 };
 
-export const getUserHobbies = async () => {
-    const { data } = await apiClient.get('/users/hobbies');
+export const getUserHobbies = async (userId: string) => {
+    const { data } = await apiClient.get(`/users/${userId}/hobbies`);
     return data;
 };
 

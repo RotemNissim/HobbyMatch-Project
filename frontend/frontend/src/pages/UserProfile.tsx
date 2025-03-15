@@ -5,6 +5,7 @@ import { getCurrentAdmin } from '../services/adminService';
 import EditProfile from '../components/EditProfile';
 import CreateEventForm from '../components/CreateEventForm';
 import MyCreatedEvents from '../components/MyCreatedEvents';
+import MyHobbies from '../components/MyHobbies';
 import '../styles/profile.css';
 import { logout } from '../services/authService';
 import axios, { AxiosError } from 'axios';
@@ -126,7 +127,8 @@ const UserProfile = () => {
             {isCreatingEvent && (
                 <CreateEventForm onEventCreated={handleEventCreated} onCancel={() => setIsCreatingEvent(false)} />
             )}
-
+                 {/* ✅ Add MyHobbies component and pass the user data */}
+            {user && <MyHobbies user={user} />}
             <div className="mt-8">
                 <h2 className="text-xl font-semibold">Events You Created</h2>
                 <div className="carousel">

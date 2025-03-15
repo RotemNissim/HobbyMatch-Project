@@ -1,7 +1,21 @@
 import User, {IUser} from '../models/User.models';
 import bcrypt from 'bcrypt';
+import Hobby from '../models/Hobby.models';
 
 class UserService {
+
+  async getHobbiesByUserId(userId: string) {
+    const user = await User.findById(userId).select('hobbies');
+   
+    if (!user) {
+      throw new Error('User not found');
+    } else if  (!user.hobbies.length) {
+      throw new Error('Hobbies not found');
+    }
+    const hobbies = await Hobby.find({_id: {$in:user.hobbies}});
+    return hobbies;
+  
+  }
 
   async createUser(data: { username: string; password: string, email: string, firstName: string, lastName: string}) {
     const hashedPassword = await bcrypt.hash(data.password, 10); 
