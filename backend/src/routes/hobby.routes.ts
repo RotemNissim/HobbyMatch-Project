@@ -17,6 +17,7 @@ router.get('/', hobbyController.listHobbies);
 // Authenticated - Add a hobby to a user's profile
 router.post('/:userId/add', authMiddleware, hobbyController.addHobby);
 router.post('/:userId/toggle', authMiddleware, asyncHandler(hobbyController.toggleHobby));
+router.post('/:eventId/toggle', authMiddleware, asyncHandler(hobbyController.toggleHobbyInEvent));
 
 // Authenticated - Remove a hobby from a user's profile
 router.post('/:userId/remove', authMiddleware, hobbyController.removeHobby);
