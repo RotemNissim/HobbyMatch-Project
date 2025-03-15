@@ -21,7 +21,6 @@ router.put('/:id', authMiddleware, asyncHandler(userController.updateProfile));
 router.post('/events', authMiddleware, asyncHandler(userController.createEvent));
 router.put('/events/:id', authMiddleware, asyncHandler(userController.updateEvent));
 router.delete('/events/:id', authMiddleware, asyncHandler(userController.deleteUserEvent));
-
 router.post('/comments/:id', authMiddleware, asyncHandler(userController.addCommentToEvent));
 
 export default router;

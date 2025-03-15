@@ -82,7 +82,6 @@ export const getCurrentAdmin = async () => {
     console.log("🔥 Fetching admin user...");
     
     const token = localStorage.getItem("accessToken");
-    console.log("🔥 Manually Adding Header:", token);
 
     const { data } = await apiClient.get("/admin/me");
 
