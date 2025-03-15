@@ -80,6 +80,7 @@ class EventService {
    * List events with optional filtering
   */
  async listEvents(filter: Partial<{
+  name:string;
    hobbies: string[];
    location: string;
    date: Date;
@@ -87,6 +88,9 @@ class EventService {
    participants: string[];
   }>) {
     const query: any = {};
+    if (filter.name) { 
+      query.title = { $regex: filter.name, $options: "i"};
+    }
     
     if (filter.hobbies) {
       query.hobby = { $in: filter.hobbies.map(id => new mongoose.Types.ObjectId(id)) };
@@ -105,7 +109,9 @@ class EventService {
     }
 
     if (filter.participants) {
-        query.participants = { $in: filter.participants.map(id => new mongoose.Types.ObjectId(id)) };
+      const minParticipants = parseInt(filter.participants.toString());
+      query["participants.0"] = { $exists: true};
+        query.participants =  { $size: { $gte: minParticipants } };
     }
 
     const events = await Event.find(query).populate('hobby participants createdBy');
