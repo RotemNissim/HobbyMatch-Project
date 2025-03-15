@@ -16,7 +16,7 @@ const AdminHobbiesList = () => {
     }, []);
 
     useEffect(() => {
-      console.log("Hobbies", hobbies);
+      
     }, [hobbies]);
   
     const fetchHobbies = async () => {

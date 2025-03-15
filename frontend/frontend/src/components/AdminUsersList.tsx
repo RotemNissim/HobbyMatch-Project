@@ -15,13 +15,13 @@ const AdminUsersList = () => {
   }, []);
 
   useEffect(() => {
-    console.log("Users state updated:", users);
+    
   }, [users]);
 
   const fetchUsers = async () => {
     try {
       const usersData = await listUsers(); // listUsers already returns data
-      console.log("Fetched users:", usersData);
+      
       setUsers(usersData || []);
     } catch (error) {
       console.error("Error fetching users:", error);

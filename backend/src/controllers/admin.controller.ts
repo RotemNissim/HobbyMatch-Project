@@ -3,7 +3,7 @@ import { AuthRequest } from "../middleware/AuthRequest";
 import User from "../models/User.models";
 import Event from "../models/Event.models";
 import Hobby from "../models/Hobby.models";
-import Admin from "../models/Admin.models";
+import Admin, { IAdmin} from "../models/Admin.models";
 import adminService from "../services/admin.service";
 import hobbyService from "../services/hobby.service";
 import userService from "../services/user.service";
@@ -16,13 +16,17 @@ class AdminController {
     getCurrentAdmin = async (req: AuthRequest, res: Response): Promise<Response> => {
     try {
       console.log("🔥 Checking req.admin:", req.user);
-      const admin = req.user;
+      const admin = await Admin.findById(req.user._id);
+      if (!admin) {
+        console.log("User is not an Admin!!");
+        return res.status(403).send("Not an Authorized Admin");
+      }
       return res.status(200).send({
         id: admin._id,
         email: admin.email,
         firstName: admin.firstName,
         lastName: admin.lastName,
-        role: 'admin',
+        role: "admin"
       });
      } catch (err) {
       console.error("🔥 Error in getCurrentAdmin:", err);
