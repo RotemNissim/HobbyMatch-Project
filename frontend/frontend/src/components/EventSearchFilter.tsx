@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Select from "react-select";
+import { listHobbies } from "../services/hobbyService";
 
 interface FilterProps {
   onFilterChange: (filters: {
     name?: string;
     date?: string;
     location?: string;
-    participants?: string;  // שינוי כאן ל-string
-    hobbies?: string;
+    participants?: string;
+    hobbies?: string[];
   }) => void;
 }
 
@@ -16,21 +18,42 @@ const EventSearchFilter: React.FC<FilterProps> = ({ onFilterChange }) => {
     date: "",
     location: "",
     participants: "",
-    hobbies: "",
+    hobbies: [] as string[],
   });
+
+  const [hobbies, setHobbies] = useState<{ value: string; label: string }[]>([]);
+
+  useEffect(() => {
+    async function fetchHobbies() {
+      try {
+        const hobbyList = await listHobbies();
+        setHobbies(hobbyList.map((hobby: any) => ({ value: hobby._id, label: hobby.name })));
+      } catch (error) {
+        console.error("Error fetching hobbies:", error);
+      }
+    }
+    fetchHobbies();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFilters((prevFilters) => ({
-      ...prevFilters,
+    setFilters((prev) => ({
+      ...prev,
       [name]: value,
+    }));
+  };
+
+  const handleHobbyChange = (selectedOptions: any) => {
+    setFilters((prev) => ({
+      ...prev,
+      hobbies: selectedOptions ? selectedOptions.map((option: any) => option.value) : [],
     }));
   };
 
   const handleSearch = () => {
     onFilterChange({
       ...filters,
-      participants: filters.participants ? filters.participants.toString() : undefined, // המרה ל-string
+      participants: filters.participants ? filters.participants.toString() : undefined,
     });
   };
 
@@ -67,14 +90,16 @@ const EventSearchFilter: React.FC<FilterProps> = ({ onFilterChange }) => {
         value={filters.participants}
         onChange={handleChange}
       />
-      <input
-        type="text"
-        name="hobbies"
-        placeholder="Hobbies"
+
+      {/* MULTI-SELECTION DROPDOWN FOR HOBBIES */}
+      <Select
+        isMulti
+        options={hobbies}
+        placeholder="Select hobbies"
         className="border p-2 rounded"
-        value={filters.hobbies}
-        onChange={handleChange}
+        onChange={handleHobbyChange}
       />
+
       <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={handleSearch}>
         Search
       </button>

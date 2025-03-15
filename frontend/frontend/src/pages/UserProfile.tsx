@@ -8,7 +8,7 @@ import MyCreatedEvents from '../components/MyCreatedEvents';
 import MyHobbies from '../components/MyHobbies';
 import '../styles/profile.css';
 import { logout } from '../services/authService';
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 import { setGlobalFlag } from '../globalState';
 
 const UserProfile = () => {
@@ -125,7 +125,7 @@ const UserProfile = () => {
             )}
 
             {isCreatingEvent && (
-                <CreateEventForm onEventCreated={handleEventCreated} onCancel={() => setIsCreatingEvent(false)} />
+            <CreateEventForm onEventCreated={handleEventCreated} onCancel={() => setIsCreatingEvent(false)} />
             )}
                  {/* ✅ Add MyHobbies component and pass the user data */}
             {user && <MyHobbies user={user} />}

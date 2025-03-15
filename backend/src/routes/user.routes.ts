@@ -14,7 +14,7 @@ const router = express.Router();
 
 router.get("/me", authMiddleware, asyncHandler(userController.getCurrentUser));
 router.get(
-  "/hobbies",
+  "/:id/hobbies",
   authMiddleware,
   asyncHandler(userController.getUserHobbies)
 );

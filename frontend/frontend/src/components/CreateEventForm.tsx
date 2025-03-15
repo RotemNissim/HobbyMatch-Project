@@ -7,7 +7,7 @@ interface EventForm {
     description: string;
     date: string;
     location: string;
-    hobbies: string[];  // Should be an array of hobby ObjectIds
+    hobby: string[]; // 🔥 MongoDB expects "hobby", not "hobbies"
 }
 
 interface Props {
@@ -21,7 +21,7 @@ const CreateEventForm: React.FC<Props> = ({ onEventCreated, onCancel }) => {
         description: '',
         date: '',
         location: '',
-        hobbies: [], // This should be an array of ObjectIds for MongoDB
+        hobby: [],
     });
 
     const [hobbiesList, setHobbiesList] = useState<{ _id: string; name: string }[]>([]);
@@ -49,9 +49,9 @@ const CreateEventForm: React.FC<Props> = ({ onEventCreated, onCancel }) => {
     const handleHobbyToggle = (hobbyId: string) => {
         setForm((prevForm) => ({
             ...prevForm,
-            hobbies: prevForm.hobbies.includes(hobbyId)
-                ? prevForm.hobbies.filter((id) => id !== hobbyId) // 🔥 Remove hobby if already selected
-                : [...prevForm.hobbies, hobbyId] // 🔥 Add hobby if not selected
+            hobby: prevForm.hobby.includes(hobbyId)
+                ? prevForm.hobby.filter((id) => id !== hobbyId) // 🔥 Remove if already selected
+                : [...prevForm.hobby, hobbyId] // 🔥 Add if not selected
         }));
     };
 
@@ -109,7 +109,7 @@ const CreateEventForm: React.FC<Props> = ({ onEventCreated, onCancel }) => {
                                 <input
                                     type="checkbox"
                                     id={hobby._id}
-                                    checked={form.hobbies.includes(hobby._id)}
+                                    checked={form.hobby.includes(hobby._id)}
                                     onChange={() => handleHobbyToggle(hobby._id)}
                                     className="cursor-pointer"
                                 />
@@ -120,11 +120,11 @@ const CreateEventForm: React.FC<Props> = ({ onEventCreated, onCancel }) => {
                 )}
 
                 {/* Display selected hobbies */}
-                {form.hobbies.length > 0 && (
+                {form.hobby.length > 0 && (
                     <div className="mt-2">
                         <p className="text-sm font-semibold">Selected Hobbies:</p>
                         <ul className="list-disc pl-5">
-                            {form.hobbies.map((hobbyId) => {
+                            {form.hobby.map((hobbyId) => {
                                 const hobby = hobbiesList.find((h) => h._id === hobbyId);
                                 return hobby ? <li key={hobby._id}>{hobby.name}</li> : null;
                             })}
