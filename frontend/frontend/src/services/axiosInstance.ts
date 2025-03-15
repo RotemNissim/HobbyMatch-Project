@@ -5,10 +5,7 @@ const apiClient = axios.create({
     baseURL: '',   // Vite proxy handles all routes
 });
 
-export const apiClientWithAuth = axios.create({
-    baseURL: '',   // Vite proxy handles all routes
-    withCredentials: true, // Use this for authentication
-});
+
 apiClient.interceptors.request.use((config) => {
     const token = localStorage.getItem('accessToken');
     console.log("Adding Authorization Header:", token);
@@ -19,6 +16,11 @@ apiClient.interceptors.request.use((config) => {
 }, (error) => {
     console.error("axios error:", error);
     return Promise.reject(error);
+});
+
+export const apiClientWithAuth = axios.create({
+    baseURL: '',   // Vite proxy handles all routes
+    withCredentials: true, // Use this for authentication
 });
 
 apiClientWithAuth.interceptors.request.use((config) => {

@@ -2,43 +2,102 @@ import { Request, Response } from 'express';
 import hobbyService from '../services/hobby.service';
 import User from '../models/User.models';
 import Hobby from '../models/Hobby.models';
+import Event from '../models/Event.models';
 import mongoose from 'mongoose';
 
 class HobbyController {
 
-    toggleHobby = async (req: Request, res: Response) => {
+  toggleHobbyInEvent = async (req: Request, res: Response) => {
     try {
-      const { userId } = req.params;
-      const { hobbyId } = req.body;
+        const { eventId } = req.params;
+        const { hobbyId } = req.body;
 
-      if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(hobbyId)) {
-          return res.status(400).json({ message: "Invalid userId or hobbyId" });
+        if (!mongoose.Types.ObjectId.isValid(eventId) || !mongoose.Types.ObjectId.isValid(hobbyId)) {
+            return res.status(400).json({ message: "Invalid eventId or hobbyId" });
+        }
+
+        const event = await Event.findById(eventId);
+        const hobby = await Hobby.findById(hobbyId);
+
+        if (!event || !hobby) {
+            return res.status(404).json({ message: "Event or Hobby not found" });
+        }
+
+        if (!hobby.users) {
+          hobby.users = [];
       }
 
-      const user = await User.findById(userId);
-      if (!user) {
-          return res.status(404).json({ message: "User not found" });
+        // 🔥 Check if the hobby is already in the user's hobbies array
+        const hobbyExists = event.hobby.some((id) => id.toString() === hobbyId);
+        
+
+        if (hobbyExists) {
+            // 🔥 Remove hobby from the User's hobbies array
+            event.hobby = event.hobby.filter((id) => id.toString() !== hobbyId);
+            await event.save();
+            
+        } else {
+            // 🔥 Add hobby to the User's hobbies array
+            event.hobby.push(new mongoose.Types.ObjectId(hobbyId));
+            await event.save();
+            
+        }
+
+      return res.status(200).json({ message: "Hobby updated successfully", hobbies: event.hobby });
+    } catch (error) {
+        console.error("🔥 Error in toggleHobby:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+   toggleHobby = async (req: Request, res: Response) => {
+    try {
+        const { userId } = req.params;
+        const { hobbyId } = req.body;
+
+        if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(hobbyId)) {
+            return res.status(400).json({ message: "Invalid userId or hobbyId" });
+        }
+
+        const user = await User.findById(userId);
+        const hobby = await Hobby.findById(hobbyId);
+
+        if (!user || !hobby) {
+            return res.status(404).json({ message: "User or Hobby not found" });
+        }
+
+        if (!hobby.users) {
+          hobby.users = [];
       }
 
-      // 🔥 Check if the hobby is already in the user's hobbies array
-      const hobbyExists = user.hobbies.some((id) => id.toString() === hobbyId);
+        // 🔥 Check if the hobby is already in the user's hobbies array
+        const hobbyExists = user.hobbies.some((id) => id.toString() === hobbyId);
+        
 
-      if (hobbyExists) {
-          // 🔥 Remove hobby if it exists
-          user.hobbies = user.hobbies.filter((id) => id.toString() !== hobbyId);
-      } else {
-          // 🔥 Add hobby if it doesn't exist
-          user.hobbies.push(new mongoose.Types.ObjectId(hobbyId.toString()));
-      }
+        if (hobbyExists) {
+            // 🔥 Remove hobby from the User's hobbies array
+            user.hobbies = user.hobbies.filter((id) => id.toString() !== hobbyId);
+            await user.save();
 
-      await user.save();
+            // 🔥 Remove the user from the Hobby's users array
+            hobby.users = hobby.users.filter((id) => id.toString() !== userId);
+            await hobby.save();
+        } else {
+            // 🔥 Add hobby to the User's hobbies array
+            user.hobbies.push(new mongoose.Types.ObjectId(hobbyId));
+            await user.save();
 
-      return res.status(200).json({ message: "Hobby updated successfully", hobbies: user.hobbies });
-  } catch (error) {
-      console.error("🔥 Error in toggleHobby:", error);
-      return res.status(500).json({ message: "Internal server error" });
-  }
-  };
+            // 🔥 Add user to the Hobby's users array
+            hobby.users.push(new mongoose.Types.ObjectId(userId));
+            await hobby.save();
+        }
+
+        return res.status(200).json({ message: "Hobby updated successfully", hobbies: user.hobbies });
+    } catch (error) {
+        console.error("🔥 Error in toggleHobby:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};
   /**
    * List all hobbies
    */

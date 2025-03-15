@@ -2,7 +2,7 @@ import AdminUsersList from "../components/AdminUsersList";
 import AdminEventsList from "../components/AdminEventsList";
 import AdminAdminsList from "../components/AdminAdminsList";
 import AdminHobbiesList from "../components/AdminHobbiesList";
-import ErrorBoundary from "../components/ErrorBoundary";
+import ErrorBoundary from "../components/ErrorBoundry";
 import { Card } from "../components/ui/Card";
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
