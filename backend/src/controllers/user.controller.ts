@@ -73,7 +73,7 @@ class UserController {
 
         return res.status(200).send(updatedEvent);
     };
-
+   
     getUserHobbies = async (req: AuthRequest, res: Response): Promise<Response> => {
         const user = req.user;
 

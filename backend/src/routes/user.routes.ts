@@ -6,7 +6,7 @@ import  asyncHandler  from '../middleware/asyncHandler';
 const router = express.Router();
 
 router.get('/me', authMiddleware, asyncHandler(userController.getCurrentUser));
-router.get('/hobbies', authMiddleware, asyncHandler(userController.getUserHobbies));
+router.get('/:id/hobbies', authMiddleware, asyncHandler(userController.getUserHobbies));
 router.get('/likes', authMiddleware, asyncHandler(userController.getUserLikes));
 
 /**
