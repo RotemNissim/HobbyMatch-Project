@@ -14,6 +14,9 @@ import hobbyRoute from "./routes/hobby.routes";
 import likeRoute from "./routes/like.routes";
 import commentRoute from "./routes/comment.routes";
 
+import swaggerJsDoc from "swagger-jsdoc";
+import swaggerUI from "swagger-ui-express";
+
 import "./config/auth.google"; // קובץ אימות OAuth של גוגל
 
 const app = express();
@@ -41,6 +44,20 @@ app.use("/comments", commentRoute);
 app.use("/public", express.static("public"));
 app.use(express.static("front"));
 
+const options = {
+  definition:{
+    openapi: "3.0.0",
+    info: {
+      title: "HobbyMatch API",
+      version: "1.0.0",
+      description: "REST server including authentication using JWT",
+  },
+  servers: [{ url: "http://localhost:3000", },],
+},
+apis: ["./src/routes/*.ts"],
+};
+const specs = swaggerJsDoc(options);
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 // חיבור למסד הנתונים
 const db = mongoose.connection;
 db.once("error", (error) => console.error(error));
