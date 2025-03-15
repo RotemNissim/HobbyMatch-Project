@@ -4,6 +4,12 @@ import  {authMiddleware}  from '../controllers/auth.controller';
 
 const router = express.Router();
 
+/**
+* @swagger
+* tags:
+*   name: Hobby
+*   description: The Hobby API
+*/
 // Public - List all hobbies
 router.get('/', hobbyController.listHobbies);
 
