@@ -1,5 +1,16 @@
 /* עיצוב כללי למיכל */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-align: center;
+}
+body {
+  margin: 0;
+}
+
 .container {
+  padding: 8px;
   max-width: 1200px;
   margin: 0 auto;
   padding: 1rem;
@@ -7,10 +18,11 @@
 
 /* עיצוב לקרוסלה */
 .carousel-container {
+  padding: 8px;
   position: relative;
   width: 100%;
   padding: 0 50px; /* מרווח בצדדים עבור הכפתורים */
-  margin: 2rem 0;
+  margin: 0;
 }
 
 /* כפתורי ניווט */
@@ -66,7 +78,7 @@
 
 /* כרטיס האירוע */
 .event-card {
-  height: 300px; /* גובה קבוע */
+  max-height: 300px; /* גובה קבוע */
   overflow: auto; /* אפשרות לגלילה אם התוכן גדול מדי */
   display: flex;
   flex-direction: column;
@@ -75,6 +87,7 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   padding: 1rem;
   transition: transform 0.3s, box-shadow 0.3s;
+  max-width: 300px;
 }
 
 .event-card:hover {

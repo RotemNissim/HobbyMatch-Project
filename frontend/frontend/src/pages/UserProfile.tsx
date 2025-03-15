@@ -9,6 +9,10 @@ import MyCreatedEvents from '../components/MyCreatedEvents';
 import '../styles/profile.css';
 import { logout } from '../services/authService';
 import axios, { AxiosError } from 'axios';
+import { setGlobalFlag } from '../globalState';
+
+
+
 
 const UserProfile = () => {
     const [user, setUser] = useState<any>(null);
@@ -66,6 +70,13 @@ const UserProfile = () => {
     const handleEventCreated = () => {
         setIsCreatingEvent(false);
     };
+    
+        const handleLogout = () => {
+            logout();
+            setGlobalFlag(false);  // מעדכן גם את localStorage
+            navigate('/');
+        };
+    
 
     return (
         <div className="carousel-container">
@@ -109,6 +120,7 @@ const UserProfile = () => {
                                 </button>
                             )}
                         </div>
+
                     </div>
                 </div>
             )}

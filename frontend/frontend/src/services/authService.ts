@@ -2,6 +2,8 @@ import apiClient from './axiosInstance';
 import { AuthFormData } from '../types';
 import { CredentialResponse } from '@react-oauth/google';
 import { googleSignIn } from './userService';
+import { setGlobalFlag } from '../globalState';
+
 
 export const login = async (email: string, password: string) => {
     const { data } = await apiClient.post('/auth/login', { email, password });
@@ -15,6 +17,7 @@ export const login = async (email: string, password: string) => {
 
     localStorage.setItem('accessToken', data.accessToken);
     localStorage.setItem('refreshToken', data.refreshToken);
+    setGlobalFlag (true);
 
     return data; // could include user data if your backend sends it
 };
@@ -24,6 +27,7 @@ export const register = async (formData: AuthFormData) => {
 
     localStorage.setItem('accessToken', data.accessToken);
     localStorage.setItem('refreshToken', data.refreshToken);
+    setGlobalFlag (true);
 
     return data;
 };
@@ -35,6 +39,8 @@ export const onGoogleLoginSuccess = async (credentialResponse: CredentialRespons
             console.log(res);
             localStorage.setItem("accessToken", res.accessToken!);
             localStorage.setItem("refreshToken", res.refreshToken!);
+            setGlobalFlag (true);
+            
     } catch (err) {
         console.log(err);
     } 
