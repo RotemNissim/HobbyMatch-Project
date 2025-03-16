@@ -177,7 +177,7 @@ const logout = async (req: Request, res: Response) => {
     try {
         const { refreshToken } = req.body;
 
-        const account = await verifyRefreshToken(refreshToken);
+        const account: tUser | tAdmin = await verifyRefreshToken(refreshToken);
         if (!account) return res.status(400).json({ message: "Invalid refresh token" });
 
         account.refreshToken = (account.refreshToken || []).filter(token => token !== refreshToken);
@@ -191,10 +191,11 @@ const logout = async (req: Request, res: Response) => {
 
 const refresh = async (req: Request, res: Response) => {
     try {
-        const account = await verifyRefreshToken(req.body.refreshToken);
+        const account : tAdmin | tUser = await verifyRefreshToken(req.body.refreshToken);
         if (!account) return res.status(400).send("fail");
 
-        const tokens = generateToken(account);
+        const tokens : tTokens = generateToken(account);
+        //צריך לשמור במקום ולא לעשות פוש כדאי למנוע פגיע הגנתית
         (account.refreshToken || []).push(tokens.refreshToken);
         await account.save();
 
