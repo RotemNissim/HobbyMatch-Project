@@ -41,10 +41,12 @@ const EventSearchPage: React.FC = () => {
 
   const handleFilterChange = async (filters: Record<string, string | string[]>) => {
     try {
+      console.log("🔎 Sending Filters: ", filters); // Debugging
+  
       const response = await axios.get<Event[]>("/events", { params: filters });
       setFilteredEvents(response.data);
     } catch (err) {
-      console.error("Error filtering events:", err);
+      console.error("❌ Error filtering events:", err);
     }
   };
 
