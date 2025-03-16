@@ -2,6 +2,7 @@ import express from "express";
 import userController from "../controllers/user.controller";
 import { authMiddleware } from "../controllers/auth.controller";
 import asyncHandler from "../middleware/asyncHandler";
+import upload from "../middleware/multerConfig";
 
 const router = express.Router();
 
@@ -23,8 +24,9 @@ router.get("/likes", authMiddleware, asyncHandler(userController.getUserLikes));
 /**
  * User Profile Routes
  */
-router.get("/:id", authMiddleware, asyncHandler(userController.getUser)); // This expects AuthRequest
-router.put("/:id", authMiddleware, asyncHandler(userController.updateProfile));
+router.get("/:id", authMiddleware, asyncHandler(userController.getUser)); 
+router.put("/:id", authMiddleware, upload.single('profilePicture'), asyncHandler(userController.updateProfile));
+router.put("/:id/profile-picture", authMiddleware, upload.single("profilePicture"), asyncHandler(userController.uploadProfilePicture));
 
 /**
  * Event Management Routes
