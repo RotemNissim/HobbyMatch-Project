@@ -44,47 +44,10 @@ import upload from "../middleware/multerConfig";
  *         password: '123456'
  *         firstName: 'bob'
  *         lastName: 'marly'
+ * security:
+ *   - bearerAuth: [] 
  */
 
-/**
- * @swagger
- * /auth/google:
- *   post:
- *     summary: Authenticate a user with Google OAuth
- *     tags: [Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               idToken:
- *                 type: array
- *                 items:
- *                   type: object
- *                   properties:
- *                     user:
- *                       $ref: '#/components/schemas/User'
- *     responses:
- *       200:
- *         description: Successfully authenticated
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 accessToken:
- *                   type: string
- *                 refreshToken:
- *                   type: string
- *                 user:
- *                   $ref: '#/components/schemas/User'
- *       400:
- *         description: Invalid request
- *       500:
- *         description: Internal server error
- */
 router.post("/google", authController.googleSignIn);
 
 /**
@@ -139,25 +102,23 @@ router.post("/login", authController.login);
  * @swagger
  * /auth/refresh:
  *   post:
- *     summary: Refresh access token
+ *     summary: Refresh token renewal
  *     tags: [Auth]
- *     security:
- *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - refreshToken
  *             properties:
- *               refreshTokens:
- *                 type: array
- *                 items:
- *                   type: string
- *                 description: Array of refresh tokens
+ *               refreshToken:
+ *                 type: string
+ *                 description: The user refresh token
  *     responses:
  *       200:
- *         description: New access token issued
+ *         description: The refreshToken wose kreayted
  *         content:
  *           application/json:
  *             schema:
@@ -167,18 +128,19 @@ router.post("/login", authController.login);
  *                   type: string
  *                 refreshToken:
  *                   type: string
+ *                 _id:
+ *                   type: string
  *       401:
- *         description: Unauthorized
- *       500:
- *         description: Internal server error
+ *         description: fail
  */
+
 router.post("/refresh", authController.refresh);
 
 /**
  * @swagger
  * /auth/logout:
  *   post:
- *     summary: Log out the user
+ *     summary: log out the user
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -186,20 +148,18 @@ router.post("/refresh", authController.refresh);
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - refreshToken
  *             properties:
- *               refreshTokens:
- *                 type: array
- *                 items:
- *                   type: string
- *                 description: Array of refresh tokens to invalidate
+ *               refreshToken:
+ *                 type: string
+ *                 description: The user refresh token
  *     responses:
  *       200:
- *         description: Successfully logged out
- *       400:
- *         description: Bad request
- *       500:
- *         description: Internal server error
- */
+ *         description: The refreshToken wose kreayted
+ *       401:
+ *         description: fail
+*/
 router.post("/logout", authController.logout);
 
 /**
