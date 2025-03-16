@@ -1,6 +1,7 @@
 import express from "express";
 const router = express.Router();
 import authController from "../controllers/auth.controller";
+import upload from "../middleware/multerConfig";
 
 /**
  * @swagger
@@ -230,6 +231,6 @@ router.post("/logout", authController.logout);
  *       500:
  *         description: Internal server error
  */
-router.post("/register", authController.register);
+router.post("/register", upload.single('profilePicture'), authController.register);
 
 export default router;

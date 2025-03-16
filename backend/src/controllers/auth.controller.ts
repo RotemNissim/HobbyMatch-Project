@@ -18,6 +18,7 @@ const register = async (req: Request, res: Response): Promise<Response> => {
         console.log("🔍 Debug: Received request body:", req.body);
 
         const { firstName, lastName, email, password, role } = req.body;
+        const profilePicture = req.file ? req.file.filename : '';
 
         if (!firstName || !lastName || !email || !password) {
             console.log("❌ Missing required fields!");
@@ -50,7 +51,7 @@ const register = async (req: Request, res: Response): Promise<Response> => {
             return res.status(201).json({ message: 'Admin registered successfully', admin });
         }
 
-        const user = await userModel.create({ firstName, lastName, email, password: hashedPassword });
+        const user = await userModel.create({ firstName, lastName, email, password: hashedPassword, profilePicture});
 
         return res.status(201).json({ message: 'User registered successfully', user });
 
