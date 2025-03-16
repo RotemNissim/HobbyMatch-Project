@@ -83,7 +83,8 @@ class EventController {
         : undefined;
 
       const filters = {
-        hobbies,
+        name: req.query.name as string,
+        hobbies: Array.isArray(req.query.hobbies) ? req.query.hobbies.map(String) : req.query.hobbies ? [String(req.query.hobbies)] : undefined,
         location: req.query.location as string,
         date: req.query.date ? new Date(req.query.date as string) : undefined,
         createdBy: req.query.createdBy as string,
