@@ -31,9 +31,10 @@ export const updateProfilePicture = async (userId: string, file: File) => {
     const formData = new FormData();
     formData.append('profilePicture', file);
 
-    const { data } = await apiClient.put(`/users/${userId}/picture`, formData, {
+    const { data } = await apiClient.put(`/users/${userId}/profile-picture`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
     });
+
     return data;
 };
 
