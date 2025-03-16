@@ -84,7 +84,11 @@ const UserProfile = () => {
                         <p><strong>Name:</strong> {user.firstName} {user.lastName}</p>
                         <p><strong>Email:</strong> {user.email}</p>
                         {user.profilePicture && (
-                            <img src={user.profilePicture} alt="Profile" className="w-24 h-24 rounded-full" />
+                               <img 
+                               src={user.profilePicture ? `http://localhost:3000/uploads/profile_pictures/${user.profilePicture}` : "/default-avatar.png"}   
+                               alt="Profile" 
+                               className="w-24 h-24 rounded-full"
+                           />
                         )}
                         <div className="space-x-4 mt-4">
                             <button

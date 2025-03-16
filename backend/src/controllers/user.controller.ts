@@ -48,13 +48,15 @@ class UserController {
     getCurrentUser = async (req: AuthRequest, res: Response): Promise<Response> => {
         const user = req.user;  // 💥 Full user object guaranteed
 
+        
+
         return res.send({
             _id: user._id,
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,
             hobbies: 'hobbies' in user ? user.hobbies : [],
-            
+            profilePicture: 'profilePicture' in user ? user.profilePicture : null,
         });
     };
 

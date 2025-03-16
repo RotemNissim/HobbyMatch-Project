@@ -22,8 +22,10 @@ export const login = async (email: string, password: string) => {
     return data; // could include user data if your backend sends it
 };
 
-export const register = async (formData: AuthFormData) => {
-    const { data } = await apiClient.post('/auth/register', formData);
+export const register = async (formData: FormData) => {
+    const { data } = await apiClient.post('/auth/register', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    });
 
     localStorage.setItem('accessToken', data.accessToken);
     localStorage.setItem('refreshToken', data.refreshToken);
