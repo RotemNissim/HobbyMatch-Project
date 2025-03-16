@@ -10,8 +10,106 @@ const router = express.Router();
 
 
 //Users Management
+
+/**
+ * @swagger
+ * /admin/users:
+ *   post:
+ *     summary: Create a new user
+ *     tags: [Users]
+ *     security:
+ *       - cookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *               - firstName
+ *               - lastName
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               password:
+ *                 type: string
+ *                 format: password
+ *               firstName:
+ *                 type: string
+ *               lastName:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: User created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *                 firstName:
+ *                   type: string
+ *                 lastName:
+ *                   type: string
+ *                 profilePicture:
+ *                   type: string
+ *                   nullable: true
+ *                 accessToken:
+ *                   type: string
+ *                 refreshToken:
+ *                   type: string
+ *       400:
+ *         description: Failed to create new user
+ *       500:
+ *         description: Internal server error
+ */
+
 router.post('/users',authMiddleware, AsyncHandler(AdminController.createUser));
+
+/**
+ * @swagger
+ * /admin/users/{id}:
+ *   put:
+ *     summary: Update a user
+ *     tags: [Users]
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: User ID
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserUpdate'
+ *     responses:
+ *       200:
+ *         description: User updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Failed to update user
+ *       500:
+ *         description: Internal server error
+ */
+
 router.put('/users/:id',authMiddleware,AsyncHandler(AdminController.updateUser));
+
+
+
 router.delete('/users/:id',authMiddleware,AsyncHandler(AdminController.deleteUser));
 router.get('/users',authMiddleware,AsyncHandler(AdminController.listUsers));
 
