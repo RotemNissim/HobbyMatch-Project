@@ -33,7 +33,12 @@ const AuthPage = () => {
       if (isLogin) {
         await login(formData.email, formData.password);
       } else {
-        await register(formData);
+        const formDataToSend = new FormData();
+Object.entries(formData).forEach(([key, value]) => {
+    formDataToSend.append(key, value);
+});
+
+await register(formDataToSend);
       }
       navigate("/profile");
     } catch (err: any) {

@@ -23,9 +23,7 @@ export const login = async (email: string, password: string) => {
 };
 
 export const register = async (formData: FormData) => {
-    const { data } = await apiClient.post('/auth/register', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-    });
+    const { data } = await apiClient.post('/auth/register', formData);
 
     localStorage.setItem('accessToken', data.accessToken);
     localStorage.setItem('refreshToken', data.refreshToken);
