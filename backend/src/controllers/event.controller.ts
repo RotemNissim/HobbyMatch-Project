@@ -32,9 +32,9 @@ class EventController {
     }
   }
 
-  async createEvent(req: Request, res: Response) {
+  async createEvent(req: AuthRequest, res: Response) {
     try {
-      const eventData = req.body;
+      const eventData = { ...req.body, createdBy: req.user._id };
       const newEvent = await eventService.createEvent(eventData);
       res.status(201).json(newEvent);
     } catch (error: unknown) {
