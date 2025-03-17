@@ -1,14 +1,15 @@
 import dotenv from "dotenv";
-dotenv.config();  // טוען משתני סביבה מ-.env
+dotenv.config(); // טוען משתני סביבה מ-.env
 
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import express, { Express } from "express";
 import passport from "passport";
+import path from "path";
 
 import adminRoute from "./routes/admin.routes";
 import userRoute from "./routes/user.routes";
-import eventRoute from "./routes/event.routes";  // כבר קיים, לוודא שהוא נטען נכון
+import eventRoute from "./routes/event.routes"; // כבר קיים, לוודא שהוא נטען נכון
 import authRoute from "./routes/auth.routes";
 import hobbyRoute from "./routes/hobby.routes";
 import likeRoute from "./routes/like.routes";
@@ -40,7 +41,6 @@ app.use("/auth", authRoute);
 app.use("/hobbies", hobbyRoute);
 app.use("/likes", likeRoute);
 <<<<<<< Updated upstream
-app.use("/comments", commentRoute);
 app.use("/public", express.static("public"));
 =======
 app.use('/uploads/profile_pictures', express.static(path.join(__dirname, 'uploads/profile_pictures')));
