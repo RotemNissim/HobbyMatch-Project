@@ -22,7 +22,7 @@ export const login = async (email: string, password: string) => {
     return data; // could include user data if your backend sends it
 };
 
-export const register = async (formData: AuthFormData) => {
+export const register = async (formData: FormData) => {
     const { data } = await apiClient.post('/auth/register', formData);
 
     localStorage.setItem('accessToken', data.accessToken);

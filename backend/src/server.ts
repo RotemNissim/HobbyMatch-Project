@@ -1,15 +1,15 @@
 import dotenv from "dotenv";
-dotenv.config(); // טוען משתני סביבה מ-.env
+dotenv.config();  
 
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import express, { Express } from "express";
 import passport from "passport";
-import path from "path";
+import path from 'path';
 
 import adminRoute from "./routes/admin.routes";
 import userRoute from "./routes/user.routes";
-import eventRoute from "./routes/event.routes"; // כבר קיים, לוודא שהוא נטען נכון
+import eventRoute from "./routes/event.routes"; 
 import authRoute from "./routes/auth.routes";
 import hobbyRoute from "./routes/hobby.routes";
 import likeRoute from "./routes/like.routes";
@@ -17,7 +17,7 @@ import likeRoute from "./routes/like.routes";
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUI from "swagger-ui-express";
 
-import "./config/auth.google"; // קובץ אימות OAuth של גוגל
+import "./config/auth.google"; 
 
 const app = express();
 

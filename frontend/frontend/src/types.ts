@@ -3,6 +3,7 @@ export interface AuthFormData {
     lastName?: string;
     email: string;
     password: string;
+    profilePicture?: string;
 }
 
 export interface IUser {

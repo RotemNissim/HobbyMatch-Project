@@ -13,6 +13,7 @@ const EditProfile: React.FC<Props> = ({ initialUser, onProfileUpdated }) => {
         email: initialUser.email,
     });
     const [profilePicture, setProfilePicture] = useState<File | null>(null);
+    const [preview, setPreview] = useState<string | null>(initialUser.profilePicture || null);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -21,6 +22,7 @@ const EditProfile: React.FC<Props> = ({ initialUser, onProfileUpdated }) => {
     const handlePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             setProfilePicture(e.target.files[0]);
+            setPreview(URL.createObjectURL(e.target.files[0]));
         }
     };
 
@@ -28,7 +30,8 @@ const EditProfile: React.FC<Props> = ({ initialUser, onProfileUpdated }) => {
         await updateProfile(initialUser._id, form);
 
         if (profilePicture) {
-            await updateProfilePicture(initialUser._id, profilePicture);
+            const updatedUser = await updateProfilePicture(initialUser._id, profilePicture);
+            setPreview(`http://localhost:3000/uploads/profile_pictures/${updatedUser.profilePicture}`);
         }
 
         onProfileUpdated(); // Notify parent (UserProfile)
@@ -36,6 +39,7 @@ const EditProfile: React.FC<Props> = ({ initialUser, onProfileUpdated }) => {
 
     return (
         <div className="space-y-4">
+            {preview && <img src={preview} alt="Profile Preview" className="w-24 h-24 rounded-full" />}
             <input type="text" name="firstName" value={form.firstName} onChange={handleChange} placeholder="First Name" />
             <input type="text" name="lastName" value={form.lastName} onChange={handleChange} placeholder="Last Name" />
             <input type="email" name="email" value={form.email} onChange={handleChange} placeholder="Email" readOnly/>
