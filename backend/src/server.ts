@@ -40,11 +40,8 @@ app.use("/events", eventRoute); // זה כבר כולל את ה-API של ההמ�
 app.use("/auth", authRoute);
 app.use("/hobbies", hobbyRoute);
 app.use("/likes", likeRoute);
-<<<<<<< Updated upstream
 app.use("/public", express.static("public"));
-=======
 app.use('/uploads/profile_pictures', express.static(path.join(__dirname, 'uploads/profile_pictures')));
->>>>>>> Stashed changes
 app.use(express.static("front"));
 const options = {
   definition:{
