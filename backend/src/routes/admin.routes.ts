@@ -12,7 +12,7 @@ const router = express.Router();
 /**
  * @swagger
  * tags:
- *   name:Admin
+ *   name: Admin
  *   description: The Admin API
  */
 
@@ -148,7 +148,7 @@ router.put("/users/:id",authMiddleware,AsyncHandler(AdminController.updateUser))
  * /admin/users/{id}:
  *   delete:
  *     summary: Delete a user
- *     tags: [Users]
+ *     tags: [Admin]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -185,7 +185,7 @@ router.delete("/users/:id",authMiddleware,AsyncHandler(AdminController.deleteUse
  * /admin/users:
  *   get:
  *     summary: Get a list of users
- *     tags: [Users]
+ *     tags: [Admin]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -247,7 +247,7 @@ router.get("/users", authMiddleware, AsyncHandler(AdminController.listUsers));
  * /admin/events:
  *   post:
  *     summary: Create a new event
- *     tags: [Events]
+ *     tags: [Admin]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -323,7 +323,7 @@ router.post("/events",authMiddleware,AsyncHandler(AdminController.createEvent));
  * /admin/events/{id}:
  *   put:
  *     summary: Update an existing event
- *     tags: [Events]
+ *     tags: [Admin]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -403,7 +403,7 @@ router.put("/events/:id",authMiddleware,AsyncHandler(AdminController.updateEvent
  * /admin/events/{id}:
  *   delete:
  *     summary: Delete an event
- *     tags: [Events]
+ *     tags: [Admin]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -431,7 +431,7 @@ router.delete("/events/:id",authMiddleware,AsyncHandler(AdminController.deleteEv
  * /admin/events:
  *   get:
  *     summary: Get a list of events
- *     tags: [Events]
+ *     tags: [Admin]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -512,7 +512,7 @@ router.get("/events", authMiddleware, AsyncHandler(eventController.listEvents));
  * /admin/hobbies:
  *   post:
  *     summary: Create a new hobby
- *     tags: [Hobbies]
+ *     tags: [Admin]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -562,7 +562,7 @@ router.post("/hobbies",authMiddleware,AsyncHandler(AdminController.createHobby))
  * /admin/hobbies/{id}:
  *   put:
  *     summary: Update an existing hobby
- *     tags: [Hobbies]
+ *     tags: [Admin]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -623,7 +623,7 @@ router.put("/hobbies/:id",authMiddleware,AsyncHandler(AdminController.updateHobb
  * /admin/hobbies/{id}:
  *   delete:
  *     summary: Delete a hobby
- *     tags: [Hobbies]
+ *     tags: [Admin]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -651,7 +651,7 @@ router.delete("/hobbies/:id",authMiddleware,AsyncHandler(AdminController.deleteH
  * /admin/hobbies:
  *   get:
  *     summary: Get a list of hobbies
- *     tags: [Hobbies]
+ *     tags: [Admin]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -702,7 +702,7 @@ router.get("/hobbies/",authMiddleware,AsyncHandler(AdminController.listHobbies))
  * /admin/me:
  *   get:
  *     summary: Get current admin details
- *     tags: [Admins]
+ *     tags: [Admin]
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -736,7 +736,7 @@ router.get("/me",authMiddleware,AsyncHandler(AdminController.getCurrentAdmin));
  * /admins:
  *   post:
  *     summary: Create a new admin
- *     tags: [Admins]
+ *     tags: [Admin]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -801,7 +801,7 @@ router.post("/admins",authMiddleware,AsyncHandler(AdminController.createAdmin));
  * /admins/{id}:
  *   put:
  *     summary: Update an existing admin
- *     tags: [Admins]
+ *     tags: [Admin]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -875,7 +875,7 @@ router.put("/admins/:id",authMiddleware,AsyncHandler(AdminController.updateAdmin
  * /admin/admins/{id}:
  *   delete:
  *     summary: Delete an admin
- *     tags: [Admins]
+ *     tags: [Admin]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -903,7 +903,7 @@ router.delete("/admins/:id",authMiddleware,AsyncHandler(AdminController.deleteAd
  * /admin/admins:
  *   get:
  *     summary: Get a list of admins
- *     tags: [Admins]
+ *     tags: [Admin]
  *     security:
  *       - bearerAuth: []
  *     parameters:

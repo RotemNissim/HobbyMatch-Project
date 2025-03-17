@@ -3,6 +3,7 @@ import EventController from "../controllers/event.controller";
 import { authMiddleware } from "../controllers/auth.controller";
 import asyncHandler from "../middleware/asyncHandler";
 import CommentController from "../controllers/comment.controller";
+import { AuthRequest } from "../middleware/AuthRequest";
 
 const router = express.Router();
 
@@ -103,24 +104,346 @@ const router = express.Router();
  *         description: Internal server error
  */
 
-router.post('/',authMiddleware,async (req, res) => await EventController.createEvent(req, res));
+router.post('/',authMiddleware,async (req, res) => await EventController.createEvent(req as AuthRequest, res));
 
+/**
+ * @swagger
+ * /events/{id}:
+ *   put:
+ *     summary: Update an existing event
+ *     tags: [Event]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The event ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Event'
+ *     responses:
+ *       200:
+ *         description: Event updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Event'
+ *       400:
+ *         description: Bad request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Failed to update event"
+ *       401:
+ *         description: Unauthorized - Only the event creator can update
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Access Denied"
+ *       404:
+ *         description: Event not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Event not found"
+ *       500:
+ *         description: Internal server error
+ */
 router.put('/:id',authMiddleware,async (req, res) => await EventController.updateEvent(req, res));
+
+/**
+ * @swagger
+ * /events/{id}:
+ *   delete:
+ *     summary: Delete an event
+ *     tags: [Event]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The event ID
+ *     responses:
+ *       200:
+ *         description: Event deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Event deleted successfully"
+ *       401:
+ *         description: Unauthorized - Only the event creator can delete
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Access Denied"
+ *       404:
+ *         description: Event not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Event not found"
+ *       500:
+ *         description: Internal server error
+ */
 
 router.delete('/:id',authMiddleware,async (req, res) => await EventController.deleteEvent(req, res));
 
+/**
+ * @swagger
+ * /events:
+ *   get:
+ *     summary: Get a list of events
+ *     tags: [Event]
+ *     responses:
+ *       200:
+ *         description: A list of events
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Event'
+ *       500:
+ *         description: Internal server error
+ */
+
 router.get('/', async (req, res) => await EventController.listEvents(req, res));
+
+/**
+ * @swagger
+ * /events/{id}:
+ *   get:
+ *     summary: Get details of a specific event
+ *     tags: [Event]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the event
+ *     responses:
+ *       200:
+ *         description: Event details retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Event'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Access Denied"
+ *       404:
+ *         description: Event not found
+ *       500:
+ *         description: Internal server error
+ */
 
 router.post('/:id/join',authMiddleware,async (req, res) => await EventController.joinEvent(req, res));
 
+/**
+ * @swagger
+ * /events/{id}/comments:
+ *   get:
+ *     summary: Get all comments for a specific event
+ *     tags: [Event]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the event
+ *     responses:
+ *       200:
+ *         description: List of comments retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Comment'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Access Denied"
+ *       404:
+ *         description: Event not found
+ *       500:
+ *         description: Internal server error
+ */
+
 router.post('/:id/leave',authMiddleware,async (req, res) => await EventController.leaveEvent(req, res));
+
+/**
+ * @swagger
+ * /events/{id}/comments:
+ *   post:
+ *     summary: Add a comment to a specific event
+ *     tags: [Event]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the event to add a comment to
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - content
+ *             properties:
+ *               content:
+ *                 type: string
+ *                 description: The content of the comment
+ *     responses:
+ *       201:
+ *         description: Comment added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Comment'
+ *       400:
+ *         description: Bad request (e.g., missing content)
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Event not found
+ *       500:
+ *         description: Internal server error
+ */
 
 router.get('/:id', authMiddleware, asyncHandler(EventController.getEvent));
 
-router.get('/:id/comments',authMiddleware,asyncHandler(EventController.getCommentsToEvent));
-router.post('/:id/comments',authMiddleware,asyncHandler(CommentController.addCommentToEvent));
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Comment:
+ *       type: object
+ *       required:
+ *         - text
+ *       properties:
+ *         _id:
+ *           type: string
+ *           description: The ID of the comment
+ *         text:
+ *           type: string
+ *           description: The content of the comment
+ *         createdBy:
+ *           type: string
+ *           description: The user who created the comment
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *           description: The time when the comment was created
+ *       example:
+ *         _id: "12345"
+ *         text: "Great event, looking forward to it!"
+ *         createdBy: "user123"
+ *         createdAt: "2025-03-18T10:00:00Z"
+ */
 
-/** ✅ נתיב להמלצות אירועים */
-router.post('/recommend',authMiddleware,async (req, res) => await EventController.recommendEvents(req, res));
+
+/**
+ * @swagger
+ * /events/{id}/comments:
+ *   post:
+ *     summary: Add a comment to a specific event
+ *     tags: [Event]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the event
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - text
+ *             properties:
+ *               text:
+ *                 type: string
+ *                 description: The content of the comment
+ *     responses:
+ *       201:
+ *         description: Comment added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Comment'
+ *       400:
+ *         description: Bad request, missing fields
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Event not found
+ *       500:
+ *         description: Internal server error
+ */
+
+router.post('/:id/comments', authMiddleware, asyncHandler(CommentController.addCommentToEvent));
 
 export default router;
