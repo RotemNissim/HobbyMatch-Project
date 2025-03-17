@@ -4,6 +4,7 @@ import { AuthUser, AuthRequest } from '../middleware/AuthRequest';
 import mongoose from 'mongoose';
 import Event from '../models/Event.models';
 import OpenAI from 'openai';
+import User from '../models/User.models';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -167,44 +168,53 @@ class EventController {
     }
   };
 
-  async recommendEvents(req: Request, res: Response) : Promise<void> {
+  async recommendEvents(req: AuthRequest, res: Response): Promise<void> {
     try {
-      const { hobbies } = req.body;
-      if (!hobbies || hobbies.length === 0) {
-      res.status(400).json({ message: 'חובה לספק תחומי עניין.' });
-      return;
+      const userId = req.user?._id; // Extract userId from the request
+      if (!userId) {
+        res.status(401).json({ message: 'Unauthorized: User ID missing.' });
+        return;
       }
-
-      // חיפוש אירועים קשורים
-      const events = await Event.find({ hobby: { $in: hobbies } });
-
-      if (events.length === 0) {
-      res.status(404).json({ message: 'לא נמצאו אירועים מתאימים.' });
-      return;
+  
+      // Fetch user's hobbies (assuming hobbies are populated in the User model)
+      const user = await User.findById(userId).populate('hobbies'); 
+      if (!user || !user.hobbies || user.hobbies.length === 0) {
+        res.status(404).json({ message: 'No hobbies found for the user.' });
+        return;
       }
-
-      // יצירת פרומפט מותאם לפי האירועים הקיימים
-      const eventDescriptions = events.map((e) => `${e.title} - ${e.description}`).join('\n');
-
+  
+      // Extract hobby names from the Hobby model
+      const hobbies = user.hobbies.map((hobby: any) => hobby.name);
+  
+      const { startDate, endDate } = req.body;
+      if (!startDate || !endDate) {
+        res.status(400).json({ message: 'A date range must be provided.' });
+        return;
+      }
+  
+      // OpenAI request
       const response = await openai.chat.completions.create({
         model: 'gpt-4',
         messages: [
-          { role: 'system', content: 'אתה בוט המלצות אירועים.' },
+          { role: 'system', content: 'You are an event planning assistant. Your goal is to suggest 3 creative event ideas that the user can organize based on their hobbies and availability.' },
           {
             role: 'user',
-            content: `בהתבסס על האירועים הבאים:\n${eventDescriptions}\nתציע 3 אירועים שמתאימים לתחומי העניין שסיפקתי.`,
+            content: `The user has the following hobbies: ${hobbies.join(', ')}
+            They are available between ${startDate} and ${endDate}.
+            Suggest 3 unique event ideas they can create, with fun names and short descriptions.`,
           },
         ],
-        temperature: 0.7,
+        temperature: 0.9, // Higher creativity
       });
-
-      const suggestions = response.choices[0]?.message?.content || 'אין הצעות כרגע.';
-      res.json({ recommendations: suggestions });
+  
+      const suggestions = response.choices[0]?.message?.content || 'No suggestions available at the moment.';
+      const formattedSuggestions = suggestions.split('\n').map((s) => s.trim()).filter(Boolean);
+  
+      res.json({ recommendations: formattedSuggestions });
     } catch (error) {
-      console.error('שגיאה בהמלצת אירועים:', error);
-      res.status(500).json({ message: 'שגיאה בהמלצת אירועים' });
+      console.error('Error recommending events:', error);
+      res.status(500).json({ message: 'Error generating event recommendations.' });
     }
   }
 }
-
 export default new EventController();
