@@ -12,7 +12,6 @@ import eventRoute from "./routes/event.routes";  // כבר קיים, לוודא 
 import authRoute from "./routes/auth.routes";
 import hobbyRoute from "./routes/hobby.routes";
 import likeRoute from "./routes/like.routes";
-import commentRoute from "./routes/comment.routes";
 
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUI from "swagger-ui-express";
@@ -40,8 +39,12 @@ app.use("/events", eventRoute); // זה כבר כולל את ה-API של ההמ�
 app.use("/auth", authRoute);
 app.use("/hobbies", hobbyRoute);
 app.use("/likes", likeRoute);
+<<<<<<< Updated upstream
 app.use("/comments", commentRoute);
 app.use("/public", express.static("public"));
+=======
+app.use('/uploads/profile_pictures', express.static(path.join(__dirname, 'uploads/profile_pictures')));
+>>>>>>> Stashed changes
 app.use(express.static("front"));
 const options = {
   definition:{
