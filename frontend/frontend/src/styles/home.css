@@ -1,0 +1,123 @@
+.homeP {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: var(--secondary-bg);
+  min-height: 100vh;
+}
+
+.homeP h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--accent-color);
+  margin-bottom: 20px;
+}
+
+.loading {
+  font-size: 18px;
+  color: var(--text-color);
+  text-align: center;
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+}
+
+.Carousel {
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Carousel Buttons */
+.carousel button {
+  background-color: var(--primary-color);
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.carousel button:hover {
+  background-color: var(--accent-color);
+}
+
+/* Event Cards */
+.event-card {
+  background: var(--card-bg);
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+}
+
+.event-card:hover {
+  transform: scale(1.03);
+}
+
+.event-title {
+  font-size: 1.5rem;
+  color: var(--primary-color);
+}
+
+.event-description {
+  font-size: 1rem;
+  color: var(--text-color);
+}
+
+.event-info {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* Join/Leave Buttons */
+.join-leave-btn {
+  background-color: var(--primary-color);
+  border: none;
+  color: white;
+  text-shadow: 1px 1px 2px black;
+  padding: 10px 15px;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.join-leave-btn:hover {
+  background-color: var(--accent-color);
+}
+
+/* Ensure HomePage container spans full height and centers the Carousel */
+.homeP-Carousel_titel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background-color: var(--secondary-bg);
+}
+
+.homeP-Carousel_titel h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--accent-color);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Ensure Carousel is centered within the container */
+.Carousel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 80%;
+}

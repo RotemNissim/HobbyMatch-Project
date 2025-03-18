@@ -4,6 +4,7 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import Carousel from "../components/Carousel";
 import EventCard from "../components/EventCard";
+import "../styles/styles.css";
 import "../styles/home.css";
 
 interface Event {
@@ -86,7 +87,7 @@ const HomePage: React.FC = () => {
   if (error) return <div className="loading events homeP error">{error}</div>;
 
   return (
-    <div className="homeP Carousel + titel">
+    <div className="homeP-Carousel_titel">
       <h1 className="All Events titel">ALL EVENTS</h1>
       <Carousel items={events} renderItem={(event) => 
       (<EventCard event={event} userId={userId} onJoinLeave={handleJoinLeave}/>)}/>

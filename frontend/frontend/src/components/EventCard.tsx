@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-// import { IEvent } from "../types";
+// import { IEvent } from "../types"
 interface Event {
   _id: string;
   title: string;
@@ -44,7 +44,7 @@ const EventCard: React.FC<EventCardProps> = ({
   const isParticipant = userId ? event.participants.some(p => p._id === userId) : false;
 
   return (
-    <div className="event-card">
+    <div className="event-card" id="content">
       <h3 className="event-title">{event.title}</h3>
       
       <p className="event-description">{event.description}</p>

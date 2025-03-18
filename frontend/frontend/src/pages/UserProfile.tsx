@@ -75,46 +75,48 @@ const UserProfile = () => {
         };
     
     return (
-        <div className="UP carousel-container">
-            <h1 className="UP titel">My Profile</h1>
+        <div className="UP_carousel-container">
 
             {user && !isEditingProfile && (
-                <div className="UP user-profile container">
-                    <div className='UP user-profile-details'>
+                <div className="UP_user-profile-container">
+                    <h1 className="UP_titel">My Profile</h1>
+                    <div className='UP_user-profile-details'>
                         <p><strong>Name:</strong> {user.firstName} {user.lastName}</p>
                         <p><strong>Email:</strong> {user.email}</p>
                         {user.profilePicture && (
                                <img 
                                src={user.profilePicture ? `http://localhost:3000/uploads/profile_pictures/${user.profilePicture}` : "/default-avatar.png"}   
                                alt="Profile" 
-                               className="UP profile-picture"
+                               className="UP_profile-picture"
                            />
                         )}
-                        <div className="UP user-profile-buttons">
+                        <div className="UP_user-profile-buttons">
                             <button
-                                className="UP edit-profile-button"
+                                className="UP_dit-profile-button"
                                 onClick={() => setIsEditingProfile(true)}
                             >
                                 ✏️ Edit Profile
                             </button>
                             <button
-                                className="UP create-event-button"
+                                className="UP_create-event-button"
                                 onClick={() => setIsCreatingEvent(true)}
                             >
                                 ➕ Create Event
                             </button>
                             <button 
-                                className='UP logout-button'
+                                className='UP_logout-button'
                                 onClick={handleLogout}
                             >
                                 Logout
                             </button>
 
+                            {/* ✅ Add MyHobbies component and pass the user data */}
+                            {user && <MyHobbies user={user} />}
                             {/* ✅ Show "Go to Admin Panel" only if the user is an admin */}
                             {isAdmin && (
                                 <button 
                                     onClick={() => navigate("/admin")} 
-                                    className="UP admin-panel-button"
+                                    className="UP_admin-panel-button"
                                 >
                                     Go to Admin Panel
                                 </button>
@@ -131,11 +133,9 @@ const UserProfile = () => {
             {isCreatingEvent && (
             <CreateEventForm onEventCreated={handleEventCreated} onCancel={() => setIsCreatingEvent(false)} />
             )}
-                 {/* ✅ Add MyHobbies component and pass the user data */}
-            {user && <MyHobbies user={user} />}
-            <div className="UP my-created-events container">
-                <h2 className="UP my events titel">Events You Created</h2>
-                <div className="UP carousel">
+            <div className="UP_my-created-events-container">
+                <h2 className="UP_my-events-titel">Events You Created</h2>
+                <div className="UP_carousel">
                     <MyCreatedEvents />
                 </div>
             </div>
