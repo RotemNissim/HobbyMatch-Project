@@ -449,5 +449,7 @@ router.post('/recommend',authMiddleware,async (req, res) => await EventControlle
 
 router.post('/:id/comments', authMiddleware, asyncHandler(CommentController.addCommentToEvent));
 
+router.get('/:id/comments',authMiddleware, asyncHandler(EventController.getCommentsToEvent)); 
+
 
 export default router;
