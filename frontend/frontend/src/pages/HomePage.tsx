@@ -21,7 +21,6 @@ const HomePage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
 
-  // חילוץ מזהה המשתמש מהטוקן
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (token) {
@@ -36,7 +35,6 @@ const HomePage: React.FC = () => {
     }
   }, []);
 
-  // טעינת האירועים
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -55,7 +53,6 @@ const HomePage: React.FC = () => {
     fetchEvents();
   }, [userId]);
 
-  // טיפול בהצטרפות/עזיבה של אירוע
   const handleJoinLeave = async (
     eventId: string,
     isParticipant: boolean,
@@ -68,7 +65,6 @@ const HomePage: React.FC = () => {
         await joinEvent(eventId);
       }
       
-      // עדכון המצב המקומי
       setEvents((prevEvents) =>
         prevEvents.map((event) =>
           event._id === eventId
@@ -86,7 +82,6 @@ const HomePage: React.FC = () => {
     }
   };
 
-  // הצגת מצבי טעינה ושגיאה
   if (loading) return <div className="loading events homeP">loading events...</div>;
   if (error) return <div className="loading events homeP error">{error}</div>;
 

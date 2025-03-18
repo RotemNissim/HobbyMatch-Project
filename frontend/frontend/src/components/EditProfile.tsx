@@ -38,7 +38,8 @@ const EditProfile: React.FC<Props> = ({ initialUser, onProfileUpdated }) => {
     };
 
     return (
-        <div className="space-y-4">
+        <div className="EditProfile container">
+            <h2 className="EditProfile titel">Edit Profile</h2>
             {preview && <img src={preview} alt="Profile Preview" className="w-24 h-24 rounded-full" />}
             <input type="text" name="firstName" value={form.firstName} onChange={handleChange} placeholder="First Name" />
             <input type="text" name="lastName" value={form.lastName} onChange={handleChange} placeholder="Last Name" />

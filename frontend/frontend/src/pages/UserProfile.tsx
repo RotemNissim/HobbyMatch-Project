@@ -70,41 +70,41 @@ const UserProfile = () => {
     
         const handleLogout = () => {
             logout();
-            setGlobalFlag(false);  // מעדכן גם את localStorage
+            setGlobalFlag(false);  //localStorage
             navigate('/');
         };
     
     return (
-        <div className="carousel-container">
-            <h1 className="text-2xl font-bold">My Profile</h1>
+        <div className="UP carousel-container">
+            <h1 className="UP titel">My Profile</h1>
 
             {user && !isEditingProfile && (
-                <div className="mt-4 space-y-2">
-                    <div className='text-and-buttons'>
+                <div className="UP user-profile container">
+                    <div className='UP user-profile-details'>
                         <p><strong>Name:</strong> {user.firstName} {user.lastName}</p>
                         <p><strong>Email:</strong> {user.email}</p>
                         {user.profilePicture && (
                                <img 
                                src={user.profilePicture ? `http://localhost:3000/uploads/profile_pictures/${user.profilePicture}` : "/default-avatar.png"}   
                                alt="Profile" 
-                               className="w-24 h-24 rounded-full"
+                               className="UP profile-picture"
                            />
                         )}
-                        <div className="space-x-4 mt-4">
+                        <div className="UP user-profile-buttons">
                             <button
-                                className="bg-blue-500 text-white px-4 py-2 rounded"
+                                className="UP edit-profile-button"
                                 onClick={() => setIsEditingProfile(true)}
                             >
                                 ✏️ Edit Profile
                             </button>
                             <button
-                                className="bg-green-500 text-white px-4 py-2 rounded"
+                                className="UP create-event-button"
                                 onClick={() => setIsCreatingEvent(true)}
                             >
                                 ➕ Create Event
                             </button>
                             <button 
-                                className='bg-red-500 text-white px-4 py-2 rounded'
+                                className='UP logout-button'
                                 onClick={handleLogout}
                             >
                                 Logout
@@ -114,7 +114,7 @@ const UserProfile = () => {
                             {isAdmin && (
                                 <button 
                                     onClick={() => navigate("/admin")} 
-                                    className="bg-indigo-500 text-white px-4 py-2 rounded"
+                                    className="UP admin-panel-button"
                                 >
                                     Go to Admin Panel
                                 </button>
@@ -133,9 +133,9 @@ const UserProfile = () => {
             )}
                  {/* ✅ Add MyHobbies component and pass the user data */}
             {user && <MyHobbies user={user} />}
-            <div className="mt-8">
-                <h2 className="text-xl font-semibold">Events You Created</h2>
-                <div className="carousel">
+            <div className="UP my-created-events container">
+                <h2 className="UP my events titel">Events You Created</h2>
+                <div className="UP carousel">
                     <MyCreatedEvents />
                 </div>
             </div>

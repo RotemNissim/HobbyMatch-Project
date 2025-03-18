@@ -34,7 +34,6 @@ const MyCreatedEvents = () => {
         loadEvents();
     }, []);
 
-    // טיפול במחיקת אירוע
     const handleDelete = async (eventId: string) => {
         if (confirm("Are you sure you want to delete this event?")) {
             try {

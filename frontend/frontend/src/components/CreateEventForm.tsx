@@ -69,51 +69,51 @@ const CreateEventForm: React.FC<Props> = ({ onEventCreated, onCancel }) => {
     };
 
     return (
-        <div className="space-y-4 bg-gray-100 p-4 rounded">
-            <h3 className="text-xl font-semibold">Create New Event</h3>
+        <div className="create-event-form">
+            <h3 className="create new event titel">Create New Event</h3>
             <input 
                 type="text" 
                 name="title" 
                 placeholder="Event Title" 
                 onChange={handleChange} 
-                className="w-full p-2 border" 
+                className="create-event-input-title"  
             />
             <textarea 
                 name="description" 
                 placeholder="Event Description" 
                 onChange={handleChange} 
-                className="w-full p-2 border"
+                className="create-event-input-description"
             ></textarea>
             <input 
                 type="date" 
                 name="date" 
                 onChange={handleChange} 
-                className="w-full p-2 border" 
+                className="create-event-input-date" 
             />
             <input 
                 type="text" 
                 name="location" 
                 placeholder="Location" 
                 onChange={handleChange} 
-                className="w-full p-2 border" 
+                className="create-event-input-location" 
             />
 
             <div>
-                <label className="block text-sm font-medium">Select Hobbies</label>
+                <label className="">Select Hobbies</label>
                 {loading ? (
                     <p>Loading hobbies...</p>
                 ) : (
-                    <div className="space-y-2">
+                    <div className="create event form ?1">
                         {hobbiesList.map((hobby) => (
-                            <div key={hobby._id} className="flex items-center space-x-2">
+                            <div key={hobby._id} className="create event form ?2">
                                 <input
                                     type="checkbox"
                                     id={hobby._id}
                                     checked={form.hobby.includes(hobby._id)}
                                     onChange={() => handleHobbyToggle(hobby._id)}
-                                    className="cursor-pointer"
+                                    className="create event form ?3"
                                 />
-                                <label htmlFor={hobby._id} className="cursor-pointer">{hobby.name}</label>
+                                <label htmlFor={hobby._id} className="create event form ?4">{hobby.name}</label>
                             </div>
                         ))}
                     </div>
@@ -121,9 +121,9 @@ const CreateEventForm: React.FC<Props> = ({ onEventCreated, onCancel }) => {
 
                 {/* Display selected hobbies */}
                 {form.hobby.length > 0 && (
-                    <div className="mt-2">
-                        <p className="text-sm font-semibold">Selected Hobbies:</p>
-                        <ul className="list-disc pl-5">
+                    <div className="create event form hobbies slcted container">
+                        <p className="create event form hobbies slcted titel">Selected Hobbies:</p>
+                        <ul className="create event form hobbies list">
                             {form.hobby.map((hobbyId) => {
                                 const hobby = hobbiesList.find((h) => h._id === hobbyId);
                                 return hobby ? <li key={hobby._id}>{hobby.name}</li> : null;
@@ -133,11 +133,11 @@ const CreateEventForm: React.FC<Props> = ({ onEventCreated, onCancel }) => {
                 )}
             </div>
 
-            <div className="flex space-x-4">
-                <button onClick={handleSubmit} className="bg-green-500 text-white px-4 py-2 rounded">
+            <div className="create event form buttons">
+                <button onClick={handleSubmit} className="Create Event button create">
                     Create Event
                 </button>
-                <button onClick={onCancel} className="bg-gray-500 text-white px-4 py-2 rounded">
+                <button onClick={onCancel} className="Create Event button cancel">
                     Cancel
                 </button>
             </div>
