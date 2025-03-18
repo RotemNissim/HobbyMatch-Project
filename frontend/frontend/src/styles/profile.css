@@ -59,7 +59,7 @@
 .UP_user-profile-buttons button {
       flex-direction: row;
     background-color: var(--primary-color);
-    color: white;
+    color: rgb(0, 0, 0);
     font-size: 1rem;
     cursor: pointer;
     border-radius: 5px;
@@ -106,4 +106,6 @@
     margin-bottom: 20px;
     text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3); /* Adding shadow to events title */
   }
+
+  
   

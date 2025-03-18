@@ -35,30 +35,25 @@
   transform: scale(1.1);
 }
 
-
 .cards-container {
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden;
   max-width: 100%;
-  
 }
-
 
 .event-cards {
   display: flex;
   padding: 20px;
-  
 }
 
 .event-card {
-  flex: 0 0 calc(33.333% - 20px);
   min-width: 250px;
   max-width: 300px;
   text-align: center;
   background: white;
-  margin: 0 10px;
+  margin: 0px;
 }
 
 .event-card:hover {
@@ -71,15 +66,14 @@
 }
 
 #content {
-  #content {
-    display: flex;               
-    justify-content: center;
-    align-items: center;    
-    width: 100%;            
-    height: 100%;           
-    margin: 0;               
-    padding: 0;              
-    border: none;            
-    box-sizing: border-box;  
-  }
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  box-sizing: border-box;
+  flex-direction: column;
 }

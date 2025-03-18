@@ -25,15 +25,17 @@
   button {
     background-color: var(--accent-color);
     color: white;
-    border: none;
-    padding: 10px 20px;
+    border: rgba(0, 0, 0, 0.5);
+    padding: 5px 20px;
     font-size: 16px;
     font-weight: bold;
     border-radius: var(--border-radius);
     cursor: pointer;
     transition: background-color var(--transition-speed), transform var(--transition-speed);
     box-shadow: var(--shadow-light);
-    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3); /* Adding shadow to events title */
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
+    
+    margin: 15px;
 
   }
   

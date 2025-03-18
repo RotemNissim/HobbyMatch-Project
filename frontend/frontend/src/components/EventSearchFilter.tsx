@@ -60,19 +60,19 @@ const EventSearchFilter: React.FC<FilterProps> = ({ onFilterChange }) => {
   return (
     <div className="filter-container">
       <input type="text" name="name" placeholder="Event name" 
-      className="border p-2 rounded"value={filters.name} onChange={handleChange}/>
-      <input type="date" name="date" className="border p-2 rounded"
+      className="ESF_nameFilter-input"value={filters.name} onChange={handleChange}/>
+      <input type="date" name="date" className="ESF_dateFilter-input"
       value={filters.date} onChange={handleChange}/>
       <input type="text" name="location" placeholder="Location"
-      className="border p-2 rounded" value={filters.location} onChange={handleChange}/>
+      className="ESF_locationFilter-input" value={filters.location} onChange={handleChange}/>
       <input type="number" name="participants" placeholder="Min Participants"
-      className="border p-2 rounded" value={filters.participants} onChange={handleChange}/>
+      className="ESF_numOfParticipantsFilter_inpur" value={filters.participants} onChange={handleChange}/>
 
       {/* MULTI-SELECTION DROPDOWN FOR HOBBIES */}
       <Select isMulti options={hobbies} placeholder="Select hobbies"
-      className="border p-2 rounded" onChange={handleHobbyChange}/>
+      className="ESF_hobbiFilter-input" onChange={handleHobbyChange}/>
 
-      <button className="search button searchP" onClick={handleSearch}>
+      <button className="search-button-searchP" onClick={handleSearch}>
         Search
       </button>
     </div>
