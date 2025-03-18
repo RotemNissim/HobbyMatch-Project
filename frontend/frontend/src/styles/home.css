@@ -37,7 +37,7 @@
 /* Carousel Buttons */
 .carousel button {
   background-color: var(--primary-color);
-  border: none;
+  border: rgba(0, 0, 0, 0.5);
   color: white;
   font-size: 1.5rem;
   padding: 10px 15px;
@@ -81,7 +81,7 @@
 /* Join/Leave Buttons */
 .join-leave-btn {
   background-color: var(--primary-color);
-  border: none;
+  border: rgba(0, 0, 0, 0.5);
   color: white;
   text-shadow: 1px 1px 2px black;
   padding: 10px 15px;
