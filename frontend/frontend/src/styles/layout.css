@@ -16,14 +16,14 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 30px;
+    padding: 0px 30px;
     background-color: var(--secondary-bg);
     box-shadow: var(--shadow-light);
     border-bottom: 2px solid var(--accent-color);
   }
   
   .navbar .logo img {
-    height: 50px;
+    height: 100px;
   }
   
   .navbar .navbar-buttons {

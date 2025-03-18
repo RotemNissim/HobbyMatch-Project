@@ -3,6 +3,7 @@ import axios from "axios";
 import EventCard from "../components/EventCard";
 import EventSearchFilter from "../components/EventSearchFilter";
 import { motion } from "framer-motion";
+import "../styles/EventSearchPage.css";
 
 interface Event {
   _id: string;
