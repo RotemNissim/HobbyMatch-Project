@@ -444,6 +444,10 @@ router.get('/:id', authMiddleware, asyncHandler(EventController.getEvent));
  *         description: Internal server error
  */
 
+
+router.post('/recommend',authMiddleware,async (req, res) => await EventController.recommendEvents(req as AuthRequest, res));
+
 router.post('/:id/comments', authMiddleware, asyncHandler(CommentController.addCommentToEvent));
+
 
 export default router;

@@ -1,11 +1,20 @@
+import dotenv from "dotenv";
+dotenv.config();  
 import { Request, Response } from 'express';
 import eventService from '../services/event.service';
-import { AuthUser, AuthRequest } from '../middleware/AuthRequest';
-import mongoose from 'mongoose';
+import { AuthRequest } from '../middleware/AuthRequest';
 import Event from '../models/Event.models';
 import OpenAI from 'openai';
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import User from '../models/User.models';
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const apiKey = process.env.GEMINI_API_KEY;
+if (!apiKey) {
+  throw new Error("GEMINI_API_KEY is missing! Set it in your .env file.");
+}
+
+// ✅ Ensure you're using the latest API version
+const gemini = new GoogleGenerativeAI(apiKey);
 
 class EventController {
   async joinEvent(req: Request, res: Response) {
@@ -167,44 +176,45 @@ class EventController {
     }
   };
 
-  async recommendEvents(req: Request, res: Response) : Promise<void> {
+  recommendEvents = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
-      const { hobbies } = req.body;
-      if (!hobbies || hobbies.length === 0) {
-      res.status(400).json({ message: 'חובה לספק תחומי עניין.' });
-      return;
+      const userId = req.user?._id;
+      if (!userId) {
+        res.status(401).json({ message: 'Unauthorized: User ID missing.' });
+        return;
       }
-
-      // חיפוש אירועים קשורים
-      const events = await Event.find({ hobby: { $in: hobbies } });
-
-      if (events.length === 0) {
-      res.status(404).json({ message: 'לא נמצאו אירועים מתאימים.' });
-      return;
+  
+      const user = await User.findById(userId).populate('hobbies');
+      if (!user || !user.hobbies || user.hobbies.length === 0) {
+        res.status(404).json({ message: 'No hobbies found for the user.' });
+        return;
       }
-
-      // יצירת פרומפט מותאם לפי האירועים הקיימים
-      const eventDescriptions = events.map((e) => `${e.title} - ${e.description}`).join('\n');
-
-      const response = await openai.chat.completions.create({
-        model: 'gpt-4',
-        messages: [
-          { role: 'system', content: 'אתה בוט המלצות אירועים.' },
-          {
-            role: 'user',
-            content: `בהתבסס על האירועים הבאים:\n${eventDescriptions}\nתציע 3 אירועים שמתאימים לתחומי העניין שסיפקתי.`,
-          },
-        ],
-        temperature: 0.7,
-      });
-
-      const suggestions = response.choices[0]?.message?.content || 'אין הצעות כרגע.';
-      res.json({ recommendations: suggestions });
-    } catch (error) {
-      console.error('שגיאה בהמלצת אירועים:', error);
-      res.status(500).json({ message: 'שגיאה בהמלצת אירועים' });
+  
+      const hobbies = user.hobbies.map((hobby: any) => hobby.name);
+      const { startDate, endDate } = req.body;
+      if (!startDate || !endDate) {
+        res.status(400).json({ message: 'A date range must be provided.' });
+        return;
+      }
+  
+      // Gemini API request
+      const model = gemini.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const prompt = `Suggest 3 creative event ideas for someone who enjoys ${hobbies.join(', ')}. 
+      They are available between ${startDate} and ${endDate}. 
+      Each event should have a unique, **fun name** and a **short description (2 sentences max)**. keep descriptions concise and engaging, avoiding unnecessary details.`;
+  
+      const response = await model.generateContent(prompt);
+      const text = response.response.text();
+  
+      // Format response
+      const formattedSuggestions = text.split('\n').map((s) => s.trim()).filter(Boolean);
+  
+      res.json({ recommendations: formattedSuggestions });
+    } catch (error:unknown) {
+      const errorMsg = error instanceof Error ? error.message : 'Error generating event recommendations.';
+      console.error('Error recommending events:',errorMsg);
+      res.status(500).json({ message: 'Error generating event recommendations.' });
     }
   }
 }
-
 export default new EventController();
