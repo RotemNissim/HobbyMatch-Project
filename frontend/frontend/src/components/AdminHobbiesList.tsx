@@ -60,33 +60,33 @@ const AdminHobbiesList = () => {
   
     return (
       <Card>
-        <div className="flex justify-between items-center p-4 cursor-pointer" onClick={() => setExpanded(!expanded)}>
-          <h2 className="text-xl font-semibold">Hobbies List</h2>
+        <div className="AdminP HL container" onClick={() => setExpanded(!expanded)}>
+          <h2 className="AdminP HL titel">Hobbies List</h2>
           {expanded ? <ChevronUp /> : <ChevronDown />}
         </div>
         {expanded && (
           <CardContent>
-            <div className="space-y-4">
+            <div className="AdminP HL Content 2">
               {hobbies.map((hobby) => (
-                <div key={hobby._id} className="flex justify-between items-center p-2 border-b">
+                <div key={hobby._id} className="AdminP HL Content for each hobby">
                   <span>{hobby.name}</span>
-                  <div className="space-x-2">
+                  <div className="AdminP HL buttons">
                     <Button size="icon" variant="outline" onClick={() => setEditingHobby(hobby)}>
-                      <Edit className="w-4 h-4" />
+                      <Edit className="AdminP HL edit button" />
                     </Button>
                     <Button size="icon" variant="outline" onClick={() => handleDeleteHobby(hobby._id)}>
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="AdminP HL trash button" />
                     </Button>
                   </div>
                 </div>
               ))}
               {editingHobby && (
-                <div className="flex space-x-2">
+                <div className="AdminP HL edit form">
                   <Input placeholder="Hobby Name" value={editingHobby.name} onChange={(e) => setEditingHobby({ ...editingHobby, name: e.target.value })} />
                   <Button onClick={handleUpdateHobby}>Update</Button>
                 </div>
               )}
-              <div className="flex space-x-2">
+              <div className="AdminP HL add hobby">
                 <Input placeholder="New Hobby" value={newHobby.name} onChange={(e) => setNewHobby({ name: e.target.value, category: e.target.value })} />
                 <Button onClick={handleAddHobby}><Plus className="w-4 h-4" /></Button>
               </div>

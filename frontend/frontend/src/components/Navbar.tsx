@@ -19,46 +19,26 @@ const Navbar: React.FC = () => {
     };
 
     return (
-        <nav style={navStyle}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <nav className='navbar'>
+            <div className='logo'>
                 <a href="/">
-                    <img src="/HobbyMatchLogo.png" alt="HobbyMatch Logo" style={{ height: '80px' }} />
+                    <img src="/HobbyMatchLogo.png" alt="HobbyMatch Logo" className='logo imag'/>
                 </a>
             </div>
-            <div style={linkContainer}>
-                <Link to="/" style={linkStyle}>Home</Link>
-                <Link to="/profile" style={linkStyle}>Profile</Link>
-                <Link to="/events" style={linkStyle}>Events</Link>
+            <div className='navbar buttons'>
+                <Link to="/" >Home</Link>
+                <Link to="/profile" >Profile</Link>
+                <Link to="/events">Events</Link>
                 {isUserLoggedIn ? (
-                    <button onClick={handleLogout} style={{ ...linkStyle, backgroundColor: 'transparent', border: 'none', cursor: 'pointer' }}>
+                    <button onClick={handleLogout} className='logout'>
                         Logout
                     </button>
                 ) : (
-                    <Link to="/login" style={linkStyle}>Login</Link>
+                    <Link to="/login" className='login'>Login</Link>
                 )}
             </div>
         </nav>
     );
-};
-
-const navStyle = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '10px 20px',
-    backgroundColor: '#333',
-    color: 'white'
-};
-
-const linkContainer = {
-    display: 'flex',
-    gap: '15px'
-};
-
-const linkStyle = {
-    color: 'white',
-    textDecoration: 'none',
-    fontWeight: 'bold'
 };
 
 export default Navbar;

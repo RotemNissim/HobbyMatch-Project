@@ -4,6 +4,7 @@ import Button from "./ui/Button";
 import { Card, CardContent } from "./ui/Card";
 import Input from "./ui/Input";
 import { ChevronDown, ChevronUp, Trash2, Plus } from "lucide-react";
+import { IUser } from "../types";
 
 const AdminUsersList = () => {
   const [users, setUsers] = useState<any[]>([]);
@@ -43,6 +44,7 @@ const AdminUsersList = () => {
     }
   };
 
+
   const handleDeleteUser = async (userId: string) => {
     try {
       await deleteUser(userId);
@@ -54,31 +56,31 @@ const AdminUsersList = () => {
 
   return (
     <Card>
-      <div className="flex justify-between items-center p-4 cursor-pointer" onClick={() => setExpanded(!expanded)}>
-        <h2 className="text-xl font-semibold">Users List</h2>
+      <div className="AdminP UL container" onClick={() => setExpanded(!expanded)}>
+        <h2 className="AdminP UL Titel">Users List</h2>
         {expanded ? <ChevronUp /> : <ChevronDown />}
       </div>
       {expanded && (
         <CardContent>
-          <div className="space-y-4">
+          <div className="AdminP UL Content 2">
             {users.length > 0 ? (
               users.map((user) => (
-                <div key={user._id || Math.random()} className="flex justify-between items-center p-2 border-b">
+                <div key={user._id || Math.random()} className="AdminP UL Content for each user">
                   <span>{user.firstName} {user.lastName} ({user.email})</span>
                   <Button size="icon" variant="outline" onClick={() => handleDeleteUser(user._id)}>
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="AdminP UL Trash button" />
                   </Button>
                 </div>
               ))
             ) : (
-              <p className="text-gray-500 text-center">No users found.</p>
+              <p className="AdminP UL no U titel">No users found.</p>
             )}
-            <div className="flex space-x-2">
+            <div className="AdminP UL Add User">
               <Input placeholder="First Name" value={newUser.firstName} onChange={(e) => setNewUser({ ...newUser, firstName: e.target.value })} />
               <Input placeholder="Last Name" value={newUser.lastName} onChange={(e) => setNewUser({ ...newUser, lastName: e.target.value })} />
               <Input placeholder="Email" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} />
               <Input placeholder="Password" type="password" value={newUser.password} onChange={(e) => setNewUser({ ...newUser, password: e.target.value })} />
-              <Button onClick={handleAddUser}><Plus className="w-4 h-4" /></Button>
+              <Button onClick={handleAddUser}><Plus className="AdminP UL add U button" /></Button>
             </div>
           </div>
         </CardContent>

@@ -1,9 +1,10 @@
 import React from "react";
 
 export const Card: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <div className="border shadow-md rounded-lg p-4 bg-white">{children}</div>
+  <div className="AdminP catagorys">{children}</div>
 );
 
 export const CardContent: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <div className="p-4">{children}</div>
+  <div className="Admin Card container">{children}</div>
+  
 );

@@ -21,14 +21,12 @@ const MyCreatedEvents = () => {
     useEffect(() => {
         const loadEvents = async () => {
             try {
-                // קבלת המשתמש הנוכחי
                 const user = await getCurrentUser();
-                // טעינת האירועים שנוצרו על ידו
                 const userEvents = await getEventsCreatedByUser(user._id);
                 setEvents(userEvents);
             } catch (error) {
                 console.error("Error loading events:", error);
-                setError("אירעה שגיאה בטעינת האירועים");
+                setError("Error loading events");
             } finally {
                 setLoading(false);
             }
@@ -38,34 +36,28 @@ const MyCreatedEvents = () => {
 
     // טיפול במחיקת אירוע
     const handleDelete = async (eventId: string) => {
-        if (confirm("האם אתה בטוח שברצונך למחוק אירוע זה?")) {
+        if (confirm("Are you sure you want to delete this event?")) {
             try {
                 await deleteEvent(eventId);
-                // עדכון הרשימה המקומית
                 setEvents(events.filter((e) => e._id !== eventId));
             } catch (error) {
                 console.error("Error deleting event:", error);
-                alert("אירעה שגיאה במחיקת האירוע");
+                alert("Error deleting event");
             }
         }
     };
 
-    // הצגת מצבי טעינה, שגיאות או אין אירועים
-    if (loading) return <p className="text-center py-4">טוען אירועים...</p>;
-    if (error) return <p className="text-center py-4 text-red-500">{error}</p>;
-    if (events.length === 0) return <p className="text-center py-4">לא נמצאו אירועים שיצרת.</p>;
+    if (loading) return <p className="loding event userP titel">Loding Events</p>;
+    if (error) return <p className="error loding event userP">{error}</p>;
+    if (events.length === 0) return <p className="No Events to show titel userP">No Events to show</p>;
 
     return (
         <div className="my-created-events">
             <Carousel
-                items={events}
-                renderItem={(event) => (
-                    <EventCard
-                        event={event}
-                        isCreatedByUser={true}
-                        onDelete={handleDelete}
-                    />
-                )}
+                items={events} renderItem={(event) => 
+                    (<EventCard event={event} isCreatedByUser={true} onDelete={handleDelete}/>
+                        
+                    )}
             />
         </div>
     );
