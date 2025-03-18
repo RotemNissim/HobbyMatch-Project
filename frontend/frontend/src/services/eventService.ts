@@ -59,3 +59,11 @@ export const addCommentToEvent = async (eventId:string, comment: {content:string
     const { data } = await apiClient.post(`/events/${eventId}/comments`, comment);
     return data;
 }
+
+export const recommendEvents = async (startDate:string, endDate:string) => {
+    const { data } = await apiClient.post('/events/recommend', {
+        startDate,
+        endDate
+    });
+    return data;
+}

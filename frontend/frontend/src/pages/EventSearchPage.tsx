@@ -4,6 +4,7 @@ import EventCard from "../components/EventCard";
 import EventSearchFilter from "../components/EventSearchFilter";
 import { motion } from "framer-motion";
 import "../styles/EventSearchPage.css";
+import { useNavigate } from "react-router-dom";
 
 interface Event {
   _id: string;
@@ -24,6 +25,7 @@ const EventSearchPage: React.FC = () => {
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -50,6 +52,9 @@ const EventSearchPage: React.FC = () => {
       console.error("❌ Error filtering events:", err);
     }
   };
+  const handleEventClick = (eventId: string) => {
+    navigate(`/events/${eventId}`);
+  };
 
   if (loading) return <p>Loading events...</p>;
   if (error) return <p className="ESP error">{error}</p>;
@@ -60,7 +65,12 @@ const EventSearchPage: React.FC = () => {
       <EventSearchFilter onFilterChange={handleFilterChange} />
       <div className="ESV events grid container">
         {filteredEvents.map((event) => (
-          <motion.div key={event._id} whileHover={{ scale: 1.05 }}>
+             <motion.div
+             key={event._id}
+             whileHover={{ scale: 1.05 }}
+             onClick={() => handleEventClick(event._id)} // Handle click event
+             className="clickable-event"
+           >
             <EventCard event={event} />
           </motion.div>
         ))}

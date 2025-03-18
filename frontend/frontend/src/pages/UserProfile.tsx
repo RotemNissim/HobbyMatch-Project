@@ -6,6 +6,7 @@ import EditProfile from '../components/EditProfile';
 import CreateEventForm from '../components/CreateEventForm';
 import MyCreatedEvents from '../components/MyCreatedEvents';
 import MyHobbies from '../components/MyHobbies';
+import GeminiEventCreator from "../components/GeminiEventCreator";
 import '../styles/profile.css';
 import { logout } from '../services/authService';
 import { AxiosError } from 'axios';
@@ -137,6 +138,8 @@ const UserProfile = () => {
                 <h2 className="UP_my-events-titel">Events You Created</h2>
                 <div className="UP_carousel">
                     <MyCreatedEvents />
+                    {/* ✅ Add GeminiEventCreator component */}
+                    {user && <GeminiEventCreator />}
                 </div>
             </div>
         </div>
