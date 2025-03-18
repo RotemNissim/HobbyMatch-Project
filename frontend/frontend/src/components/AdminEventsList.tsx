@@ -68,17 +68,17 @@ const AdminEventsList = () => {
 
   return (
     <Card>
-      <div className="flex justify-between items-center p-4 cursor-pointer" onClick={() => setExpanded(!expanded)}>
-        <h2 className="text-xl font-semibold">Events List</h2>
+      <div className="AdminP EL container" onClick={() => setExpanded(!expanded)}>
+        <h2 className="AdminP EL titel">Events List</h2>
         {expanded ? <ChevronUp /> : <ChevronDown />}
       </div>
       {expanded && (
         <CardContent>
-          <div className="space-y-4">
+          <div className="AdminP EL content2">
             {events.map((event) => (
-              <div key={event._id} className="flex justify-between items-center p-2 border-b">
+              <div key={event._id} className="AdminP EL content for each event">
                 <span>{event.title} - {event.location} ({event.date})</span>
-                <div className="space-x-2">
+                <div className="AdminP EL buttons">
                   <Button size="icon" variant="outline" onClick={() => setEditingEvent(event)}>
                     <Edit className="w-4 h-4" />
                   </Button>
@@ -89,7 +89,7 @@ const AdminEventsList = () => {
               </div>
             ))}
             {editingEvent && (
-              <div className="flex space-x-2">
+              <div className="AdminP EL editing event">
                 <Input placeholder="Title" value={editingEvent.title} onChange={(e) => setEditingEvent({ ...editingEvent, title: e.target.value })} />
                 <Input placeholder="Description" value={editingEvent.description} onChange={(e) => setEditingEvent({ ...editingEvent, description: e.target.value })} />
                 <Input placeholder="Location" value={editingEvent.location} onChange={(e) => setEditingEvent({ ...editingEvent, location: e.target.value })} />
@@ -97,7 +97,7 @@ const AdminEventsList = () => {
                 <Button onClick={handleUpdateEvent}>Update</Button>
               </div>
             )}
-            <div className="flex space-x-2">
+            <div className="AdminP EL add event">
               <Input placeholder="Title" value={newEvent.title} onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })} />
               <Input placeholder="Description" value={newEvent.description} onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })} />
               <Input placeholder="Location" value={newEvent.location} onChange={(e) => setNewEvent({ ...newEvent, location: e.target.value })} />

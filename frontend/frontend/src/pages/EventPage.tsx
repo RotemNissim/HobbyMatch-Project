@@ -100,19 +100,19 @@ const EventPage: React.FC = () => {
     if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
     return (
-        <div style={{ padding: '20px' }}>
+        <div className='EventPage container'>
             {userId && event ?  (
                 <>
                     <h1>{event.title}</h1>
                     {event.image && (
-                        <img src={event.image} alt="Event" style={{ maxWidth: '100%', marginBottom: '10px' }} />
+                        <img src={event.image} alt="Event" className='EventPage img' />
                     )}
                     <p>{event.description}</p>
                     <p><strong>Date:</strong> {new Date(event.date).toLocaleDateString()}</p>
                     <p><strong>Location:</strong> {event.location}</p>
 
                     {/* Join/Leave button */}
-                    <button  onClick={() =>
+                    <button className='EventPage leave join buttons' onClick={() =>
                     handleJoinLeave(
                       event._id,
                       event.participants.some((p) => p._id === userId),
@@ -126,7 +126,7 @@ const EventPage: React.FC = () => {
 
                     {/* Edit and Delete buttons */}
                     {event && (event.createdBy === userId ||userRole === "admin") && (
-                        <div>
+                        <div className='EventPage Edit and Delete buttons'>
                             <button onClick={handleUpdate}>Edit</button>
                             <button onClick={handleDelete}>Delete</button>
                         </div>
@@ -136,7 +136,7 @@ const EventPage: React.FC = () => {
                  {event && <Comments eventId={event._id} />}
                 </>
             ) : (
-                <p style={{ color: 'red' }}>Event not found.</p>
+                <p className='EventPage Event not found titel'>Event not found.</p>
             )}
         </div>
     );

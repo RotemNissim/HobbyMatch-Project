@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-
+// import { IEvent } from "../types"
 interface Event {
   _id: string;
   title: string;
@@ -30,7 +30,7 @@ const EventCard: React.FC<EventCardProps> = ({
   onDelete,
   isCreatedByUser = false
 }) => {
-  // פונקציה עזר להצגת תאריך בפורמט קריא
+  // Date formatting
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('he-IL', {
@@ -40,49 +40,43 @@ const EventCard: React.FC<EventCardProps> = ({
     });
   };
 
-  // בדוק אם המשתמש משתתף באירוע
+  // Check if user is a participant
   const isParticipant = userId ? event.participants.some(p => p._id === userId) : false;
 
   return (
-    <div className="event-card">
-      {/* כותרת האירוע */}
+    <div className="event-card" id="content">
       <h3 className="event-title">{event.title}</h3>
       
-      {/* תיאור האירוע */}
       <p className="event-description">{event.description}</p>
       
-      {/* מידע על האירוע */}
-      <div className="mt-auto">
-        <p className="event-info">
+      <div className="event-info div">
+        <p className="event-date">
           <strong>📅 תאריך:</strong> {formatDate(event.date)}
         </p>
-        <p className="event-info">
+        <p className="event-location">
           <strong>📍 מיקום:</strong> {event.location}
         </p>
         
-        {/* מספר משתתפים */}
-        <p className="event-info">
+        <p className="event-participants">
           <strong>👥 משתתפים:</strong> {event.participants.length}
         </p>
       </div>
       
-      {/* כפתור הצטרפות/עזיבה (במסך הבית) */}
       {userId && onJoinLeave && (
         <button
           onClick={() => onJoinLeave(event._id, isParticipant, userId)}
           className={`join-leave-btn ${isParticipant ? 'bg-red-500 hover:bg-red-600' : ''}`}
         >
-          {isParticipant ? "❌ עזוב אירוע" : "✅ הצטרף לאירוע"}
+          {isParticipant ? "❌ Leane Event" : "✅ Join Event"}
         </button>
       )}
 
-      {/* כפתור מחיקה (באירועים שנוצרו ע"י המשתמש) */}
       {isCreatedByUser && onDelete && (
         <button
           onClick={() => onDelete(event._id)}
-          className="delete-btn"
+          className="delete event btn"
         >
-          🗑️ מחק אירוע
+          🗑️ Delete Event
         </button>
       )}
     </div>

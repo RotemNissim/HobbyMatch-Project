@@ -1,6 +1,7 @@
 import React from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import '../styles/layout.css';
 
 interface LayoutProps {
     children: React.ReactNode;
@@ -8,10 +9,9 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
     return (
-        <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+        <div className='layout'>
             <Navbar />
-            <main style={{ flex: 1 }}>{children}</main>
-            
+            <main className='main'>{children}</main>
             <Footer />
         </div>
         

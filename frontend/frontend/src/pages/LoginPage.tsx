@@ -47,11 +47,11 @@ await register(formDataToSend);
   };
 
   return (
-    <div className="auth-wrapper">
-      <div className="auth-container">
+    <div className="login-page container">
+      <div className="login-page 2">
         <h2>{isLogin ? "Login" : "Sign Up"}</h2>
-        {error && <p className="text-red-500">{error}</p>}
-        <form onSubmit={handleSubmit} className="input-container">
+        {error && <p className="login-page3">{error}</p>}
+        <form onSubmit={handleSubmit} className="loginP form">
           {!isLogin && (
             <>
               <input
@@ -60,6 +60,7 @@ await register(formDataToSend);
                 placeholder="First Name"
                 value={formData.firstName}
                 onChange={handleChange}
+                className="loginP input firstName"
               />
               <input
                 type="text"
@@ -67,6 +68,7 @@ await register(formDataToSend);
                 placeholder="Last Name"
                 value={formData.lastName}
                 onChange={handleChange}
+                className="loginP input lastName"
               />
             </>
           )}
@@ -76,6 +78,7 @@ await register(formDataToSend);
             placeholder="Email"
             value={formData.email}
             onChange={handleChange}
+            className="loginP input email"
           />
           <input
             type="password"
@@ -83,8 +86,9 @@ await register(formDataToSend);
             placeholder="Password"
             value={formData.password}
             onChange={handleChange}
+            className="loginP input password"
           />
-          <button type="submit">{isLogin ? "Login" : "Sign Up"}</button>
+          <button className="login submit button" type="submit">{isLogin ? "Login" : "Sign Up"}</button>
         </form>
         <p>
           {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}

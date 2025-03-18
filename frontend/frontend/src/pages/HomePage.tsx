@@ -4,6 +4,7 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import Carousel from "../components/Carousel";
 import EventCard from "../components/EventCard";
+import "../styles/styles.css";
 import "../styles/home.css";
 
 interface Event {
@@ -21,7 +22,6 @@ const HomePage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
 
-  // חילוץ מזהה המשתמש מהטוקן
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (token) {
@@ -36,7 +36,6 @@ const HomePage: React.FC = () => {
     }
   }, []);
 
-  // טעינת האירועים
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -55,7 +54,6 @@ const HomePage: React.FC = () => {
     fetchEvents();
   }, [userId]);
 
-  // טיפול בהצטרפות/עזיבה של אירוע
   const handleJoinLeave = async (
     eventId: string,
     isParticipant: boolean,
@@ -68,7 +66,6 @@ const HomePage: React.FC = () => {
         await joinEvent(eventId);
       }
       
-      // עדכון המצב המקומי
       setEvents((prevEvents) =>
         prevEvents.map((event) =>
           event._id === eventId
@@ -86,25 +83,14 @@ const HomePage: React.FC = () => {
     }
   };
 
-  // הצגת מצבי טעינה ושגיאה
-  if (loading) return <div className="container text-center py-8">טוען אירועים...</div>;
-  if (error) return <div className="container text-center py-8 text-red-500">{error}</div>;
+  if (loading) return <div className="loading events homeP">loading events...</div>;
+  if (error) return <div className="loading events homeP error">{error}</div>;
 
   return (
-    <div className="container">
-      <h1 className="text-2xl font-bold text-center mb-6">כל האירועים</h1>
-      
-      {/* קרוסלת האירועים */}
-      <Carousel
-        items={events}
-        renderItem={(event) => (
-          <EventCard
-            event={event}
-            userId={userId}
-            onJoinLeave={handleJoinLeave}
-          />
-        )}
-      />
+    <div className="homeP-Carousel_titel">
+      <h1 className="All Events titel">ALL EVENTS</h1>
+      <Carousel items={events} renderItem={(event) => 
+      (<EventCard event={event} userId={userId} onJoinLeave={handleJoinLeave}/>)}/>
     </div>
   );
 };

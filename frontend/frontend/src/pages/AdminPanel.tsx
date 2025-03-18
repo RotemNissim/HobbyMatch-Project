@@ -28,8 +28,8 @@ const AdminPanel = () => {
     return (
         <ErrorBoundary>
         
-        <div className="container mx-auto p-6 space-y-6">
-          <h1 className="text-2xl font-bold">Admin Panel</h1>
+        <div className="AdminPanel container">
+          <h1 className="AdminPanel titel">Admin Panel</h1>
           <Card>
             <AdminUsersList />
           </Card>

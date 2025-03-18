@@ -58,49 +58,21 @@ const EventSearchFilter: React.FC<FilterProps> = ({ onFilterChange }) => {
   };
 
   return (
-    <div className="flex flex-wrap gap-4 mb-6">
-      <input
-        type="text"
-        name="name"
-        placeholder="Event name"
-        className="border p-2 rounded"
-        value={filters.name}
-        onChange={handleChange}
-      />
-      <input
-        type="date"
-        name="date"
-        className="border p-2 rounded"
-        value={filters.date}
-        onChange={handleChange}
-      />
-      <input
-        type="text"
-        name="location"
-        placeholder="Location"
-        className="border p-2 rounded"
-        value={filters.location}
-        onChange={handleChange}
-      />
-      <input
-        type="number"
-        name="participants"
-        placeholder="Min Participants"
-        className="border p-2 rounded"
-        value={filters.participants}
-        onChange={handleChange}
-      />
+    <div className="filter-container">
+      <input type="text" name="name" placeholder="Event name" 
+      className="border p-2 rounded"value={filters.name} onChange={handleChange}/>
+      <input type="date" name="date" className="border p-2 rounded"
+      value={filters.date} onChange={handleChange}/>
+      <input type="text" name="location" placeholder="Location"
+      className="border p-2 rounded" value={filters.location} onChange={handleChange}/>
+      <input type="number" name="participants" placeholder="Min Participants"
+      className="border p-2 rounded" value={filters.participants} onChange={handleChange}/>
 
       {/* MULTI-SELECTION DROPDOWN FOR HOBBIES */}
-      <Select
-        isMulti
-        options={hobbies}
-        placeholder="Select hobbies"
-        className="border p-2 rounded"
-        onChange={handleHobbyChange}
-      />
+      <Select isMulti options={hobbies} placeholder="Select hobbies"
+      className="border p-2 rounded" onChange={handleHobbyChange}/>
 
-      <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={handleSearch}>
+      <button className="search button searchP" onClick={handleSearch}>
         Search
       </button>
     </div>
