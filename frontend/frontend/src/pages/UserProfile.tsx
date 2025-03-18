@@ -70,51 +70,53 @@ const UserProfile = () => {
     
         const handleLogout = () => {
             logout();
-            setGlobalFlag(false);  // מעדכן גם את localStorage
+            setGlobalFlag(false);  //localStorage
             navigate('/');
         };
     
     return (
-        <div className="carousel-container">
-            <h1 className="text-2xl font-bold">My Profile</h1>
+        <div className="UP_carousel-container">
 
             {user && !isEditingProfile && (
-                <div className="mt-4 space-y-2">
-                    <div className='text-and-buttons'>
+                <div className="UP_user-profile-container">
+                    <h1 className="UP_titel">My Profile</h1>
+                    <div className='UP_user-profile-details'>
                         <p><strong>Name:</strong> {user.firstName} {user.lastName}</p>
                         <p><strong>Email:</strong> {user.email}</p>
                         {user.profilePicture && (
                                <img 
                                src={user.profilePicture ? `http://localhost:3000/uploads/profile_pictures/${user.profilePicture}` : "/default-avatar.png"}   
                                alt="Profile" 
-                               className="w-24 h-24 rounded-full"
+                               className="UP_profile-picture"
                            />
                         )}
-                        <div className="space-x-4 mt-4">
+                        <div className="UP_user-profile-buttons">
                             <button
-                                className="bg-blue-500 text-white px-4 py-2 rounded"
+                                className="UP_dit-profile-button"
                                 onClick={() => setIsEditingProfile(true)}
                             >
                                 ✏️ Edit Profile
                             </button>
                             <button
-                                className="bg-green-500 text-white px-4 py-2 rounded"
+                                className="UP_create-event-button"
                                 onClick={() => setIsCreatingEvent(true)}
                             >
                                 ➕ Create Event
                             </button>
                             <button 
-                                className='bg-red-500 text-white px-4 py-2 rounded'
+                                className='UP_logout-button'
                                 onClick={handleLogout}
                             >
                                 Logout
                             </button>
 
+                            {/* ✅ Add MyHobbies component and pass the user data */}
+                            {user && <MyHobbies user={user} />}
                             {/* ✅ Show "Go to Admin Panel" only if the user is an admin */}
                             {isAdmin && (
                                 <button 
                                     onClick={() => navigate("/admin")} 
-                                    className="bg-indigo-500 text-white px-4 py-2 rounded"
+                                    className="UP_admin-panel-button"
                                 >
                                     Go to Admin Panel
                                 </button>
@@ -131,11 +133,9 @@ const UserProfile = () => {
             {isCreatingEvent && (
             <CreateEventForm onEventCreated={handleEventCreated} onCancel={() => setIsCreatingEvent(false)} />
             )}
-                 {/* ✅ Add MyHobbies component and pass the user data */}
-            {user && <MyHobbies user={user} />}
-            <div className="mt-8">
-                <h2 className="text-xl font-semibold">Events You Created</h2>
-                <div className="carousel">
+            <div className="UP_my-created-events-container">
+                <h2 className="UP_my-events-titel">Events You Created</h2>
+                <div className="UP_carousel">
                     <MyCreatedEvents />
                 </div>
             </div>

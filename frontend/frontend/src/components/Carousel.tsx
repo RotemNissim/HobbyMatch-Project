@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import "../styles/carousel.css";
 
 interface CarouselProps<T> {
   items: T[];
@@ -9,33 +10,42 @@ interface CarouselProps<T> {
 const Carousel = <T,>({ items, renderItem }: CarouselProps<T>) => {
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState<"left" | "right">("right");
+  const [itemsPerPage, setItemsPerPage] = useState(3);
+
+  useEffect(() => {
+    const updateItemsPerPage = () => {
+      setItemsPerPage(window.innerWidth >= 768 ? 3 : 1);
+    };
+    updateItemsPerPage();
+    window.addEventListener("resize", updateItemsPerPage);
+    return () => window.removeEventListener("resize", updateItemsPerPage);
+  }, []);
 
   if (items.length === 0) return <p className="text-center py-4">No events found.</p>;
 
-  const itemsPerPage = window.innerWidth >= 768 ? 3 : 1;
   const totalItems = items.length;
-
+  
   const nextSlide = () => {
     setDirection("right");
-    setIndex((prev) => (prev + 3) % totalItems);
+    setIndex((prev) => (prev + itemsPerPage) % totalItems);
   };
 
   const prevSlide = () => {
     setDirection("left");
-    setIndex((prev) => (prev - 3 + totalItems) % totalItems);
+    setIndex((prev) => (prev - itemsPerPage + totalItems) % totalItems);
   };
 
-  // מעגליות - אם מגיעים לסוף, נמשיך מההתחלה
-  const visibleItems = [
-    ...items,
-    ...items
-  ].slice(index, index + itemsPerPage);
+  // Update visibleItems to make the carousel circular
+  const visibleItems = Array.from({ length: itemsPerPage }, (_, i) => {
+    const idx = (index + i) % totalItems; // Ensure circular display with modulo
+    return items[idx];
+  });
 
   return (
     <div className="carousel-container">
-      <button onClick={prevSlide} className="nav-button">⬅️</button>
+      <button onClick={prevSlide} className="carousel-button left">◀</button>
 
-      <div className="event-cards-container">
+      <div className="cards-container">
         <AnimatePresence initial={false} mode="wait">
           <motion.div
             key={index}
@@ -46,15 +56,15 @@ const Carousel = <T,>({ items, renderItem }: CarouselProps<T>) => {
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
             {visibleItems.map((item, i) => (
-              <motion.div key={i} className="event-card-wrapper" whileHover={{ scale: 1.03 }}>
+              <motion.div key={i} className="event-card" whileHover={{ scale: 1.03 }}>
                 {renderItem(item)}
               </motion.div>
             ))}
           </motion.div>
         </AnimatePresence>
       </div>
-      
-      <button onClick={nextSlide} className="nav-button">➡️</button>
+
+      <button onClick={nextSlide} className="carousel-button right">▶</button>
     </div>
   );
 };

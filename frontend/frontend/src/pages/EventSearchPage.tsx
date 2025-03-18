@@ -3,6 +3,7 @@ import axios from "axios";
 import EventCard from "../components/EventCard";
 import EventSearchFilter from "../components/EventSearchFilter";
 import { motion } from "framer-motion";
+import "../styles/EventSearchPage.css";
 
 interface Event {
   _id: string;
@@ -51,13 +52,13 @@ const EventSearchPage: React.FC = () => {
   };
 
   if (loading) return <p>Loading events...</p>;
-  if (error) return <p className="text-red-500">{error}</p>;
+  if (error) return <p className="ESP error">{error}</p>;
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-2xl font-bold text-center mb-6">Search Events</h1>
+    <div className="event-search-page container">
+      <h1 className="ESV search titel">Search Events</h1>
       <EventSearchFilter onFilterChange={handleFilterChange} />
-      <div className="grid grid-cols-4 gap-4 mt-6">
+      <div className="ESV events grid container">
         {filteredEvents.map((event) => (
           <motion.div key={event._id} whileHover={{ scale: 1.05 }}>
             <EventCard event={event} />

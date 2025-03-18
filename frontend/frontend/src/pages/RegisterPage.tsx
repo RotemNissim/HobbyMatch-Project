@@ -51,19 +51,19 @@ const Register = () => {
     };
 
     return (
-        <div className="max-w-md mx-auto p-6 bg-white shadow-md rounded-lg">
-            <h2 className="text-2xl font-bold mb-4">Register</h2>
-            {preview && <img src={preview} alt="Preview" className="w-24 h-24 rounded-full mb-4" />}
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                <input type="text" name="firstName" placeholder="First Name" onChange={handleChange} required />
-                <input type="text" name="lastName" placeholder="Last Name" onChange={handleChange} required />
-                <input type="email" name="email" placeholder="Email" onChange={handleChange} required />
-                <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
-                <input type="file" accept="image/*" onChange={handleFileChange} />
-                <button type="submit" disabled={loading} className="bg-blue-500 text-white px-4 py-2 rounded">
+        <div className="Register container">
+            <h2 className="Register titel">Register</h2>
+            {preview && <img src={preview} alt="Preview" className="Register img" />}
+            <form onSubmit={handleSubmit} className="Register form">
+                <input type="text" name="firstName" placeholder="First Name" onChange={handleChange} required className="Register input firstName" />
+                <input type="text" name="lastName" placeholder="Last Name" onChange={handleChange} required className="Register input lastName"/>
+                <input type="email" name="email" placeholder="Email" onChange={handleChange} required className="Register input email" />
+                <input type="password" name="password" placeholder="Password" onChange={handleChange} required className="Register input password" />
+                <input type="file" accept="image/*" onChange={handleFileChange} className="Register input img file" />
+                <button type="submit" disabled={loading} className="Register submit button">
                     {loading ? "Registering..." : "Register"}
                 </button>
-                {error && <p className="text-red-500">{error}</p>}
+                {error && <p className="Register error">{error}</p>}
             </form>
         </div>
     );

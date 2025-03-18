@@ -1,163 +1,123 @@
-/* עיצוב כללי למיכל */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  text-align: center;
-}
-body {
-  margin: 0;
-}
-
-.container {
-  padding: 8px;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1rem;
-}
-
-/* עיצוב לקרוסלה */
-.carousel-container {
-  padding: 8px;
-  position: relative;
-  width: 100%;
-  padding: 0 50px; /* מרווח בצדדים עבור הכפתורים */
-  margin: 0;
-}
-
-/* כפתורי ניווט */
-.nav-button {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background-color: rgba(75, 85, 99, 0.7);
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 10;
-  font-size: 1.2rem;
-  transition: background-color 0.3s;
-}
-
-.nav-button:hover {
-  background-color: rgba(55, 65, 81, 0.9);
-}
-
-.nav-button:first-child {
-  left: 0;
-}
-
-.nav-button:last-child {
-  right: 0;
-}
-
-/* מיכל כרטיסי האירוע */
-.event-cards-container {
-  overflow: hidden;
-  width: 100%;
-}
-
-.event-cards {
-  display: flex;
-  gap: 1rem;
-  width: 100%;
-}
-
-/* עטיפה לכרטיס בודד */
-.event-card-wrapper {
-  flex: 1;
-  min-width: 0;
-  max-width: calc(33.333% - 0.7rem);
-}
-
-/* כרטיס האירוע */
-.event-card {
-  max-height: 300px; /* גובה קבוע */
-  overflow: auto; /* אפשרות לגלילה אם התוכן גדול מדי */
+.homeP {
   display: flex;
   flex-direction: column;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  padding: 1rem;
-  transition: transform 0.3s, box-shadow 0.3s;
-  max-width: 300px;
+  align-items: center;
+  padding: 20px;
+  background-color: var(--secondary-bg);
+  min-height: 100vh;
+}
+
+.homeP h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--accent-color);
+  margin-bottom: 20px;
+}
+
+.loading {
+  font-size: 18px;
+  color: var(--text-color);
+  text-align: center;
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+}
+
+.Carousel {
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Carousel Buttons */
+.carousel button {
+  background-color: var(--primary-color);
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.carousel button:hover {
+  background-color: var(--accent-color);
+}
+
+/* Event Cards */
+.event-card {
+  background: var(--card-bg);
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
 }
 
 .event-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transform: scale(1.03);
 }
 
-/* כותרת האירוע */
 .event-title {
-  font-size: 1.25rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-  color: #1f2937;
+  font-size: 1.5rem;
+  color: var(--primary-color);
 }
 
-/* תיאור האירוע */
 .event-description {
-  color: #4b5563;
-  margin-bottom: 0.5rem;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  flex-grow: 1;
+  font-size: 1rem;
+  color: var(--text-color);
 }
 
-/* מידע על האירוע */
 .event-info {
-  margin-bottom: 0.5rem;
   font-size: 0.9rem;
-  color: #6b7280;
+  color: var(--text-muted);
 }
 
-/* כפתורי פעולה */
-.join-leave-btn, .delete-btn {
-  width: 100%;
-  padding: 0.5rem;
-  border: none;
-  border-radius: 4px;
-  font-weight: 500;
-  cursor: pointer;
-  margin-top: auto; /* דחוף את הכפתור לתחתית */
-  transition: background-color 0.3s;
-}
-
+/* Join/Leave Buttons */
 .join-leave-btn {
-  background-color: #3b82f6;
+  background-color: var(--primary-color);
+  border: none;
   color: white;
+  text-shadow: 1px 1px 2px black;
+  padding: 10px 15px;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
 }
 
 .join-leave-btn:hover {
-  background-color: #2563eb;
+  background-color: var(--accent-color);
 }
 
-.delete-btn {
-  background-color: #ef4444;
-  color: white;
+/* Ensure HomePage container spans full height and centers the Carousel */
+.homeP-Carousel_titel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background-color: var(--secondary-bg);
 }
 
-.delete-btn:hover {
-  background-color: #dc2626;
+.homeP-Carousel_titel h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--accent-color);
+  margin-bottom: 20px;
+  text-align: center;
 }
 
-/* הגדרות תגובה (רספונסיביות) */
-@media (max-width: 768px) {
-  .event-card-wrapper {
-    max-width: 100%;
-  }
-  
-  .event-cards {
-    flex-direction: column;
-  }
+/* Ensure Carousel is centered within the container */
+.Carousel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 80%;
 }
