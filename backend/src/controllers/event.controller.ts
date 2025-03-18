@@ -1,12 +1,20 @@
+import dotenv from "dotenv";
+dotenv.config();  
 import { Request, Response } from 'express';
 import eventService from '../services/event.service';
-import { AuthUser, AuthRequest } from '../middleware/AuthRequest';
-import mongoose from 'mongoose';
+import { AuthRequest } from '../middleware/AuthRequest';
 import Event from '../models/Event.models';
 import OpenAI from 'openai';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import User from '../models/User.models';
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const apiKey = process.env.GEMINI_API_KEY;
+if (!apiKey) {
+  throw new Error("GEMINI_API_KEY is missing! Set it in your .env file.");
+}
+
+// ✅ Ensure you're using the latest API version
+const gemini = new GoogleGenerativeAI(apiKey);
 
 class EventController {
   async joinEvent(req: Request, res: Response) {
@@ -168,51 +176,43 @@ class EventController {
     }
   };
 
-  async recommendEvents(req: AuthRequest, res: Response): Promise<void> {
+  recommendEvents = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
-      const userId = req.user?._id; // Extract userId from the request
+      const userId = req.user?._id;
       if (!userId) {
         res.status(401).json({ message: 'Unauthorized: User ID missing.' });
         return;
       }
   
-      // Fetch user's hobbies (assuming hobbies are populated in the User model)
-      const user = await User.findById(userId).populate('hobbies'); 
+      const user = await User.findById(userId).populate('hobbies');
       if (!user || !user.hobbies || user.hobbies.length === 0) {
         res.status(404).json({ message: 'No hobbies found for the user.' });
         return;
       }
   
-      // Extract hobby names from the Hobby model
       const hobbies = user.hobbies.map((hobby: any) => hobby.name);
-  
       const { startDate, endDate } = req.body;
       if (!startDate || !endDate) {
         res.status(400).json({ message: 'A date range must be provided.' });
         return;
       }
   
-      // OpenAI request
-      const response = await openai.chat.completions.create({
-        model: 'gpt-4',
-        messages: [
-          { role: 'system', content: 'You are an event planning assistant. Your goal is to suggest 3 creative event ideas that the user can organize based on their hobbies and availability.' },
-          {
-            role: 'user',
-            content: `The user has the following hobbies: ${hobbies.join(', ')}
-            They are available between ${startDate} and ${endDate}.
-            Suggest 3 unique event ideas they can create, with fun names and short descriptions.`,
-          },
-        ],
-        temperature: 0.9, // Higher creativity
-      });
+      // Gemini API request
+      const model = gemini.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const prompt = `Suggest 3 creative event ideas for someone who enjoys ${hobbies.join(', ')}. 
+      They are available between ${startDate} and ${endDate}. 
+      Each event should have a unique, **fun name** and a **short description (2 sentences max)**. keep descriptions concise and engaging, avoiding unnecessary details.`;
   
-      const suggestions = response.choices[0]?.message?.content || 'No suggestions available at the moment.';
-      const formattedSuggestions = suggestions.split('\n').map((s) => s.trim()).filter(Boolean);
+      const response = await model.generateContent(prompt);
+      const text = response.response.text();
+  
+      // Format response
+      const formattedSuggestions = text.split('\n').map((s) => s.trim()).filter(Boolean);
   
       res.json({ recommendations: formattedSuggestions });
-    } catch (error) {
-      console.error('Error recommending events:', error);
+    } catch (error:unknown) {
+      const errorMsg = error instanceof Error ? error.message : 'Error generating event recommendations.';
+      console.error('Error recommending events:',errorMsg);
       res.status(500).json({ message: 'Error generating event recommendations.' });
     }
   }
