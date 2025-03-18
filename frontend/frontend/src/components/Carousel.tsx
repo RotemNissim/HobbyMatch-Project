@@ -32,21 +32,17 @@ const Carousel = <T,>({ items, renderItem }: CarouselProps<T>) => {
   ].slice(index, index + itemsPerPage);
 
   return (
-    <div className="carousel-container">
-      <button onClick={prevSlide} className="nav-button">⬅️</button>
+    <div className="1st in carousel">
+      <button onClick={prevSlide} className="carousel buttonL">⬅️</button>
 
-      <div className="event-cards-container">
+      <div className="cards-container">
         <AnimatePresence initial={false} mode="wait">
-          <motion.div
-            key={index}
-            className="event-cards"
-            initial={{ x: direction === "right" ? 100 : -100, opacity: 0.8 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: direction === "right" ? -100 : 100, opacity: 0.8 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-          >
+          <motion.div key={index} className="event-cards motion.div" 
+          initial={{ x: direction === "right" ? 100 : -100, opacity: 0.8 }}
+          animate={{ x: 0, opacity: 1 }} exit={{ x: direction === "right" ? -100 : 100, opacity: 0.8 }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}>
             {visibleItems.map((item, i) => (
-              <motion.div key={i} className="event-card-wrapper" whileHover={{ scale: 1.03 }}>
+              <motion.div key={i} className="event-card motion.div hover" whileHover={{ scale: 1.03 }}>
                 {renderItem(item)}
               </motion.div>
             ))}
@@ -54,7 +50,7 @@ const Carousel = <T,>({ items, renderItem }: CarouselProps<T>) => {
         </AnimatePresence>
       </div>
       
-      <button onClick={nextSlide} className="nav-button">➡️</button>
+      <button onClick={nextSlide} className="carousel buttonR">➡️</button>
     </div>
   );
 };

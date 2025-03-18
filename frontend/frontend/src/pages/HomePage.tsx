@@ -87,24 +87,15 @@ const HomePage: React.FC = () => {
   };
 
   // הצגת מצבי טעינה ושגיאה
-  if (loading) return <div className="container text-center py-8">טוען אירועים...</div>;
-  if (error) return <div className="container text-center py-8 text-red-500">{error}</div>;
+  if (loading) return <div className="loading events homeP">loading events...</div>;
+  if (error) return <div className="loading events homeP error">{error}</div>;
 
   return (
-    <div className="container">
-      <h1 className="text-2xl font-bold text-center mb-6">כל האירועים</h1>
+    <div className="homeP Carousel + titel">
+      <h1 className="All Events titel">ALL EVRNTS</h1>
       
-      {/* קרוסלת האירועים */}
-      <Carousel
-        items={events}
-        renderItem={(event) => (
-          <EventCard
-            event={event}
-            userId={userId}
-            onJoinLeave={handleJoinLeave}
-          />
-        )}
-      />
+      <Carousel items={events} renderItem={(event) => 
+      (<EventCard event={event} userId={userId} onJoinLeave={handleJoinLeave}/>)}/>
     </div>
   );
 };
