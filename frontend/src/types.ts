@@ -44,7 +44,7 @@ export interface IEvent {
 }
 
 export interface IHobby {
-  _id: string;
+  _id?: string;
   name: string;
   category: string;
   users?: string[];

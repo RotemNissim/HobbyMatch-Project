@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { joinEvent, leaveEvent } from "../services/eventService";
-import axios from "axios";
+import { joinEvent, leaveEvent, listEvent } from "../services/eventService";
 import { jwtDecode } from "jwt-decode";
 import Carousel from "../components/Carousel";
 import EventCard from "../components/EventCard";
@@ -40,9 +39,9 @@ const HomePage: React.FC = () => {
     const fetchEvents = async () => {
       try {
         console.log("📡 Fetching events...");
-        const response = await axios.get("/events");
-        console.log("✅ Events fetched:", response.data);
-        setEvents(response.data);
+        const response = await listEvent();
+        console.log("✅ Events fetched:", response);
+        setEvents(response);
       } catch (err) {
         console.error("❌ Error fetching events:", err);
         setError("Failed to fetch events");

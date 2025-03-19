@@ -2,9 +2,8 @@ import axios from 'axios';
 const token = localStorage.getItem('accessToken');
 axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 const apiClient = axios.create({
-    baseURL: '',   // Vite proxy handles all routes
+    baseURL: 'https://node120.cs.colman.ac.il/api',   // Vite proxy handles all routes
 });
-
 
 apiClient.interceptors.request.use((config) => {
     const token = localStorage.getItem('accessToken');

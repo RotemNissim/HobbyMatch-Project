@@ -9,7 +9,7 @@ interface Event {
   location: string;
   participants: { _id: string }[];
   createdBy?: string;
-  hobby?: string[];
+  hobby?: { _id:string}[];
   image?: string;
   likes?: string[];
   comments?: string[];
