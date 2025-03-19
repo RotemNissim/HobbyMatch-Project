@@ -13,6 +13,7 @@ import { AxiosError } from 'axios';
 import { setGlobalFlag } from '../globalState';
 import Select from 'react-select';
 
+
 const BASE_URL = import.meta.env.VITE_API_BASE_URL +  "/api/uploads/profile_pictures";
 console.log("base url:", BASE_URL);
 
@@ -90,7 +91,7 @@ const UserProfile = () => {
                         <p><strong>Email:</strong> {user.email}</p>
                         {user.profilePicture && (
                                <img 
-                               src={user.profilePicture ? `https://node120.cs.colman.ac.il/api/uploads/profile_pictures/${user.profilePicture}` : "/default-avatar.png"}   
+                            //    src={user.profilePicture ? `https://node120.cs.colman.ac.il/api/uploads/profile_pictures/${user.profilePicture}` : "/default-avatar.png"}   
                                alt="Profile" 
                                className="UP_profile-picture"
                                />
