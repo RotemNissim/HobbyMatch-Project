@@ -79,7 +79,7 @@ const AdminUsersList: React.FC = () => {
                 <Input placeholder="First Name" value={editingUser.firstName} onChange={(e) => setEditingUser({ ...editingUser, firstName: e.target.value })} />
                 <Input placeholder="Last Name" value={editingUser.lastName} onChange={(e) => setEditingUser({ ...editingUser, lastName: e.target.value })} />
                 <Input placeholder="Email" value={editingUser.email} onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })} />
-                <Input placeholder="Password" type="password" value={editingUser.password || ""} onChange={(e) => setEditingUser({ ...editingUser, password: e.target.value })} />
+                <Input placeholder="Password" type="password" value={editingUser.password || ""} onChange={(e) => setEditingUser({ ...editingUser, password: e.target.value})} />
                 <Button onClick={handleUpdateUser}>Update</Button>
                 <Button onClick={() => setEditingUser(null)} variant="outline">Cancel</Button>
               </div>

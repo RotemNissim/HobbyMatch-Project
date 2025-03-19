@@ -43,8 +43,8 @@ class UserService {
 
   async updateUser(userId: string, updates: Partial<{ firstName: string, lastName: string, email: string, password?: string, profilePicture?: string, hobbies: string[] }>) {
       if (updates.password) {
-          const salt = await bcrypt.genSalt(10);
-          updates.password = await bcrypt.hash(updates.password, salt);
+        console.log('password is updated');
+          updates.password = await bcrypt.hash(updates.password, 10);
       }
       
       const user = await User.findByIdAndUpdate(userId, updates, { new: true }).select('-password');
