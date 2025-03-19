@@ -89,13 +89,8 @@ const UserProfile = () => {
                         <p><strong>Name:</strong> {user.firstName} {user.lastName}</p>
                         <p><strong>Email:</strong> {user.email}</p>
                         {user.profilePicture && (
-<<<<<<< HEAD
-                               <img 
-                               src={user.profilePicture ? `${BASE_URL}/${user.profilePicture}` : "/default-avatar.png"}   
-=======
                             <img 
                                src={user.profilePicture ? `http://localhost:3000/uploads/profile_pictures/${user.profilePicture}` : "/default-avatar.png"}   
->>>>>>> userProfile
                                alt="Profile" 
                                className="UP_profile-picture"
                                />
