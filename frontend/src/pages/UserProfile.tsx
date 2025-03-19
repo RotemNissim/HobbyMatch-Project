@@ -91,7 +91,7 @@ const UserProfile = () => {
                         <p><strong>Email:</strong> {user.email}</p>
                         {user.profilePicture && (
                                <img 
-                            //    src={user.profilePicture ? `https://node120.cs.colman.ac.il/api/uploads/profile_pictures/${user.profilePicture}` : "/default-avatar.png"}   
+                               src={user.profilePicture ? `https://node120.cs.colman.ac.il/api/uploads/profile_pictures/${user.profilePicture}` : "/default-avatar.png"}   
                                alt="Profile" 
                                className="UP_profile-picture"
                                />
