@@ -13,9 +13,14 @@ export const createUser = async (user: IUser) => {
     })
 };
 
+export const updateUser = async (userId: string, updates: Partial<IUser>) => {
+    const { data } = await apiClient.put(`/admin/users/${userId}`, updates);
+    return data;
+};
+
 export const deleteUser = async (userId: string) => {
     return apiClient.delete(`/admin/users/${userId}`);
-
+    
 };
 
 export const listUsers = async () => {
@@ -110,6 +115,5 @@ export const listAdmins = async () => {
     const { data } = await apiClient.get("/admin/admins");
     return data;
 };
-
 
 
