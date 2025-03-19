@@ -15,14 +15,14 @@ beforeAll(async () => {
 
 afterAll(async () => {
   if (userId) {
-    const res = await request(app).post("/auth/login").send({
+    const res = await request(app).post("/api/auth/login").send({
       email: "galtest@test.com",
       password: "1234",
     });
     let userToken: string = res.body.accessToken;
    
     await request(app)
-    .delete(`/admin/users/${userId}`)
+    .delete(`/api/admin/users/${userId}`)
     .set("Authorization", `Bearer ${userToken}`)
     .send();
   }
@@ -33,7 +33,7 @@ afterAll(async () => {
 describe("Authentication Tests", () => {
   describe("POST /auth/register", () => {
     it("should register a new user", async () => {
-      const res = await request(app).post("/auth/register").send({
+      const res = await request(app).post("/api/auth/register").send({
         firstName: "new",
         lastName: "user2",
         email: "newUser2@example.com",
@@ -45,7 +45,7 @@ describe("Authentication Tests", () => {
     });
 
     it("should not register with missing fields", async () => {
-      const res = await request(app).post("/auth/register").send({
+      const res = await request(app).post("/api/auth/register").send({
         email: "rotem@example.com",
       });
 
@@ -53,18 +53,9 @@ describe("Authentication Tests", () => {
     });
 
     describe("POST /auth/login", () => {
-      beforeAll(async () => {
-        const res = await request(app).post("/auth/register").send({
-          firstName: "new",
-          lastName: "user",
-          email: "newUser@example.com",
-          password: "newUser",
-        });
-      });
-
       it("should login with valid credentials", async () => {
-        const res = await request(app).post("/auth/login").send({
-          email: "newUser@example.com",
+        const res = await request(app).post("/api/auth/login").send({
+          email: "newUser2@example.com",
           password: "newUser",
         });
 
@@ -73,8 +64,8 @@ describe("Authentication Tests", () => {
       });
 
       it("should fail login with wrong credentials", async () => {
-        const res = await request(app).post("/auth/login").send({
-          email: "newUser@example.com",
+        const res = await request(app).post("/api/auth/login").send({
+          email: "newUser2@example.com",
           password: "wrongpassword",
         });
 

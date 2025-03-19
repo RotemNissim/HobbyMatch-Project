@@ -16,14 +16,14 @@ beforeAll(async () => {
   app = await initApp();
 
   // יצירת משתמש לבדיקה
-  await request(app).post("/auth/register").send({
+  await request(app).post("/api/auth/register").send({
     firstName: "Events",
     lastName: "User",
     email: "eventuser@example.com",
     password: "eventUser",
   });
 
-  const res = await request(app).post("/auth/login").send({
+  const res = await request(app).post("/api/auth/login").send({
     email: "eventuser@example.com",
     password: "eventUser",
   });
@@ -40,12 +40,12 @@ describe("Event API Tests", () => {
   describe("POST /events", () => {
     it("should create a new event", async () => {
       const res = await request(app)
-        .post("/events")
+        .post("/api/events")
         .set("Authorization", `Bearer ${userToken}`)
         .send({
           title: "Test Event",
           description: "This is a test event",
-          date: "2025-05-02T00:00:00.000+00:00",
+          date: new Date(),
           location: "Tel Aviv",
           hobbies: ["67dae9f5a8d3d895500c4d65"],
           createdBy: userId,
@@ -66,7 +66,7 @@ describe("Event API Tests", () => {
         createdBy: userId,
       });
 
-      const res = await request(app).get("/events");
+      const res = await request(app).get("/api/events");
 
       expect(res.statusCode).toEqual(200);
       expect(res.body.length).toBeGreaterThan(0);
@@ -85,7 +85,7 @@ describe("Event API Tests", () => {
       });
 
       const res = await request(app)
-        .put(`/events/${event._id}`)
+        .put(`/api/events/${event._id}`)
         .set("Authorization", `Bearer ${userToken}`)
         .send({ title: "Updated Title" });
 
@@ -106,7 +106,7 @@ describe("Event API Tests", () => {
       });
 
       const res = await request(app)
-        .delete(`/events/${event._id}`)
+        .delete(`/api/events/${event._id}`)
         .set("Authorization", `Bearer ${userToken}`);
 
       expect(res.statusCode).toEqual(200);
