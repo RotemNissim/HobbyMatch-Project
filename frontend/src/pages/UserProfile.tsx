@@ -14,6 +14,7 @@ import { setGlobalFlag } from '../globalState';
 import Select from 'react-select';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL +  "/api/uploads/profile_pictures";
+console.log(BASE_URL);
 
 const UserProfile = () => {
     const [user, setUser] = useState<any>(null);
