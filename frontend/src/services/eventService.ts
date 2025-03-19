@@ -73,3 +73,14 @@ export const recommendEvents = async (startDate:string, endDate:string) => {
     });
     return data;
 }
+
+export const uploadEventImage = async (eventId: string, imageFile: File) => {
+    const formData = new FormData();
+    formData.append("image", imageFile);
+
+    const { data } = await apiClient.put(`/events/${eventId}/upload-image`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    });
+
+    return data; 
+};
