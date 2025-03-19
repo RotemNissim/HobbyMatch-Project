@@ -65,7 +65,7 @@ deploy_frontend() {
 }
 
 # Deploy backend with PM2
-# deploy_backend
+deploy_backend
 
 # Deploy frontend by copying to /var/www/html
 deploy_frontend
