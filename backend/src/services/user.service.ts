@@ -40,15 +40,20 @@ class UserService {
   /**
    * Update user profile
    */
-  async updateUser(userId: string, updates: Partial<{ firstName: string, lastName: string, email: string; hobbies: string[] }>) {
-    const user = await User.findByIdAndUpdate(userId, updates, { new: true }).select('-password');
-    if (!user) {
-      throw new Error('User not found or update failed');
-    }
-    return user;
-  }
 
-  async deleteUser(userId:string) {
+  async updateUser(userId: string, updates: Partial<{ firstName: string, lastName: string, email: string, password?: string, profilePicture?: string, hobbies: string[] }>) {
+      if (updates.password) {
+          const salt = await bcrypt.genSalt(10);
+          updates.password = await bcrypt.hash(updates.password, salt);
+      }
+      
+      const user = await User.findByIdAndUpdate(userId, updates, { new: true }).select('-password');
+      if (!user) {
+        throw new Error('User not found or update failed');
+      }
+      return user;
+  }
+    async deleteUser(userId:string) {
     const user = await User.findByIdAndDelete(userId);
     if (!user) {
       throw new Error('User not found or deletion failed');

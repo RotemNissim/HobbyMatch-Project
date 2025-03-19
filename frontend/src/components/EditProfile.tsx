@@ -11,6 +11,7 @@ const EditProfile: React.FC<Props> = ({ initialUser, onProfileUpdated }) => {
         firstName: initialUser.firstName,
         lastName: initialUser.lastName,
         email: initialUser.email,
+        password: ""  // ריק בהתחלה - יעדכן רק אם המשתמש יזין סיסמה
     });
     const [profilePicture, setProfilePicture] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(initialUser.profilePicture || null);
@@ -27,7 +28,14 @@ const EditProfile: React.FC<Props> = ({ initialUser, onProfileUpdated }) => {
     };
 
     const handleSave = async () => {
-        await updateProfile(initialUser._id, form);
+        const updates: any = { ...form };
+        
+        // אם הסיסמה ריקה - לא שולחים אותה לשרת
+        if (!form.password) {
+            delete updates.password;
+        }
+
+        await updateProfile(initialUser._id, updates);
 
         if (profilePicture) {
             const updatedUser = await updateProfilePicture(initialUser._id, profilePicture);
@@ -43,7 +51,8 @@ const EditProfile: React.FC<Props> = ({ initialUser, onProfileUpdated }) => {
             {preview && <img src={preview} alt="Profile Preview" className="w-24 h-24 rounded-full" />}
             <input type="text" name="firstName" value={form.firstName} onChange={handleChange} placeholder="First Name" />
             <input type="text" name="lastName" value={form.lastName} onChange={handleChange} placeholder="Last Name" />
-            <input type="email" name="email" value={form.email} onChange={handleChange} placeholder="Email" readOnly/>
+            <input type="email" name="email" value={form.email} onChange={handleChange} placeholder="Email" readOnly />
+            <input type="password" name="password" value={form.password} onChange={handleChange} placeholder="New Password (optional)" />
             <input type="file" onChange={handlePictureChange} />
             <button onClick={handleSave} className="bg-green-500 text-white px-4 py-2">💾 Save</button>
             <button onClick={onProfileUpdated} className="ml-4 bg-gray-500 text-white px-4 py-2">Cancel</button>

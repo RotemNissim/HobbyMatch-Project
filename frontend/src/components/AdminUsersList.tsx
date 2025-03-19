@@ -1,54 +1,47 @@
 import React, { useEffect, useState } from "react";
-import { createUser, deleteUser, listUsers } from "../services/adminService";
+import { createUser, deleteUser, updateUser, listUsers } from "../services/adminService";
 import Button from "./ui/Button";
 import { Card, CardContent } from "./ui/Card";
 import Input from "./ui/Input";
-import { ChevronDown, ChevronUp, Trash2, Plus } from "lucide-react";
+import { ChevronDown, ChevronUp, Trash2, Edit, Plus } from "lucide-react";
 import { IUser } from "../types";
 
-const AdminUsersList = () => {
-  const [users, setUsers] = useState<any[]>([]);
-  const [expanded, setExpanded] = useState(true); // Set to true for debugging
-  const [newUser, setNewUser] = useState({ firstName: "", lastName: "", email: "", password: "" });
+const AdminUsersList: React.FC = () => {
+  const [users, setUsers] = useState<IUser[]>([]);
+  const [expanded, setExpanded] = useState<boolean>(true);
+  const [newUser, setNewUser] = useState<IUser>({ firstName: "", lastName: "", email: "", password: "", profilePicture: "" });
+  const [editingUser, setEditingUser] = useState<IUser | null>(null);
 
   useEffect(() => {
     fetchUsers();
   }, []);
 
-  useEffect(() => {
-    
-  }, [users]);
-
   const fetchUsers = async () => {
     try {
-      const usersData = await listUsers(); // listUsers already returns data
-      
+      const usersData = await listUsers();
       setUsers(usersData || []);
     } catch (error) {
       console.error("Error fetching users:", error);
     }
   };
 
-  const handleAddUser = async () => {
-    if (!newUser.firstName || !newUser.lastName || !newUser.email || !newUser.password) {
-      alert("Please fill all fields before adding a user.");
-      return;
-    }
+  const handleUpdateUser = async () => {
+    if (!editingUser) return;
 
     try {
-      await createUser(newUser);
-      setNewUser({ firstName: "", lastName: "", email: "", password: "" });
-      fetchUsers();
+      await updateUser(editingUser._id || "", editingUser);
+      setUsers((prevUsers) =>
+        prevUsers.map((user) => (user._id === editingUser._id ? editingUser : user))
+      ); // Optimistic update
+      setEditingUser(null);
     } catch (error) {
-      console.error("Error adding user:", error);
+      console.error("Error updating user:", error);
     }
   };
-
-
   const handleDeleteUser = async (userId: string) => {
     try {
       await deleteUser(userId);
-      setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId)); // Optimistic update
+      setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
     } catch (error) {
       console.error("Error deleting user:", error);
     }
@@ -56,32 +49,41 @@ const AdminUsersList = () => {
 
   return (
     <Card>
-      <div className="AdminP UL container" onClick={() => setExpanded(!expanded)}>
-        <h2 className="AdminP UL Titel">Users List</h2>
+      <div className="flex justify-between items-center p-4 cursor-pointer" onClick={() => setExpanded(!expanded)}>
+        <h2 className="text-xl font-semibold">Users List</h2>
         {expanded ? <ChevronUp /> : <ChevronDown />}
       </div>
       {expanded && (
         <CardContent>
-          <div className="AdminP UL Content 2">
+          <div className="space-y-4">
             {users.length > 0 ? (
               users.map((user) => (
-                <div key={user._id || Math.random()} className="AdminP UL Content for each user">
+                <div key={user._id} className="flex justify-between items-center p-2 border-b">
                   <span>{user.firstName} {user.lastName} ({user.email})</span>
-                  <Button size="icon" variant="outline" onClick={() => handleDeleteUser(user._id)}>
-                    <Trash2 className="AdminP UL Trash button" />
-                  </Button>
+                  <img src={user.profilePicture} alt="Profile" className="w-10 h-10 rounded-full" />
+                  <div className="space-x-2">
+                    <Button size="icon" variant="outline" onClick={() => setEditingUser(user)}>
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                    <Button size="icon" variant="outline" onClick={() => handleDeleteUser(user._id || "")}>
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
                 </div>
               ))
             ) : (
-              <p className="AdminP UL no U titel">No users found.</p>
+              <p className="text-gray-500 text-center">No users found.</p>
             )}
-            <div className="AdminP UL Add User">
-              <Input placeholder="First Name" value={newUser.firstName} onChange={(e) => setNewUser({ ...newUser, firstName: e.target.value })} />
-              <Input placeholder="Last Name" value={newUser.lastName} onChange={(e) => setNewUser({ ...newUser, lastName: e.target.value })} />
-              <Input placeholder="Email" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} />
-              <Input placeholder="Password" type="password" value={newUser.password} onChange={(e) => setNewUser({ ...newUser, password: e.target.value })} />
-              <Button onClick={handleAddUser}><Plus className="AdminP UL add U button" /></Button>
-            </div>
+            {editingUser && (
+              <div className="flex space-x-2 p-2 border-t mt-4">
+                <Input placeholder="First Name" value={editingUser.firstName} onChange={(e) => setEditingUser({ ...editingUser, firstName: e.target.value })} />
+                <Input placeholder="Last Name" value={editingUser.lastName} onChange={(e) => setEditingUser({ ...editingUser, lastName: e.target.value })} />
+                <Input placeholder="Email" value={editingUser.email} onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })} />
+                <Input placeholder="Password" type="password" value={editingUser.password || ""} onChange={(e) => setEditingUser({ ...editingUser, password: e.target.value })} />
+                <Button onClick={handleUpdateUser}>Update</Button>
+                <Button onClick={() => setEditingUser(null)} variant="outline">Cancel</Button>
+              </div>
+            )}
           </div>
         </CardContent>
       )}
