@@ -18,8 +18,8 @@ apiClient.interceptors.request.use((config) => {
 });
 
 export const apiClientWithAuth = axios.create({
-    baseURL: '',   // Vite proxy handles all routes
-    withCredentials: true, // Use this for authentication
+    baseURL: 'http://localhost:4001/api',   // Vite proxy handles all routes
+    // Use this for authentication
 });
 
 apiClientWithAuth.interceptors.request.use((config) => {
