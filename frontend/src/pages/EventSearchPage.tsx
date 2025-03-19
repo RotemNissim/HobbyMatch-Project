@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import EventCard from "../components/EventCard";
 import EventSearchFilter from "../components/EventSearchFilter";
 import { motion } from "framer-motion";
 import "../styles/EventSearchPage.css";
 import { useNavigate } from "react-router-dom";
+import { listEvent } from "../services/eventService";
 
 interface Event {
   _id: string;
@@ -14,7 +14,7 @@ interface Event {
   location: string;
   participants: { _id: string }[];
   createdBy: string;
-  hobby: string[];
+  hobby: {_id:string}[];
   image?: string;
   likes: string[];
   comments?: string[];
@@ -30,9 +30,9 @@ const EventSearchPage: React.FC = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get<Event[]>("/events");
-        setEvents(response.data);
-        setFilteredEvents(response.data);
+        const response = await listEvent();
+        setEvents(response);
+        setFilteredEvents(response);
       } catch (err) {
         setError("Failed to fetch events");
       } finally {
@@ -46,8 +46,8 @@ const EventSearchPage: React.FC = () => {
     try {
       console.log("🔎 Sending Filters: ", filters); // Debugging
   
-      const response = await axios.get<Event[]>("/events", { params: filters });
-      setFilteredEvents(response.data);
+      const response = await listEvent(filters);
+      setFilteredEvents(response);
     } catch (err) {
       console.error("❌ Error filtering events:", err);
     }

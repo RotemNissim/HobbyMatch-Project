@@ -3,9 +3,12 @@ import { joinEvent, leaveEvent, getCurrentEvent } from '../services/eventService
 import { useParams } from 'react-router-dom';
 import Comments from '../components/Comments';
 import { jwtDecode } from 'jwt-decode';
-import EventCard from '../components/EventCard';
 import handleDelete from '../components/MyCreatedEvents';
 import handleUpdate from '../components/MyCreatedEvents';
+
+interface Participant {
+    _id: string;
+}
 
 interface Event {
     _id: string;
@@ -15,7 +18,7 @@ interface Event {
     location: string;
     image?: string;
     createdBy: string;
-    participants: { _id: string }[];
+    participants: (Participant | string)[]; // Handles both string and object participants
     hobby: { _id: string }[];
     likes: { _id: string }[];
 }
@@ -27,9 +30,9 @@ const EventPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [userId, setUserId] = useState<string | null>(null);
     const [userRole, setUserRole] = useState<string | null>(null);
-    const [isParticipant, setIsParticipant] = useState(false);
+    const [isParticipant, setIsParticipant] = useState<boolean>(false);
 
-    // Extract user info from JWT token
+    // Decode token to get user info
     useEffect(() => {
         const token = localStorage.getItem("accessToken");
         if (token) {
@@ -46,9 +49,9 @@ const EventPage: React.FC = () => {
         }
     }, []);
 
-    // Fetch event details
+    // Fetch event data
     useEffect(() => {
-        if (!eventId) return;
+        if (!eventId || !userId) return;
 
         const fetchEvent = async () => {
             try {
@@ -63,93 +66,91 @@ const EventPage: React.FC = () => {
 
                 console.log("✅ Event Data Received:", eventData);
                 setEvent(eventData);
+
             } catch (err) {
                 console.error("❌ Error fetching event:", err);
-                setError("Failed to fetch event");
+                setError('Failed to fetch event');
             } finally {
                 setLoading(false);
             }
         };
 
         fetchEvent();
-    }, [eventId]);
+    }, [eventId, userId]);
 
-    // Update isParticipant when event data changes
+    // ✅ Ensure `isParticipant` updates when `event` changes
     useEffect(() => {
-      if (event && userId) {
-          const participantCheck = event.participants.some(p => p?._id.toString() === userId);
-          console.log("🔍 Checking Participants:", event.participants.map(p => p?._id.toString()));
-          console.log("👤 User ID:", userId);
-          console.log("✅ isParticipant Before Update:", isParticipant);
-          setIsParticipant(participantCheck);
-          console.log("✅ isParticipant After Update:", participantCheck);
-      }
-  }, [event?.participants, userId]);
-  
+        if (event) {
+            console.log("🎯 Updating isParticipant state...");
+            console.log("👤 Current User ID:", userId);
+            console.log("📋 Participants:", event.participants);
+            
+            setIsParticipant(event.participants.some((p: Participant | string) =>
+                typeof p === 'string' ? p === userId : p._id === userId
+            ));
 
-    // Handle Join/Leave event
+            console.log("✅ Updated isParticipant:", isParticipant);
+        }
+    }, [event, userId]);
+
+    // Handle Join/Leave Event
     const handleJoinLeave = async () => {
-      if (!event || !userId) return;
-  
-      try {
-          if (isParticipant) {
-              await leaveEvent(event._id);
-              console.log("❌ Leaving Event...");
-          } else {
-              await joinEvent(event._id);
-              console.log("✅ Joining Event...");
-          }
-  
-          // Update participants in state
-          setEvent(prevEvent => {
-              if (!prevEvent) return prevEvent;
-  
-              const updatedParticipants = isParticipant
-                  ? prevEvent.participants.filter(p => p._id !== userId)  // Remove user when leaving
-                  : [...prevEvent.participants, { _id: userId }];  // Add user when joining
-  
-              console.log("🔄 Updated Participants:", updatedParticipants);
-  
-              return { ...prevEvent, participants: updatedParticipants };
-          });
-  
-          // Ensure `isParticipant` updates immediately
-          setIsParticipant(!isParticipant);
-          console.log("🚀 isParticipant Updated to:", !isParticipant);
-  
-      } catch (err) {
-          console.error("❌ Error updating participation:", err);
-      }
-  };
-  
+        if (!event) return;
+
+        try {
+            console.log("🔄 Handling Join/Leave...");
+            console.log("⏳ Current isParticipant:", isParticipant);
+
+            if (isParticipant) {
+                console.log("👋 Leaving event...");
+                await leaveEvent(event._id);
+            } else {
+                console.log("✅ Joining event...");
+                await joinEvent(event._id);
+            }
+
+            console.log("🔄 Fetching updated event...");
+            const updatedEvent = await getCurrentEvent(event._id);
+            
+            console.log("📡 New Event Data:", updatedEvent);
+            setEvent(updatedEvent);
+
+            console.log("🎯 Checking if user is now a participant...");
+            const updatedParticipantStatus = updatedEvent.participants.some((p: Participant | string) =>
+                typeof p === 'string' ? p === userId : p._id === userId
+            );
+
+            setIsParticipant(updatedParticipantStatus);
+            console.log("✅ New isParticipant Value:", updatedParticipantStatus);
+
+        } catch (err) {
+            console.error("❌ Error updating participation:", err);
+        }
+    };
 
     if (loading) return <p>Loading event...</p>;
     if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
     return (
-        <div className="EventPage container">
+        <div className='EventPage container'>
             {userId && event ? (
                 <>
-                    {/* Event Card Component */}
-                    <EventCard
-                        event={event}
-                        userId={userId}
-                        onJoinLeave={handleJoinLeave}
-                        onDelete={handleDelete}
-                        isCreatedByUser={event.createdBy === userId || userRole === "admin"}
-                    />
+                    <h1>{event.title}</h1>
+                    {event.image && <img src={event.image} alt="Event" className='EventPage img' />}
+                    <p>{event.description}</p>
+                    <p><strong>Date:</strong> {new Date(event.date).toLocaleDateString()}</p>
+                    <p><strong>Location:</strong> {event.location}</p>
 
-                    {/* Join/Leave button (directly in EventPage) */}
-                    <button className="EventPage leave join buttons" onClick={handleJoinLeave}>
-                           {isParticipant ? "❌ Leave Event" : "✅ Join Event"}
+                    {/* Join/Leave button */}
+                    <button className='EventPage leave join buttons' onClick={handleJoinLeave}>
+                        {isParticipant ? "Leave Event" : "Join Event"}
                     </button>
 
-
-                    {/* Edit and Delete buttons (Only for Event Creator or Admin) */}
+                    {/* Edit and Delete buttons */}
                     {event && (event.createdBy === userId || userRole === "admin") && (
-                        <div className="EventPage Edit and Delete buttons">
+                        <div className='EventPage Edit and Delete buttons'>
                             <button onClick={handleUpdate}>Edit</button>
-                            <button onClick={() => handleDelete()}>Delete</button>
+                            <button onClick={handleDelete}>Delete</button>
                         </div>
                     )}
 
@@ -157,7 +158,7 @@ const EventPage: React.FC = () => {
                     {event && <Comments eventId={event._id} />}
                 </>
             ) : (
-                <p className="EventPage Event not found title">Event not found.</p>
+                <p className='EventPage Event not found titel'>Event not found.</p>
             )}
         </div>
     );
