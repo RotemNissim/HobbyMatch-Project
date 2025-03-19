@@ -1,0 +1,85 @@
+{
+  "hash": "a8f47796",
+  "configHash": "06c1ba7a",
+  "lockfileHash": "37add162",
+  "browserHash": "f12e93bf",
+  "optimized": {
+    "@react-oauth/google": {
+      "src": "../../frontend/node_modules/@react-oauth/google/dist/index.esm.js",
+      "file": "@react-oauth_google.js",
+      "fileHash": "4141e4c1",
+      "needsInterop": false
+    },
+    "axios": {
+      "src": "../../frontend/node_modules/axios/index.js",
+      "file": "axios.js",
+      "fileHash": "4eeed17a",
+      "needsInterop": false
+    },
+    "framer-motion": {
+      "src": "../../frontend/node_modules/framer-motion/dist/es/index.mjs",
+      "file": "framer-motion.js",
+      "fileHash": "f11b31f0",
+      "needsInterop": false
+    },
+    "jwt-decode": {
+      "src": "../../frontend/node_modules/jwt-decode/build/esm/index.js",
+      "file": "jwt-decode.js",
+      "fileHash": "6e80460b",
+      "needsInterop": false
+    },
+    "lucide-react": {
+      "src": "../../frontend/node_modules/lucide-react/dist/esm/lucide-react.js",
+      "file": "lucide-react.js",
+      "fileHash": "94decc6f",
+      "needsInterop": false
+    },
+    "react": {
+      "src": "../../frontend/node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "e55e4d11",
+      "needsInterop": true
+    },
+    "react-datepicker": {
+      "src": "../../frontend/node_modules/react-datepicker/dist/index.es.js",
+      "file": "react-datepicker.js",
+      "fileHash": "5bb55f44",
+      "needsInterop": false
+    },
+    "react-dom/client": {
+      "src": "../../frontend/node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "42f7480f",
+      "needsInterop": true
+    },
+    "react-router-dom": {
+      "src": "../../frontend/node_modules/react-router-dom/dist/index.mjs",
+      "file": "react-router-dom.js",
+      "fileHash": "a4343ca1",
+      "needsInterop": false
+    },
+    "react-select": {
+      "src": "../../frontend/node_modules/react-select/dist/react-select.esm.js",
+      "file": "react-select.js",
+      "fileHash": "ff062383",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "chunk-PTSUKDLP": {
+      "file": "chunk-PTSUKDLP.js"
+    },
+    "chunk-O2KBR57X": {
+      "file": "chunk-O2KBR57X.js"
+    },
+    "chunk-WJ3WLI7T": {
+      "file": "chunk-WJ3WLI7T.js"
+    },
+    "chunk-ZD6RMWBO": {
+      "file": "chunk-ZD6RMWBO.js"
+    },
+    "chunk-DC5AMYBS": {
+      "file": "chunk-DC5AMYBS.js"
+    }
+  }
+}
