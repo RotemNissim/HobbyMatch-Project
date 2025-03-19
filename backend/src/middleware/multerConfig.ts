@@ -5,12 +5,14 @@ import fs from 'fs';
 // Storage config
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uploadPath = path.join(__dirname, '../uploads/profile_pictures');
+    const uploadPath = path.join(process.cwd(), "src", "uploads", "profile_pictures");
+    console.log("📝 Multer Uploading to:", uploadPath); // 🔍 Debugging Log
     if (!fs.existsSync(uploadPath)) {
-      fs.mkdirSync(uploadPath, { recursive: true });
+        fs.mkdirSync(uploadPath, { recursive: true });
+        console.log("📁 Directory Created:", uploadPath); // 🔍 Debugging Log
     }
     cb(null, uploadPath);
-  },
+},
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
     cb(null, uniqueSuffix + path.extname(file.originalname));
