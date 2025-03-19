@@ -36,3 +36,34 @@ export const getEventsUserIsAttending = async (userId: string) => {
     const { data } = await apiClient.get(`/events?participants=${userId}`);
     return data;
 };
+
+export const getCurrentEvent = async (eventId: string) => {
+    console.log(`📡 API Request: GET /events/${eventId}`);
+    try {
+        const response = await apiClient.get(`/events/${eventId}`);
+        console.log("✅ API Response Data:", response.data); // ✅ Check if data exists
+        return response.data;
+    } catch (error) {
+        console.error("❌ API Error fetching event:", error);
+        throw error; // Ensure errors are caught
+    }
+};
+
+
+export const getCommentsToEvent = async (eventId:string) => {
+    const { data } = await apiClient.get(`/events/${eventId}/comments`);
+    return data;
+}
+
+export const addCommentToEvent = async (eventId:string, comment: {content:string}) => {
+    const { data } = await apiClient.post(`/events/${eventId}/comments`, comment);
+    return data;
+}
+
+export const recommendEvents = async (startDate:string, endDate:string) => {
+    const { data } = await apiClient.post('/events/recommend', {
+        startDate,
+        endDate
+    });
+    return data;
+}

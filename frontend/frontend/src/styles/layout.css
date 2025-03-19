@@ -1,0 +1,73 @@
+/* Layout Styling */
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main {
+  flex: 1;
+  padding: 20px;
+  background-color: var(--primary-bg);
+}
+
+/* Navbar Styling */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px 30px;
+  background-color: var(--secondary-bg);
+  box-shadow: var(--shadow-light);
+  border-bottom: 2px solid var(--accent-color);
+}
+
+.navbar .logo img {
+  height: 100px;
+}
+
+.navbar .navbar-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.navbar a,
+.navbar button {
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--text-color);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  transition: color 0.3s ease, transform 0.2s;
+}
+
+.navbar a:hover,
+.navbar button:hover {
+  color: var(--accent-color);
+  transform: scale(1.1);
+}
+
+.logout {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.logout:hover {
+  color: var(--text-color);
+}
+
+/* Footer Styling */
+.footer {
+  text-align: center;
+  padding: 15px;
+  background-color: var(--secondary-bg);
+  color: var(--text-color);
+  box-shadow: var(--shadow-light);
+  border-top: 2px solid var(--accent-color);
+}

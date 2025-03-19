@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken';
 import { Document } from "mongoose";
 import { AuthRequest } from '../middleware/AuthRequest';
 import dotenv from 'dotenv';
+import { OAuth2Client } from "google-auth-library";
 dotenv.config();
 
 // ✅ Post-creation user & admin types with guaranteed _id
@@ -17,6 +18,7 @@ const register = async (req: Request, res: Response): Promise<Response> => {
         console.log("🔍 Debug: Received request body:", req.body);
 
         const { firstName, lastName, email, password, role } = req.body;
+        const profilePicture = req.file ? req.file.filename : '';
 
         if (!firstName || !lastName || !email || !password) {
             console.log("❌ Missing required fields!");
@@ -49,7 +51,7 @@ const register = async (req: Request, res: Response): Promise<Response> => {
             return res.status(201).json({ message: 'Admin registered successfully', admin });
         }
 
-        const user = await userModel.create({ firstName, lastName, email, password: hashedPassword });
+        const user = await userModel.create({ firstName, lastName, email, password: hashedPassword, profilePicture});
 
         return res.status(201).json({ message: 'User registered successfully', user });
 
@@ -73,7 +75,7 @@ const generateToken = (account: tUser | tAdmin): tTokens => {
 
     const payload = {
         _id: account._id.toString(),
-        role: 'role' in account ? account.role : 'user'
+        role: ('role' in account && account.role) ? account.role : 'user' 
     };
 
     const expiresIn = process.env.TOKEN_EXPIRES || '3h'; 
@@ -88,16 +90,20 @@ const generateToken = (account: tUser | tAdmin): tTokens => {
 const login = async (req: Request, res: Response): Promise<Response> => {
   try {
       const { email, password } = req.body;
+      console.log("🙏 login attempt:", email);
 
       const user = await userModel.findOne({ email }).select("+password") as tUser | null;
 
       if (user) {
+            console.log("🙏 user found:", user.email);
           const validPassword = await bcrypt.compare(password, user.password);
           if (!validPassword) {
               return res.status(400).json({ message: 'Invalid email or password' });
           }
 
           const tokens = generateToken(user);
+          console.log("🔥 tokens:", tokens);
+
           user.refreshToken = user.refreshToken || [];
           user.refreshToken.push(tokens.refreshToken);
           await user.save();
@@ -111,14 +117,17 @@ const login = async (req: Request, res: Response): Promise<Response> => {
       }
 
       const admin = await adminModel.findOne({ email }).select("+password") as tAdmin | null;
+     
 
       if (admin) {
+        console.log("🔥 Admin Found:", admin.email);
           const validPassword = await bcrypt.compare(password, admin.password);
           if (!validPassword) {
               return res.status(400).json({ message: 'Invalid email or password' });
           }
 
           const tokens = generateToken(admin);
+          console.log("✅ Generated Tokens (Admin):", tokens);
           admin.refreshToken = admin.refreshToken || [];
           admin.refreshToken.push(tokens.refreshToken);
           await admin.save();
@@ -169,7 +178,7 @@ const logout = async (req: Request, res: Response) => {
     try {
         const { refreshToken } = req.body;
 
-        const account = await verifyRefreshToken(refreshToken);
+        const account: tUser | tAdmin = await verifyRefreshToken(refreshToken);
         if (!account) return res.status(400).json({ message: "Invalid refresh token" });
 
         account.refreshToken = (account.refreshToken || []).filter(token => token !== refreshToken);
@@ -183,10 +192,11 @@ const logout = async (req: Request, res: Response) => {
 
 const refresh = async (req: Request, res: Response) => {
     try {
-        const account = await verifyRefreshToken(req.body.refreshToken);
+        const account : tAdmin | tUser = await verifyRefreshToken(req.body.refreshToken);
         if (!account) return res.status(400).send("fail");
 
-        const tokens = generateToken(account);
+        const tokens : tTokens = generateToken(account);
+        //צריך לשמור במקום ולא לעשות פוש כדאי למנוע פגיע הגנתית
         (account.refreshToken || []).push(tokens.refreshToken);
         await account.save();
 
@@ -201,28 +211,56 @@ const refresh = async (req: Request, res: Response) => {
 };
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) : Promise<void> => {
-  const authorization = req.header('authorization');
-  const token = authorization?.split(' ')[1];
+    console.log("🔥 Incoming request to:", req.url);
+    console.log("🔥 Headers Received:", req.headers);
 
-  if (!token) {res.status(401).json({ message: 'Access Denied' });
-  return;}
+    const authorization = req.header("authorization");
+    console.log("🔥 Authorization Header in Backend:", authorization);
+
+    let token;
+
+    if (authorization && authorization.startsWith("Bearer ")) {
+        token = authorization.split(" ")[1];
+        console.log("🔥 Extracted Token:", token);
+    }
+
+    // 🔥 2️⃣ If no token, check the cookie (Google login)
+    if (!token && req.cookies && req.cookies.accessToken) {
+        token = req.cookies.accessToken;
+        console.log("🔥 Token Found in Cookies:", token);
+    }
+
+  if (!token) {
+    console.warn("🔥 No token found! Rejecting request.");
+    res.status(401).json({ message: 'Access Denied' });
+  return;
+}
     
 
   try {
       const { _id } = jwt.verify(token, process.env.TOKEN_SECRET!) as { _id: string };
+      console.log("🔥 Decoded Token ID:", _id);
 
+      const admin = await adminModel.findById(_id) as tAdmin | null;  
       const user = await userModel.findById(_id) as tUser | null;
+
       if (user) {
+        console.log("🔥 Regular User Found:", user.email);
           (req as any).user = user;
           return next();
       }
-
-      const admin = await adminModel.findById(_id) as tAdmin | null;
+      
       if (admin) {
+        console.log("🔥 Admin Found:", admin.email);
           (req as any).user = admin;
           return next();
       }
+      console.log("Auth Middleware - Token ID:", _id);
+        console.log("Checking User Model...");
+        console.log("User Found:", user);
 
+        console.log("Checking Admin Model...");
+        console.log("Admin Found:", admin);
        res.status(401).json({ message: 'User not found' });
        return;
 
@@ -232,11 +270,44 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
   }
 };
 
+const client = new OAuth2Client(); 
+const googleSignIn = async (req: Request, res:Response) => {
+    console.log(req.body);
+    try {
+const ticket = await client.verifyIdToken({
+        idToken: req.body.credential,
+        audience: process.env.GOOGLE_CLIENT_ID
+    });
+    const payload = ticket.getPayload();
+    const email = payload?.email;
+    if (email != null) {
+        let user = await userModel.findOne({ 'email': email }) as tUser;
+        if (user == null) {
+            const rs = await userModel.create(
+                {
+                    'email': email,
+                    'password': '',
+                    'profilePicture': payload?.picture,
+                    'firstName': payload?.given_name,
+                    'lastName': payload?.family_name,
+                    'googleId': payload?.sub,
+                }
+            )
+        }
+        const tokens = await generateToken(user);
+        res.status(200).send({email: user.email, _id: user._id, ...tokens});
+    }
+    } catch (err) {
+        return res.status(400).send(String(err));
+    }  
+}
+
 export default {
     register: register as unknown as express.RequestHandler,
     login: login as unknown as express.RequestHandler,
     refresh: refresh as unknown as express.RequestHandler,
     logout: logout as unknown as express.RequestHandler,
     generateToken,
-    authMiddleware: authMiddleware as unknown as express.RequestHandler
+    authMiddleware: authMiddleware as unknown as express.RequestHandler,
+    googleSignIn: googleSignIn as unknown as express.RequestHandler
 };

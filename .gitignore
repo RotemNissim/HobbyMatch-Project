@@ -10,6 +10,8 @@
 # Environment variables
 /backend/.env
 /frontend/.env
+/backend/uploads/profile_pictures/*
+!backend/uploads/profile_pictures/.gitkeep
 
 # Logs
 *.log

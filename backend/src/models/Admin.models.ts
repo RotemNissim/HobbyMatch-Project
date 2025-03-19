@@ -9,7 +9,6 @@ export interface IAdmin {
     password: string;
     email: string;
     role: 'admin';
-   
 }
 
 const AdminSchema = new mongoose.Schema<IAdmin>({

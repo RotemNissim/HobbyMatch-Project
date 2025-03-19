@@ -1,0 +1,111 @@
+/* Container for the entire profile page */
+.UP_carousel-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--secondary-bg);
+    min-height: 100vh;
+    height: 100%; /* Prevent scrolling */
+    overflow: hidden; /* Prevent scrolling if content overflows */
+    box-sizing: border-box;
+  }
+  
+  /* Title */
+  .UP_titel {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2); /* Adding shadow to title */
+    margin-bottom: 20px;
+  }
+  
+  /* User profile container */
+  .UP_user-profile-container {
+    text-align: center;
+    background-color: var(--card-bg);
+    border-radius: 15px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 800px;
+  }
+  
+  /* Profile details */
+  .UP_user-profile-details {
+    text-align: center;
+  }
+  
+  .UP_profile-picture {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .UP_user-profile-details p {
+    font-size: 1rem;
+    color: var(--text-color);
+    margin: 10px 0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15); /* Adding shadow to text */
+  }
+  
+  .UP_user-profile-buttons {
+    align-items: center;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+}
+
+.UP_user-profile-buttons button {
+      flex-direction: row;
+    background-color: var(--primary-color);
+    color: rgb(0, 0, 0);
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 5px;
+    margin: 5px;
+    width: 80%;
+    max-width: 200px;
+    transition: background-color 0.3s ease, transform 0.2s;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2); /* Shadow on buttons */
+  }
+  
+  .UP_user-profile-buttons button:hover {
+    background-color: var(--accent-color);
+    transform: scale(1.05);
+  }
+  
+  /* Logout button style */
+  .UP_logout-button {
+    background-color: var(--danger-color);
+  }
+  
+  .UP_logout-button:hover {
+    background-color: var(--danger-color-hover);
+  }
+  
+  /* Admin panel button */
+  .UP_admin-panel-button {
+    background-color: var(--admin-color);
+  }
+  
+  .UP_admin-panel-button:hover {
+    background-color: var(--admin-color-hover);
+  }
+  
+  /* My Created Events section */
+  .UP_my-created-events-container {
+    width: 100%;
+    max-width: 1000px;
+    text-align: center;
+  }
+  
+  .UP_my-created-events-container .UP_my-events-titel {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3); /* Adding shadow to events title */
+  }
+
+  
+  

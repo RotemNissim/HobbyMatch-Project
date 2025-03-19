@@ -1,9 +1,28 @@
-import User from '../models/User.models';
+import User, {IUser} from '../models/User.models';
+import bcrypt from 'bcrypt';
+import Hobby from '../models/Hobby.models';
 
 class UserService {
 
+  async getHobbiesByUserId(userId: string) {
+    const user = await User.findById(userId).select('hobbies');
+   
+    if (!user) {
+      throw new Error('User not found');
+    } else if  (!user.hobbies.length) {
+      throw new Error('Hobbies not found');
+    }
+    const hobbies = await Hobby.find({_id: {$in:user.hobbies}});
+    return hobbies;
+  
+  }
+
   async createUser(data: { username: string; password: string, email: string, firstName: string, lastName: string}) {
-    const newUser = new User(data);
+    const hashedPassword = await bcrypt.hash(data.password, 10); 
+    const newUser = new User({
+      ...data,
+      password:hashedPassword
+    });
     await newUser.save();
     return newUser;
   }
@@ -37,18 +56,23 @@ class UserService {
     return { message: 'User Deleted successfully'};
   }
 
-  async listUsers(filter: Partial<{username: string; email:string}>) {
+  async listUsers(filter: Partial<{firstName: string; email:string, lastName: string}>) {
     const query: any = {};
-    if (filter.username) {
-      query.username = { $regex: filter.username,$options: 'i' };
+    if (filter.firstName) {
+      query.firstName = { $regex: filter.firstName,$options: 'i' };
     }
     if (filter.email) {
       query.email = { $regex: filter.email,$options: 'i' };
      }
-
+    if (filter.lastName) {
+      query.lastName = { $regex: filter.lastName,$options: 'i' };
+ 
+    }
      const users = await User.find(query).select('-password');
      return users;
     }
+
+   
   
 }
 

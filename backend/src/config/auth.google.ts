@@ -18,8 +18,8 @@ passport.use(new GoogleStrategy({
                 firstName: profile.name?.givenName,
                 lastName: profile.name?.familyName,
                 email: profile.emails?.[0].value,
-                password: '', // No password needed for Google accounts
                 googleId: profile.id,
+                profilePicture: profile.photos?[0].values: profile.photos
             });
         }
 
