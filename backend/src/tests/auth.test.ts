@@ -7,19 +7,25 @@ import User from "../models/User.models"; // Adjust path as needed
 import { Express } from "express";
 
 let app: Express;
+let session: mongoose.ClientSession;
 
 beforeAll(async () => {
   app = await initApp(); // Initialize app with MongoDB connection
 });
 
+beforeEach(async () => {
+  session = await mongoose.startSession();
+  session.startTransaction();
+});
+
 afterEach(async () => {
-  await User.deleteMany(); // Clean up users after each test
+  await session.abortTransaction(); // Undo all changes
+  session.endSession();
 });
 
 afterAll(async () => {
-  await mongoose.connection.close(); // Close DB connection after all tests
+  await mongoose.connection.close(); // Close DB connection
 });
-
 describe("Authentication Tests", () => {
   describe("POST /auth/register", () => {
     it("should register a new user", async () => {

@@ -10,6 +10,7 @@ import { Express } from "express";
 let app: Express;
 let userToken: string;
 let userId: string;
+let session: mongoose.ClientSession;
 
 beforeAll(async () => {
   app = await initApp();
@@ -26,12 +27,18 @@ beforeAll(async () => {
   userId = userRes.body._id;
 });
 
+beforeEach(async () => {
+  session = await mongoose.startSession();
+  session.startTransaction();
+});
+
 afterEach(async () => {
-  await Event.deleteMany(); // ניקוי האירועים אחרי כל בדיקה
+  await session.abortTransaction(); // Undo all changes
+  session.endSession();
 });
 
 afterAll(async () => {
-  await mongoose.connection.close(); // סגירת חיבור למסד הנתונים
+  await mongoose.connection.close(); // Close DB connection
 });
 
 describe("Event API Tests", () => {
