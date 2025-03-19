@@ -37,7 +37,7 @@ app.use("/api/auth", authRoute);
 app.use("/api/hobbies", hobbyRoute);
 app.use("/api/likes", likeRoute);
 app.use("/api/comments", commentRoute);
-app.use('/api/uploads/profile_pictures', express.static(path.join(__dirname, 'uploads/profile_pictures')));
+app.use('/api/uploads/profile_pictures', express.static(path.join(__dirname, '../uploads/profile_pictures')));
 app.use(express.static("front"));
 
 const options = {
