@@ -24,7 +24,7 @@ const register = async (req: Request, res: Response): Promise<Response> => {
             console.log("❌ Missing required fields!");
             return res.status(400).json({ message: 'All fields are required' });
         }
-
+        
         const hashedPassword = await bcrypt.hash(password, 10);
 
         if (role === 'admin') {

@@ -9,11 +9,11 @@ import userModel, { IUser } from '../models/User.models';
 import { AuthUser, AuthRequest }  from '../middleware/AuthRequest';
 import path from 'path';
 import fs from 'fs';
+import { IHobby } from '../models/Hobby.models';
 
 // ✅ Authenticated request includes full user object (not just _id)
 
 class UserController {
-
     async uploadProfilePicture(req: Request, res: Response) {
         try {
           const userId = req.params.id;
@@ -47,8 +47,6 @@ class UserController {
       
     getCurrentUser = async (req: AuthRequest, res: Response): Promise<Response> => {
         const user = req.user;  // 💥 Full user object guaranteed
-
-        
 
         return res.send({
             _id: user._id,
@@ -96,6 +94,7 @@ class UserController {
 
         return res.status(201).send(newEvent);
     };
+
     deleteUserEvent = async (req: AuthRequest, res: Response): Promise<Response> => {
         const user = req.user;
         const eventId = req.params.id;
@@ -103,6 +102,7 @@ class UserController {
 
         return res.status(200).send(deletedEvent);
     }
+
     updateEvent = async (req: AuthRequest, res: Response): Promise<Response> => {
         const user = req.user;
         const eventId = req.params.id;
@@ -114,8 +114,9 @@ class UserController {
    
     getUserHobbies = async (req: AuthRequest, res: Response): Promise<Response> => {
         const user = req.user;
+        console.log("controller - get user hobbies");
 
-        const hobbies = await hobbyService.getHobbiesByUserId(user._id.toString());
+        const hobbies: IHobby[] = await hobbyService.getHobbiesByUserId(user._id.toString());
         return res.status(200).json(hobbies);
     };
 

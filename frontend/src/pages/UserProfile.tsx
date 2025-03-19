@@ -93,32 +93,8 @@ const UserProfile = () => {
                                src={user.profilePicture ? `https://node120.cs.colman.ac.il/api/uploads/profile_pictures/${user.profilePicture}` : "/default-avatar.png"}   
                                alt="Profile" 
                                className="UP_profile-picture"
-                           />
-                        )}
-                        <div className="UP_user-profile-buttons">
-                            <button
-                                className="UP_dit-profile-button"
-                                onClick={() => setIsEditingProfile(true)}
-                            >
-                                ✏️ Edit Profile
-                            </button>
-                            <button
-                                className="UP_create-event-button"
-                                onClick={() => setIsCreatingEvent(true)}
-                            >
-                                ➕ Create Event
-                            </button>
-                            <button 
-                                className='UP_logout-button'
-                                onClick={handleLogout}
-                            >
-                                Logout
-                            </button>
-
-                            
-
-                            {user && <MyHobbies user={user} />}
-                            {/* ✅ Show "Go to Admin Panel" only if the user is an admin */}
+                               />
+                            )}
                             {isAdmin && (
                                 <button 
                                     onClick={() => navigate("/admin")} 
@@ -126,8 +102,26 @@ const UserProfile = () => {
                                 >
                                     Go to Admin Panel
                                 </button>
-                            )}
+                                )}
+                            {/* ✅ Show "Go to Admin Panel" only if the user is an admin */}
+                        <div className="UP_user-profile-buttons">
+                            <button
+                                className="UP_dit-profile-button"
+                                onClick={() => setIsEditingProfile(true)}
+                                >
+                                ✏️ Edit Profile
+                            </button>
+                            <button
+                                className="UP_create-event-button"
+                                onClick={() => setIsCreatingEvent(true)}
+                                >
+                                ➕ Create Event
+                            </button>
+                            <button className='UP_logout-button' onClick={handleLogout}>
+                                Logout
+                            </button>
                         </div>
+                                {user._id && <MyHobbies user={user}/>}
                     </div>
                 </div>
             )}
