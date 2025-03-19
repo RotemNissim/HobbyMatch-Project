@@ -7,13 +7,26 @@ import User from "../models/User.models"; // Adjust path as needed
 import { Express } from "express";
 
 let app: Express;
-let session: mongoose.ClientSession;
+let userId: string;
 
 beforeAll(async () => {
   app = await initApp(); // Initialize app with MongoDB connection
 });
 
 afterAll(async () => {
+  if (userId) {
+    const res = await request(app).post("/auth/login").send({
+      email: "galtest@test.com",
+      password: "1234",
+    });
+    let userToken: string = res.body.accessToken;
+   
+    await request(app)
+    .delete(`/admin/users/${userId}`)
+    .set("Authorization", `Bearer ${userToken}`)
+    .send();
+  }
+
   await mongoose.connection.close(); // Close DB connection
 });
 
@@ -26,9 +39,11 @@ describe("Authentication Tests", () => {
         email: "newUser2@example.com",
         password: "newUser",
       });
+      userId = res.body.user._id;
+
       expect(res.statusCode).toEqual(201);
     });
-    
+
     it("should not register with missing fields", async () => {
       const res = await request(app).post("/auth/register").send({
         email: "rotem@example.com",
