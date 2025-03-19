@@ -5,6 +5,7 @@ import EventSearchPage from "../pages/EventSearchPage";
 import UserProfile from "../pages/UserProfile";
 import EventPage from "../pages/EventPage";
 import AdminPanel from "../pages/AdminPanel";
+import RegisterPage from "../pages/RegisterPage";
 
 function AppRouter() {
   return (
@@ -15,6 +16,7 @@ function AppRouter() {
       <Route path="/events" element={<EventSearchPage />} />
       <Route path="/events/:eventId" element={<EventPage />} />
       <Route path="/admin" element={<AdminPanel />} />
+      <Route path="/register" element={<RegisterPage />} />
     </Routes>
   );
 }
