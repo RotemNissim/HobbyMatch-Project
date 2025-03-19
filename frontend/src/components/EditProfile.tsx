@@ -39,7 +39,7 @@ const EditProfile: React.FC<Props> = ({ initialUser, onProfileUpdated }) => {
 
         if (profilePicture) {
             const updatedUser = await updateProfilePicture(initialUser._id, profilePicture);
-            setPreview(`http://localhost:3000/uploads/profile_pictures/${updatedUser.profilePicture}`);
+            setPreview(`https://node120.cs.colman.ac.il/api/uploads/profile_pictures/${updatedUser.profilePicture}`);
         }
 
         onProfileUpdated(); // Notify parent (UserProfile)

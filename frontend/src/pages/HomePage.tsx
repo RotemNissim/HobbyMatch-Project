@@ -87,7 +87,7 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="homeP-Carousel_titel">
-      <h1 className="All Events titel">ALL EVENTS</h1>
+      <h1 className="All Events titel">ALL EVENTS-test</h1>
       <Carousel items={events} renderItem={(event) => 
       (<EventCard event={event} userId={userId} onJoinLeave={handleJoinLeave}/>)}/>
     </div>

@@ -106,7 +106,7 @@ class AdminController {
 
   deleteUser = async (req: AuthRequest, res: Response): Promise<Response> => {
     try {
-       const userId = req.params.id;
+      const userId = req.params.id;
       await userService.deleteUser(userId);
       return res.status(200).send("User deleted successfully");
     } catch (err) { 

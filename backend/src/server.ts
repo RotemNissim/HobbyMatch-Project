@@ -37,7 +37,14 @@ app.use("/api/auth", authRoute);
 app.use("/api/hobbies", hobbyRoute);
 app.use("/api/likes", likeRoute);
 app.use("/api/comments", commentRoute);
-app.use('/api/uploads/profile_pictures', express.static(path.join(__dirname, '../uploads/profile_pictures')));
+const uploadsPath = path.join(process.cwd(), "src", "uploads", "profile_pictures");
+
+app.use("/api/uploads/profile_pictures", express.static(uploadsPath, {
+    setHeaders: (res) => {
+        res.set("Access-Control-Allow-Origin", "*"); // Allow frontend access
+        res.set("Cache-Control", "public, max-age=31536000"); // Enable caching
+    }
+}));
 app.use(express.static("front"));
 
 const options = {
