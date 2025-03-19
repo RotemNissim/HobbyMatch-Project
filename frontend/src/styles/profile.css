@@ -52,8 +52,9 @@
   .UP_user-profile-buttons {
     align-items: center;
     display: flex;
-    flex-direction: row-reverse;
+    flex-direction: row;
     align-items: center;
+    justify-content: center;
 }
 
 .UP_user-profile-buttons button {
