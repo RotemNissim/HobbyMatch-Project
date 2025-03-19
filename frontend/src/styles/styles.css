@@ -84,4 +84,11 @@
     text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3); /* Adding shadow to events title */
 
   }
+
+  input {
+    border-radius: 8px; /* אפשר להגדיל לפי הצורך */
+    padding: 10px; /* אופציונלי, נראה יותר טוב */
+    border: 1px solid #ccc; /* מסגרת עדינה */
+}
+
   
