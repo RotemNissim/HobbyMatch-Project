@@ -11,6 +11,7 @@ import '../styles/profile.css';
 import { logout } from '../services/authService';
 import { AxiosError } from 'axios';
 import { setGlobalFlag } from '../globalState';
+import Select from 'react-select';
 
 const UserProfile = () => {
     const [user, setUser] = useState<any>(null);
@@ -74,7 +75,7 @@ const UserProfile = () => {
             setGlobalFlag(false);  //localStorage
             navigate('/');
         };
-    
+        
     return (
         <div className="UP_carousel-container">
 
@@ -111,7 +112,8 @@ const UserProfile = () => {
                                 Logout
                             </button>
 
-                            {/* ✅ Add MyHobbies component and pass the user data */}
+                            
+
                             {user && <MyHobbies user={user} />}
                             {/* ✅ Show "Go to Admin Panel" only if the user is an admin */}
                             {isAdmin && (
