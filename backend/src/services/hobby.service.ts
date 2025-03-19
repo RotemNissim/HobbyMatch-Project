@@ -38,7 +38,7 @@ class HobbyService {
     if (!user) {
       throw new Error('User not found');
     } else if  (!user.hobbies.length) {
-      throw new Error('Hobbies not found');
+      return [];
     }
     const hobbies = await Hobby.find({_id: {$in:user.hobbies}});
     return hobbies;
