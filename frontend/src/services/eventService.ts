@@ -1,5 +1,11 @@
 import apiClient from './axiosInstance';
 
+
+export const listEvent = async (filters?:Record<string, string | string[]>) => {
+  const { data } = await apiClient.get(`/events`, {params: filters || {}});
+    return data;
+};
+
 export const joinEvent = async (eventId: string) => {
     await apiClient.post(`/events/${eventId}/join`);
 };

@@ -10,6 +10,8 @@
 # Environment variables
 /backend/.env
 /frontend/.env
+/frontend/.env.production
+/frontend/.env.development
 /backend/uploads/profile_pictures/*
 !backend/uploads/profile_pictures/.gitkeep
 

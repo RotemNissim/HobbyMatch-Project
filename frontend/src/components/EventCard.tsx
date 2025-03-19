@@ -9,7 +9,7 @@ interface Event {
   location: string;
   participants: { _id: string }[];
   createdBy?: string;
-  hobby?: string[];
+  hobby?: { _id:string}[];
   image?: string;
   likes?: string[];
   comments?: string[];
@@ -67,7 +67,7 @@ const EventCard: React.FC<EventCardProps> = ({
           onClick={() => onJoinLeave(event._id, isParticipant, userId)}
           className={`join-leave-btn ${isParticipant ? 'bg-red-500 hover:bg-red-600' : ''}`}
         >
-          {isParticipant ? "❌ Leane Event" : "✅ Join Event"}
+          {isParticipant ? "❌ Leave Event" : "✅ Join Event"}
         </button>
       )}
 

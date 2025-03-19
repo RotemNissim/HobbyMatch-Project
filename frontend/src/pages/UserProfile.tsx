@@ -11,6 +11,10 @@ import '../styles/profile.css';
 import { logout } from '../services/authService';
 import { AxiosError } from 'axios';
 import { setGlobalFlag } from '../globalState';
+import Select from 'react-select';
+
+const BASE_URL = import.meta.env.VITE_API_BASE_URL +  "/api/uploads/profile_pictures";
+console.log(BASE_URL);
 
 const UserProfile = () => {
     const [user, setUser] = useState<any>(null);
@@ -74,7 +78,7 @@ const UserProfile = () => {
             setGlobalFlag(false);  //localStorage
             navigate('/');
         };
-    
+        
     return (
         <div className="UP_carousel-container">
 
@@ -86,7 +90,7 @@ const UserProfile = () => {
                         <p><strong>Email:</strong> {user.email}</p>
                         {user.profilePicture && (
                                <img 
-                               src={user.profilePicture ? `http://localhost:3000/uploads/profile_pictures/${user.profilePicture}` : "/default-avatar.png"}   
+                               src={user.profilePicture ? `${BASE_URL}/${user.profilePicture}` : "/default-avatar.png"}   
                                alt="Profile" 
                                className="UP_profile-picture"
                            />
@@ -111,7 +115,8 @@ const UserProfile = () => {
                                 Logout
                             </button>
 
-                            {/* ✅ Add MyHobbies component and pass the user data */}
+                            
+
                             {user && <MyHobbies user={user} />}
                             {/* ✅ Show "Go to Admin Panel" only if the user is an admin */}
                             {isAdmin && (

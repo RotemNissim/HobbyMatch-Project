@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 import initApp from "./server";
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 4001;
 
 console.log("1");
 initApp().then((app) => {

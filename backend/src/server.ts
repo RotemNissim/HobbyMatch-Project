@@ -30,14 +30,14 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/users", userRoute);
-app.use("/admin", adminRoute);
-app.use("/events", eventRoute);
-app.use("/auth", authRoute);
-app.use("/hobbies", hobbyRoute);
-app.use("/likes", likeRoute);
-app.use("/comments", commentRoute);
-app.use('/uploads/profile_pictures', express.static(path.join(__dirname, 'uploads/profile_pictures')));
+app.use("/api/users", userRoute);
+app.use("/api/admin", adminRoute);
+app.use("/api/events", eventRoute);
+app.use("/api/auth", authRoute);
+app.use("/api/hobbies", hobbyRoute);
+app.use("/api/likes", likeRoute);
+app.use("/api/comments", commentRoute);
+app.use('/api/uploads/profile_pictures', express.static(path.join(__dirname, '../uploads/profile_pictures')));
 app.use(express.static("front"));
 
 const options = {
@@ -48,7 +48,7 @@ const options = {
       version: "1.0.0",
       description: "REST server including authentication using JWT",
   },
-  servers: [{ url: "http://localhost:3000/", },],
+  servers: [{ url: "http://localhost:4001/", },],
 },
 apis: ["./src/routes/*.ts"],
 };
