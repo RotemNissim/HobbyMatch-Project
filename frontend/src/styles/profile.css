@@ -52,8 +52,9 @@
   .UP_user-profile-buttons {
     align-items: center;
     display: flex;
-    flex-direction: row-reverse;
+    flex-direction: row;
     align-items: center;
+    justify-content: center;
 }
 
 .UP_user-profile-buttons button {
@@ -107,5 +108,19 @@
     text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3); /* Adding shadow to events title */
   }
 
+  .gemini-event-generator{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--secondary-bg);
+    overflow: hidden; /* Prevent scrolling if content overflows */
+    box-sizing: border-box;
+  }
   
-  
+  .event-generator-form{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
