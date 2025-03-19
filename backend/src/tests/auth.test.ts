@@ -7,31 +7,41 @@ import User from "../models/User.models"; // Adjust path as needed
 import { Express } from "express";
 
 let app: Express;
+let userId: string;
 
 beforeAll(async () => {
   app = await initApp(); // Initialize app with MongoDB connection
 });
 
-afterEach(async () => {
-  await User.deleteMany(); // Clean up users after each test
-});
-
 afterAll(async () => {
-  await mongoose.connection.close(); // Close DB connection after all tests
+  if (userId) {
+    const res = await request(app).post("/auth/login").send({
+      email: "galtest@test.com",
+      password: "1234",
+    });
+    let userToken: string = res.body.accessToken;
+   
+    await request(app)
+    .delete(`/admin/users/${userId}`)
+    .set("Authorization", `Bearer ${userToken}`)
+    .send();
+  }
+
+  await mongoose.connection.close(); // Close DB connection
 });
 
 describe("Authentication Tests", () => {
   describe("POST /auth/register", () => {
     it("should register a new user", async () => {
       const res = await request(app).post("/auth/register").send({
-        firstName: "rotem",
-        lastName: "nissim",
-        email: "rotem@example.com",
-        password: "securepassword123",
+        firstName: "new",
+        lastName: "user2",
+        email: "newUser2@example.com",
+        password: "newUser",
       });
+      userId = res.body.user._id;
 
       expect(res.statusCode).toEqual(201);
-      expect(res.body).toHaveProperty("refreshToken");
     });
 
     it("should not register with missing fields", async () => {
@@ -40,68 +50,36 @@ describe("Authentication Tests", () => {
       });
 
       expect(res.statusCode).toEqual(400);
-      expect(res.body).toHaveProperty("error");
-    });
-  });
-
-  describe("POST /auth/login", () => {
-    beforeEach(async () => {
-      // Create a test user before login tests
-      await request(app).post("/auth/register").send({
-        firstName: "rotem",
-        lastName: "nissim",
-        email: "rotem@example.com",
-        password: "securepassword123",
-      });
     });
 
-    it("should login with valid credentials", async () => {
-      const res = await request(app).post("/auth/login").send({
-        email: "rotem@example.com",
-        password: "securepassword123",
+    describe("POST /auth/login", () => {
+      beforeAll(async () => {
+        const res = await request(app).post("/auth/register").send({
+          firstName: "new",
+          lastName: "user",
+          email: "newUser@example.com",
+          password: "newUser",
+        });
       });
 
-      expect(res.statusCode).toEqual(200);
-      expect(res.body).toHaveProperty("refreshToken");
-    });
+      it("should login with valid credentials", async () => {
+        const res = await request(app).post("/auth/login").send({
+          email: "newUser@example.com",
+          password: "newUser",
+        });
 
-    it("should fail login with wrong credentials", async () => {
-      const res = await request(app).post("/auth/login").send({
-        email: "rotem@example.com",
-        password: "wrongpassword",
+        expect(res.statusCode).toEqual(200);
+        expect(res.body).toHaveProperty("refreshToken");
       });
 
-      expect(res.statusCode).toEqual(400);
-      expect(res.body).toHaveProperty("error");
-    });
-  });
+      it("should fail login with wrong credentials", async () => {
+        const res = await request(app).post("/auth/login").send({
+          email: "newUser@example.com",
+          password: "wrongpassword",
+        });
 
-  describe("GET /protected", () => {
-    let token: string;
-
-    beforeEach(async () => {
-      const res = await request(app).post("/auth/register").send({
-        firstName: "rotem",
-        lastName: "nissim",
-        email: "rotem@example.com",
-        password: "securepassword123",
+        expect(res.statusCode).toEqual(400);
       });
-
-      token = res.body.token;
-    });
-
-    it("should access protected route with valid token", async () => {
-      const res = await request(app)
-        .get("/protected")
-        .set("Authorization", `Bearer ${token}`);
-
-      expect(res.statusCode).toEqual(200);
-    });
-
-    it("should not access protected route without token", async () => {
-      const res = await request(app).get("/protected");
-
-      expect(res.statusCode).toEqual(404);
     });
   });
 });

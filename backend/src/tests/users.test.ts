@@ -2,20 +2,18 @@ import request from "supertest";
 import initApp from "../server";
 import mongoose from "mongoose";
 import { Express } from "express";
-import userModel, {IUser} from "../models/User.models";
+import userModel, { IUser } from "../models/User.models";
 
-var app:Express;
+var app: Express;
 
 beforeAll(async () => {
-    console.log("beforeAll");
-    app = await initApp();
-    await userModel.deleteMany();
+  console.log("beforeAll");
+  app = await initApp();
 });
 
-afterAll((done) => {
-    console.log("afterAll");
-    mongoose.connection.close();
-    done();
+
+afterAll(async () => {
+  await mongoose.connection.close(); 
 });
 
 const baseUrl = "/auth";
