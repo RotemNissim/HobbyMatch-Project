@@ -16,25 +16,20 @@ beforeAll(async () => {
   app = await initApp();
 
   // יצירת משתמש לבדיקה
-  const userRes = await request(app).post("/auth/register").send({
-    firstName: "Test",
+  await request(app).post("/auth/register").send({
+    firstName: "Events",
     lastName: "User",
-    email: "testuser@example.com",
-    password: "testpassword123",
+    email: "eventuser@example.com",
+    password: "eventUser",
   });
-  
-  userToken = userRes.body.refreshToken;
-  userId = userRes.body._id;
-});
 
-beforeEach(async () => {
-  session = await mongoose.startSession();
-  session.startTransaction();
-});
+  const res = await request(app).post("/auth/login").send({
+    email: "eventuser@example.com",
+    password: "eventUser",
+  });
 
-afterEach(async () => {
-  await session.abortTransaction(); // Undo all changes
-  session.endSession();
+  userToken = res.body.accessToken;
+  userId = res.body._id;
 });
 
 afterAll(async () => {
@@ -50,9 +45,9 @@ describe("Event API Tests", () => {
         .send({
           title: "Test Event",
           description: "This is a test event",
-          date: new Date(),
+          date: "2025-05-02T00:00:00.000+00:00",
           location: "Tel Aviv",
-          hobby: "Music",
+          hobbies: ["67dae9f5a8d3d895500c4d65"],
           createdBy: userId,
         });
 
@@ -67,11 +62,12 @@ describe("Event API Tests", () => {
         description: "Description here",
         date: new Date(),
         location: "Jerusalem",
-        hobby: "Art",
+        hobby: ["67dae9f5a8d3d895500c4d65"],
         createdBy: userId,
       });
 
       const res = await request(app).get("/events");
+
       expect(res.statusCode).toEqual(200);
       expect(res.body.length).toBeGreaterThan(0);
     });
@@ -84,7 +80,7 @@ describe("Event API Tests", () => {
         description: "Old description",
         date: new Date(),
         location: "Haifa",
-        hobby: "Sports",
+        hobbies: ["67dae9f5a8d3d895500c4d65"],
         createdBy: userId,
       });
 
@@ -105,7 +101,7 @@ describe("Event API Tests", () => {
         description: "This will be deleted",
         date: new Date(),
         location: "Eilat",
-        hobby: "Diving",
+        hobbies: ["67dae9f5a8d3d895500c4d65"],
         createdBy: userId,
       });
 
