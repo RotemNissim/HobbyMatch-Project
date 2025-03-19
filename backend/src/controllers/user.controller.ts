@@ -28,9 +28,9 @@ class UserController {
       
           // Delete old profile picture if it exists
           if (user.profilePicture) {
-            const oldImagePath = path.join(__dirname, '../uploads/profile_pictures', user.profilePicture);
-            if (fs.existsSync(oldImagePath)) {
-              fs.unlinkSync(oldImagePath);
+            const uploadsPath = path.join(process.cwd(), "src", "uploads", "profile_pictures", user.profilePicture);
+            if (fs.existsSync(uploadsPath)) {
+              fs.unlinkSync(uploadsPath);
             }
           }
       
