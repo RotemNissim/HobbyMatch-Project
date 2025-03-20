@@ -13,6 +13,7 @@ import { AxiosError } from 'axios';
 import { setGlobalFlag } from '../globalState';
 import Select from 'react-select';
 
+
 const BASE_URL = import.meta.env.VITE_API_BASE_URL +  "/api/uploads/profile_pictures";
 console.log("base url:", BASE_URL);
 
@@ -79,7 +80,7 @@ const UserProfile = () => {
             navigate('/');
         };
         
-    return (
+        return (
         <div className="UP_carousel-container">
 
             {user && !isEditingProfile && (
@@ -93,8 +94,17 @@ const UserProfile = () => {
                                src={user.profilePicture ? `https://node120.cs.colman.ac.il/api/uploads/profile_pictures/${user.profilePicture}` : "/default-avatar.png"}   
                                alt="Profile" 
                                className="UP_profile-picture"
-                           />
-                        )}
+                               />
+                            )}
+                            {/* ✅ Show "Go to Admin Panel" only if the user is an admin */}
+                            {isAdmin && (
+                                <button 
+                                    onClick={() => navigate("/admin")} 
+                                    className="UP_admin-panel-button"
+                                >
+                                    Go to Admin Panel
+                                </button>
+                            )}
                         <div className="UP_user-profile-buttons">
                             <button
                                 className="UP_dit-profile-button"
@@ -114,20 +124,8 @@ const UserProfile = () => {
                             >
                                 Logout
                             </button>
-
-                            
-
-                            {user && <MyHobbies user={user} />}
-                            {/* ✅ Show "Go to Admin Panel" only if the user is an admin */}
-                            {isAdmin && (
-                                <button 
-                                    onClick={() => navigate("/admin")} 
-                                    className="UP_admin-panel-button"
-                                >
-                                    Go to Admin Panel
-                                </button>
-                            )}
                         </div>
+                            {user && <MyHobbies user={user} />}
                     </div>
                 </div>
             )}

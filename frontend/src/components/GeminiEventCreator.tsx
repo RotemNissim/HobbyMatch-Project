@@ -38,7 +38,7 @@ const GeminiEventGenerator = () => {
   return (
     <div className="gemini-event-generator">
       <h3>Let GeminiAI Generate an Event for Me</h3>
-      <div>
+      <div className="event-generator-form">
         <label>Start Date:</label>
         <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} />
 

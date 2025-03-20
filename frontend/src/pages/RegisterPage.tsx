@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { register } from "../services/authService";
 import { useNavigate } from "react-router-dom";
+import "../styles/register.css";
 
 const Register = () => {
     const navigate = useNavigate();
@@ -52,9 +53,9 @@ const Register = () => {
 
     return (
         <div className="Register container">
-            <h2 className="Register titel">Register</h2>
             {preview && <img src={preview} alt="Preview" className="Register img" />}
             <form onSubmit={handleSubmit} className="Register form">
+            <h2 className="Register titel">Register</h2>
                 <input type="text" name="firstName" placeholder="First Name" onChange={handleChange} required className="Register input firstName" />
                 <input type="text" name="lastName" placeholder="Last Name" onChange={handleChange} required className="Register input lastName"/>
                 <input type="email" name="email" placeholder="Email" onChange={handleChange} required className="Register input email" />

@@ -100,12 +100,12 @@ const CreateEventForm: React.FC<Props> = ({ onEventCreated, onCancel }) => {
                 onChange={handleChange} 
                 className="create-event-input-title"  
             />
-            <textarea 
+            <input
                 name="description" 
                 placeholder="Event Description" 
                 onChange={handleChange} 
                 className="create-event-input-description"
-            ></textarea>
+            ></input>
             <input 
                 type="date" 
                 name="date" 

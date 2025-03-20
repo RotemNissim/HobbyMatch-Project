@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { login, register, onGoogleLoginSuccess, onGoogleLoginFailure } from "../services/authService";
 import { AuthFormData } from "../types";
 import { GoogleLogin } from "@react-oauth/google";
+import "../styles/login.css";
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -34,11 +35,11 @@ const AuthPage = () => {
         await login(formData.email, formData.password);
       } else {
         const formDataToSend = new FormData();
-Object.entries(formData).forEach(([key, value]) => {
-    formDataToSend.append(key, value);
-});
+        Object.entries(formData).forEach(([key, value]) => {
+          formDataToSend.append(key, value);
+        });
 
-await register(formDataToSend);
+        await register(formDataToSend);
       }
       navigate("/profile");
     } catch (err: any) {
@@ -91,7 +92,7 @@ await register(formDataToSend);
           <button className="login submit button" type="submit">{isLogin ? "Login" : "Sign Up"}</button>
         </form>
         <p>
-          {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
+          {isLogin ? <a href="register">Don't have an account?</a> : "Already have an account?"}{" "}
           <GoogleLogin onSuccess={onGoogleLoginSuccess} onError={onGoogleLoginFailure} />
         </p>
       </div>
