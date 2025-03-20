@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { login, register, onGoogleLoginSuccess, onGoogleLoginFailure } from "../services/authService";
 import { AuthFormData } from "../types";
 import { GoogleLogin } from "@react-oauth/google";
+import "../styles/login.css";
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);

@@ -1,16 +1,16 @@
 {
     "compilerOptions": {
-      "target": "ES6",                           // קומפילציה ל-ECMAScript 6
-      "module": "commonjs",                      // שימוש במערכת מודולים של Node.js
-      "moduleResolution": "node",                // פתרון מודולים כמו Node.js
-      "outDir": "./dist",                        // תיקיית הפלט לאחר קומפילציה
-      "rootDir": "./src",                        // תיקיית המקור
-      "esModuleInterop": true,                   // פתרון שגיאות ייבוא כמו Express
-      "forceConsistentCasingInFileNames": true,  // התאמת שמות קבצים רגישים לאותיות גדולות/קטנות
-      "strict": true,                            // הפעלת Strict Mode
-      "skipLibCheck": true                       // דילוג על בדיקת טיפוסים בספריות
+      "target": "ES6",                          
+      "module": "commonjs",                     
+      "moduleResolution": "node",               
+      "outDir": "./dist",                       
+      "rootDir": "./src",                       
+      "esModuleInterop": true,                  
+      "forceConsistentCasingInFileNames": true, 
+      "strict": true,                           
+      "skipLibCheck": true                      
     },
-    "include": ["src"],                          // כלול את תיקיית src בקומפילציה
-    "exclude": ["node_modules"]                  // דלג על תיקיית node_modules
+    "include": ["src"],                         
+    "exclude": ["node_modules"]                 
   }
   

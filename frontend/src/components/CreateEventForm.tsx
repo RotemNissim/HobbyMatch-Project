@@ -1,12 +1,13 @@
-import { useEffect, useState } from 'react';
-import { createEvent } from '../services/eventService';
+import { useEffect, useState} from 'react';
+import { createEvent, uploadEventImage } from '../services/eventService';
 import { listHobbies } from '../services/hobbyService';
-
+import { useParams } from 'react-router-dom';
 interface EventForm {
     title: string;
     description: string;
     date: string;
     location: string;
+    image:string;
     hobby: string[]; // 🔥 MongoDB expects "hobby", not "hobbies"
 }
 
@@ -22,10 +23,15 @@ const CreateEventForm: React.FC<Props> = ({ onEventCreated, onCancel }) => {
         date: '',
         location: '',
         hobby: [],
+        image: '',
     });
 
     const [hobbiesList, setHobbiesList] = useState<{ _id: string; name: string }[]>([]);
     const [loading, setLoading] = useState(true);
+
+    const { eventId } = useParams(); // Get eventId from URL
+    const [event, setEvent] = useState<Event[] | null>(null);
+
 
     useEffect(() => {
         const fetchHobbies = async () => {
@@ -54,6 +60,22 @@ const CreateEventForm: React.FC<Props> = ({ onEventCreated, onCancel }) => {
                 : [...prevForm.hobby, hobbyId] // 🔥 Add if not selected
         }));
     };
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]; // Ensure a file was selected
+        if (!file || !eventId) return; // Make sure event and event ID exist
+    
+        try {
+            const newImage = await uploadEventImage(eventId, file); // Send the image to backend
+            setEvent((prevEvent) => prevEvent ? { ...prevEvent, image: newImage } : prevEvent); // Update state
+        } catch (error) {
+            console.error("❌ Error uploading event image:", error);
+        }
+    };
+    
+    
+    // File upload input in UI
+    
+    
 
     const handleSubmit = async () => {
         try {
@@ -97,6 +119,7 @@ const CreateEventForm: React.FC<Props> = ({ onEventCreated, onCancel }) => {
                 onChange={handleChange} 
                 className="create-event-input-location" 
             />
+            <input type="file" accept="image/*" onChange={handleImageUpload} />
 
             <div>
                 <label className="">Select Hobbies</label>

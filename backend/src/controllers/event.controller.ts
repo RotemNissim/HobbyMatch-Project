@@ -4,9 +4,10 @@ import { Request, Response } from 'express';
 import eventService from '../services/event.service';
 import { AuthRequest } from '../middleware/AuthRequest';
 import Event from '../models/Event.models';
-import OpenAI from 'openai';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import User from '../models/User.models';
+import path from 'path';
+import fs from 'fs';
 
 const apiKey = process.env.GEMINI_API_KEY;
 if (!apiKey) {
@@ -214,6 +215,37 @@ class EventController {
       const errorMsg = error instanceof Error ? error.message : 'Error generating event recommendations.';
       console.error('Error recommending events:',errorMsg);
       res.status(500).json({ message: 'Error generating event recommendations.' });
+    }
+  }
+
+  async uploadEventImage(req: Request, res: Response) {
+    try {
+      const eventId = req.params.id;
+      if (!req.file) {
+        return res.status(400).json({ message: 'No file uploaded' });
+      }
+  
+      const event = await Event.findById(eventId);
+      if (!event) {
+        return res.status(404).json({ message: 'Event not found' });
+      }
+  
+      
+      if (event.image) {
+        const uploadsPath = path.join(process.cwd(), "src", "uploads", "profile_pictures", event.image);
+        if (fs.existsSync(uploadsPath)) {
+          fs.unlinkSync(uploadsPath);
+        }
+      }
+  
+      // Save new file path
+      event.image = req.file.filename;
+      await event.save();
+  
+      res.status(200).json({ message: 'Event picture updated', image: event.image });
+    } catch (error: unknown) {
+        const errMsg = error instanceof Error ? error.message : 'Failed to upload event picture';
+      res.status(500).json({ message: errMsg});
     }
   }
 }

@@ -15,7 +15,7 @@ import authRoute from "./routes/auth.routes";
 import hobbyRoute from "./routes/hobby.routes";
 import likeRoute from "./routes/like.routes";
 import commentRoute from "./routes/comment.routes";
-import "./config/auth.google"; 
+
 
 const app = express();
 

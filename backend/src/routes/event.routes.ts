@@ -4,6 +4,7 @@ import { authMiddleware } from "../controllers/auth.controller";
 import asyncHandler from "../middleware/asyncHandler";
 import CommentController from "../controllers/comment.controller";
 import { AuthRequest } from "../middleware/AuthRequest";
+import upload from "../middleware/multerConfig"
 
 const router = express.Router();
 
@@ -451,5 +452,6 @@ router.post('/:id/comments', authMiddleware, asyncHandler(CommentController.addC
 
 router.get('/:id/comments',authMiddleware, asyncHandler(EventController.getCommentsToEvent)); 
 
+router.put("/:id/upload-image", authMiddleware, upload.single("image"), asyncHandler(EventController.uploadEventImage));
 
 export default router;
